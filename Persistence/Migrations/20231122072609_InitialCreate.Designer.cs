@@ -11,8 +11,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231121090252_AddUnitIdInProduct")]
-    partial class AddUnitIdInProduct
+    [Migration("20231122072609_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +26,7 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Categoy")
+                    b.Property<string>("Category")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedOn")

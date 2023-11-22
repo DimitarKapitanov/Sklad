@@ -10,7 +10,7 @@ namespace Domain
         }
         public string Name { get; set; }
 
-        public string Categoy { get; set; }
+        public string Category { get; set; }
 
         public double Quantity { get; set; }
 

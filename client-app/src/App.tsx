@@ -21,7 +21,7 @@ function App() {
       <List>
         {products.map((product: any) => (
           <List.Item key={product.id}>
-            {product.name} / {product.price} / {product.description} / {product.category} 
+            {product.name} / {product.quantity}{product.unit.acronym} / {product.price} / {product.description} / {product.category} / {product.unit.name} /  {product.unit.type}
           </List.Item>
         ))}
       </List>

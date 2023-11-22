@@ -8,9 +8,11 @@ namespace Persistence
         {
             if (!context.Units.Any())
             {
-                var units = new List<Unit>{
+                var units = new List<Unit>
+                {
                     new Unit
                     {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                         Name = "kilogram",
                         Acronym = "kg",
                         CreatedOn = DateTime.UtcNow,
@@ -19,6 +21,7 @@ namespace Persistence
                     },
                     new Unit
                     {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
                         Name = "pack",
                         Acronym = "pack",
                         CreatedOn = DateTime.UtcNow,
@@ -27,6 +30,7 @@ namespace Persistence
                     },
                     new Unit
                     {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
                         Name = "mililiter",
                         Acronym = "ml",
                         Type = "can 330",
@@ -36,6 +40,7 @@ namespace Persistence
                     },
                     new Unit
                     {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000004"),
                         Name = "liter",
                         Acronym = "l",
                         Type = "bottle 1L",
@@ -45,6 +50,7 @@ namespace Persistence
                     },
                     new Unit
                     {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000005"),
                         Name = "liter",
                         Acronym = "l",
                         Type = "bottle 2L",
@@ -54,6 +60,7 @@ namespace Persistence
                     },
                     new Unit
                     {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000006"),
                         Name = "liter",
                         Acronym = "l",
                         Type = "bottle 3L",
@@ -63,6 +70,7 @@ namespace Persistence
                     },
                     new Unit
                     {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000007"),
                         Name = "liter",
                         Acronym = "l",
                         Type = "bottle 0.750L",
@@ -72,6 +80,7 @@ namespace Persistence
                     }
                 };
                 await context.Units.AddRangeAsync(units);
+
             }
             if (context.Products.Any()) return;
 
@@ -80,279 +89,210 @@ namespace Persistence
                 new Product
                 {
                     Name = "Coca Cola",
-                    Categoy = "drinks",
+                    Category = "drinks",
                     Description = "Coca Cola",
                     Quantity = 10,
-                    Unit = new Unit {
-                        Name = "mililiter",
-                        Acronym = "ml",
-                        Type = "can 330"
-                    },
                     Price = 1.99m,
                     DeliveryPrice = 0.99m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000003"),
                 },
                 new Product
                 {
                     Name = "Pepsi",
-                    Categoy = "drinks",
+                    Category = "drinks",
                     Description = "Pepsi",
                     Quantity = 10,
-                    Unit = new Unit
-                    {
-                        Name = "mililiter",
-                        Acronym = "ml",
-                        Type = "can 330"
-                    },
                     Price = 1.50m,
                     DeliveryPrice = 0.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000003"),
                 },
                 new Product
                 {
                     Name = "Fanta",
-                    Categoy = "drinks",
+                    Category = "drinks",
                     Description = "Fanta",
                     Quantity = 10,
-                    Unit = new Unit
-                    {
-                        Name = "mililiter",
-                        Acronym = "ml",
-                        Type = "can 330"
-                    },
                     Price = 1.50m,
                     DeliveryPrice = 0.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000003"),
                 },
                 new Product
                 {
                     Name = "Coca Cola",
-                    Categoy = "drinks",
+                    Category = "drinks",
                     Description = "Coca Cola",
                     Quantity = 10,
-                    Unit = new Unit
-                    {
-                        Name = "liter",
-                        Acronym = "l",
-                        Type = "bottle 1L"
-                    },
                     Price = 1.99m,
                     DeliveryPrice = 0.99m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000004"),
                 },
                 new Product
                 {
                     Name = "Pepsi",
-                    Categoy = "drinks",
+                    Category = "drinks",
                     Description = "Pepsi",
                     Quantity = 10,
-                    Unit = new Unit
-                    {
-                        Name = "liter",
-                        Acronym = "l",
-                        Type = "bottle 1L"
-                    },
                     Price = 1.50m,
                     DeliveryPrice = 0.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000004"),
                 },
                 new Product
                 {
                     Name = "Fanta",
-                    Categoy = "drinks",
+                    Category = "drinks",
                     Description = "Fanta",
                     Quantity = 10,
-                    Unit = new Unit
-                    {
-                        Name = "liter",
-                        Acronym = "l",
-                        Type = "bottle 2L"
-                    },
                     Price = 1.50m,
                     DeliveryPrice = 0.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000004"),
                 },
                 new Product
                 {
                     Name = "Banan",
-                    Categoy = "fruits",
+                    Category = "fruits",
                     Description = "Banan",
                     Quantity = 100,
-                    Unit = new Unit
-                    {
-                        Name = "kilogram",
-                        Acronym = "kg",
-                    },
                     Price = 1.50m,
                     DeliveryPrice = 0.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 },
                 new Product
                 {
                     Name = "Apple",
-                    Categoy = "fruits",
+                    Category = "fruits",
                     Description = "Apple",
                     Quantity = 100,
-                    Unit = new Unit
-                    {
-                        Name = "kilogram",
-                        Acronym = "kg",
-                    },
                     Price = 1.50m,
                     DeliveryPrice = 0.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 },
                 new Product
                 {
                     Name = "Tomato",
-                    Categoy = "vegetables",
+                    Category = "vegetables",
                     Description = "Tomato",
                     Quantity = 100,
-                    Unit = new Unit
-                    {
-                        Name = "kilogram",
-                        Acronym = "kg",
-                    },
                     Price = 1.50m,
                     DeliveryPrice = 0.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 },
                 new Product
                 {
                     Name = "Potato",
-                    Categoy = "vegetables",
+                    Category = "vegetables",
                     Description = "Potato",
                     Quantity = 100,
-                    Unit = new Unit
-                    {
-                        Name = "kilogram",
-                        Acronym = "kg",
-                    },
                     Price = 1.50m,
                     DeliveryPrice = 0.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 },
                 new Product
                 {
                     Name = "Pork tenderloin",
-                    Categoy = "meat",
+                    Category = "meat",
                     Description = "Pork tenderloin",
                     Quantity = 100,
-                    Unit = new Unit
-                    {
-                        Name = "kilogram",
-                        Acronym = "kg",
-                    },
                     Price = 5.50m,
                     DeliveryPrice = 1.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 },
                 new Product
                 {
                     Name = "Chicken",
-                    Categoy = "meat",
+                    Category = "meat",
                     Description = "Chicken",
                     Quantity = 100,
-                    Unit = new Unit
-                    {
-                        Name = "pack",
-                        Acronym = "pack",
-                    },
                     Price = 4.50m,
                     DeliveryPrice = 1.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 },
                 new Product
                 {
                     Name = "Beef",
-                    Categoy = "meat",
+                    Category = "meat",
                     Description = "Beef",
                     Quantity = 100,
-                    Unit = new Unit
-                    {
-                        Name = "kilogram",
-                        Acronym = "kg",
-                    },
                     Price = 6.50m,
                     DeliveryPrice = 1.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 },
                 new Product
                 {
                     Name = "Lasagna",
-                    Categoy = "ready meals",
+                    Category = "ready meals",
                     Description = "Lasagna",
                     Quantity = 50,
-                    Unit = new Unit
-                    {
-                        Name = "pack",
-                        Acronym = "pack",
-                    },
                     Price = 3.50m,
                     DeliveryPrice = 1.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
                 },
                 new Product
                 {
                     Name = "Pizza",
-                    Categoy = "ready meals",
+                    Category = "ready meals",
                     Description = "Pizza",
                     Quantity = 50,
-                    Unit = new Unit
-                    {
-                        Name = "pack",
-                        Acronym = "pack",
-                    },
                     Price = 3.50m,
                     DeliveryPrice = 1.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
                 },
                 new Product
                 {
                     Name = "Pasta",
-                    Categoy = "ready meals",
+                    Category = "ready meals",
                     Description = "Pasta",
                     Quantity = 50,
-                    Unit = new Unit
-                    {
-                        Name = "pack",
-                        Acronym = "pack",
-                    },
                     Price = 3.50m,
                     DeliveryPrice = 1.50m,
                     CreatedOn = DateTime.UtcNow,
                     ModifiedOn = DateTime.UtcNow,
                     IsDeleted = false,
+                    UnitId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
                 }
             };
 

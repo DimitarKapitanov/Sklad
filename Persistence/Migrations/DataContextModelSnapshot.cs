@@ -23,7 +23,7 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Categoy")
+                    b.Property<string>("Category")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedOn")

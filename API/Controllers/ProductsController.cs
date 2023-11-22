@@ -1,29 +1,52 @@
+using Application.Products;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers
 {
     public class ProductsController : BaseApiController
     {
-        private readonly DataContext _context;
-        public ProductsController(DataContext context)
+        [HttpGet()]
+        public async Task<ActionResult<List<Product>>> GetProducts(CancellationToken cancellationToken)
         {
-            _context = context;
+            return await Mediator.Send(new List.Query(), cancellationToken);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        [HttpGet("filtered/{isDelited?}")]
+        public async Task<ActionResult<List<Product>>> GetActiveProducts(bool? isDelited, CancellationToken cancellationToken)
         {
-            return await _context.Products.ToListAsync();
+            return await Mediator.Send(new List.Query { isDelited = isDelited }, cancellationToken);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(Guid id)
+        public async Task<ActionResult<Product>> GetProduct(Guid id, CancellationToken cancellationToken)
         {
-            var product = await _context.Products.FindAsync(id);
-            return product;
+            return await Mediator.Send(new Details.Query { Id = id }, cancellationToken);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct(Product product, CancellationToken cancellationToken)
+        {
+            await Mediator.Send(new Create.Command { Product = product }, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditProduct(Guid id, Product product, CancellationToken cancellationToken)
+        {
+            product.Id = id;
+            await Mediator.Send(new Edit.Command { Product = product }, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(Guid id, CancellationToken cancellationToken)
+        {
+            await Mediator.Send(new Delete.Command { Id = id });
+
+            return Ok();
         }
     }
 }
