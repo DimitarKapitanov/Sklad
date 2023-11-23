@@ -1,48 +1,48 @@
-using AutoMapper;
-using Domain;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Persistence;
 
-namespace Application.Products
+namespace Application.Units
 {
-    public class Edit
+    public class UnitDelete
     {
         public class Command : IRequest
         {
-            public Product Product { get; set; }
+            public Guid Id { get; set; }
         }
 
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
-            private readonly IMapper _mapper;
-            private readonly ILogger<Edit> _logger;
-
-            public Handler(DataContext context, IMapper mapper, ILogger<Edit> logger)
+            private readonly ILogger<UnitDelete> _logger;
+            public Handler(DataContext context, ILogger<UnitDelete> logger)
             {
-                _mapper = mapper;
                 _logger = logger;
                 _context = context;
             }
-
             public async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var product = await _context.Products.FindAsync(request.Product.Id);
-
-                    _mapper.Map(request.Product, product);
+                    var unit = await _context.Units.FindAsync(request.Id);
+                    unit.IsDeleted = true;
+                    _logger.LogInformation(unit.IsDeleted.ToString());
+                    _context.Update(unit);
 
                     await _context.SaveChangesAsync(cancellationToken);
-                    _logger.LogInformation("The operation editing product was cancelled.");
+                    _logger.LogInformation("The operation deleting unit was cancelled.");
                 }
                 catch (Exception)
                 {
-                    _logger.LogInformation("The operation editing product was cancelled.");
+                    _logger.LogInformation("The operation deleting unit was cancelled.");
                 }
             }
+        
         }
     }
 }

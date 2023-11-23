@@ -15,7 +15,7 @@ namespace API.Controllers
         [HttpGet("filtered/{isDelited?}")]
         public async Task<ActionResult<List<Product>>> GetActiveProducts(bool? isDelited, CancellationToken cancellationToken)
         {
-            return await Mediator.Send(new List.Query { isDelited = isDelited }, cancellationToken);
+            return await Mediator.Send(new List.Query { IsDelited = isDelited }, cancellationToken);
         }
 
         [HttpGet("{id}")]
@@ -44,7 +44,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(Guid id, CancellationToken cancellationToken)
         {
-            await Mediator.Send(new Delete.Command { Id = id });
+            await Mediator.Send(new Delete.Command { Id = id }, cancellationToken);
 
             return Ok();
         }

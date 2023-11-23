@@ -1,34 +1,52 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Application.Units;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers
 {
     public class UnitController : BaseApiController
     {
-        private readonly DataContext _context;
-
-        public UnitController(DataContext context)
+        [HttpGet]
+        public async Task<ActionResult<List<Unit>>> GetUnits(CancellationToken cancellationToken)
         {
-            _context = context;
+            return await Mediator.Send(new UnitList.Query(), cancellationToken);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Unit>>> GetUnits()
+        [HttpGet("filtered/{isDelited?}")]
+        public async Task<ActionResult<List<Unit>>> GetActiveUnits(bool? isDelited, CancellationToken cancellationToken)
         {
-            return await _context.Units.ToListAsync();
+            return await Mediator.Send(new UnitList.Query { IsDelited = isDelited }, cancellationToken);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Unit>> GetUnit(Guid id)
+        public async Task<ActionResult<Unit>> GetUnit(Guid id, CancellationToken cancellationToken)
         {
-            var unit = await _context.Units.FindAsync(id);
-            return unit;
+            return await Mediator.Send(new UnitDetails.Query { Id = id } , cancellationToken);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUnit(Unit unit, CancellationToken cancellationToken)
+        {
+            await Mediator.Send(new UnitCreate.Command { Unit = unit }, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditUnit(Guid id, Unit unit, CancellationToken cancellationToken)
+        {
+            unit.Id = id;
+            await Mediator.Send(new UnitEdit.Command { Unit = unit }, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUnit(Guid id, CancellationToken cancellationToken)
+        {
+            await Mediator.Send(new UnitDelete.Command { Id = id }, cancellationToken);
+
+            return Ok();
         }
     }
 }

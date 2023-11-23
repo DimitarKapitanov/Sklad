@@ -11,7 +11,7 @@ namespace Application.Products
     {
         public class Query : IRequest<List<Product>>
         {
-            public bool? isDelited { get; set; }
+            public bool? IsDelited { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, List<Product>>
@@ -29,7 +29,7 @@ namespace Application.Products
                 {
                     var product = await _context.Products
                     .Include(p => p.Unit)
-                    .Where(u => !request.isDelited.HasValue || u.IsDeleted == request.isDelited.Value)
+                    .Where(u => !request.IsDelited.HasValue || u.IsDeleted == request.IsDelited.Value)
                     .Select(p => new Product
                     {
                         Id = p.Id,

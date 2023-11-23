@@ -29,7 +29,7 @@ namespace Application.Products
                     cancellationToken.ThrowIfCancellationRequested();
                     await _context.SaveChangesAsync();
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     _logger.LogInformation("The operation creating product was cancelled.");
                 }

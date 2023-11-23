@@ -1,5 +1,6 @@
 using Application.Core;
 using Application.Products;
+using Application.Units;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -28,6 +29,7 @@ namespace API.Extensions
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssemblies(typeof(List.Handler).Assembly);
+                cfg.RegisterServicesFromAssemblies(typeof(UnitList.Handler).Assembly);
             });
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 

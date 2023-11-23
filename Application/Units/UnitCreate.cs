@@ -2,39 +2,35 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Persistence;
 
-namespace Application.Products
+namespace Application.Units
 {
-    public class Delete
+    public class UnitCreate
     {
         public class Command : IRequest
         {
-            public Guid Id { get; set; }
+            public Domain.Unit Unit { get; set; }
         }
 
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
-            private readonly ILogger<Delete> _logger;
-
-            public Handler(DataContext context, ILogger<Delete> logger)
+            private readonly ILogger<UnitCreate> _logger;
+            public Handler(DataContext context, ILogger<UnitCreate> logger)
             {
                 _logger = logger;
                 _context = context;
             }
-
             public async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 try
                 {
+                    _context.Units.Add(request.Unit);
                     cancellationToken.ThrowIfCancellationRequested();
-                    var product = await _context.Products.FindAsync(request.Id);
-                    product.IsDeleted = true;
-                    _context.Products.Update(product);
                     await _context.SaveChangesAsync();
                 }
-                catch (OperationCanceledException)
+                catch (Exception)
                 {
-                    _logger.LogError("The operation was cancelled.");
+                    _logger.LogInformation("The operation creating unit was cancelled.");
                 }
 
             }
