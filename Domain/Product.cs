@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Model;
 
 namespace Domain
@@ -15,6 +16,8 @@ namespace Domain
         public double Quantity { get; set; }
 
         public Guid UnitId { get; set; }
+        
+        [ForeignKey("UnitId")]
         public virtual Unit Unit { get; set; }
         
         public string Description { get; set; }
