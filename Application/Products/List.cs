@@ -42,12 +42,10 @@ namespace Application.Products
                         Unit = new Unit
                         {
                             Id = p.Unit.Id,
-                            Name = p.Unit.Name,
                             Acronym = p.Unit.Acronym,
                             CreatedOn = p.Unit.CreatedOn,
                             IsDeleted = p.Unit.IsDeleted,
                             ModifiedOn = p.Unit.ModifiedOn,
-                            Type = p.Unit.Type,
                             DeletedOn = p.Unit.DeletedOn,
                         },
                         UnitId = p.UnitId,

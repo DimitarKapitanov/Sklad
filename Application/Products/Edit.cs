@@ -33,10 +33,19 @@ namespace Application.Products
                     cancellationToken.ThrowIfCancellationRequested();
                     var product = await _context.Products.FindAsync(request.Product.Id);
 
-                    _mapper.Map(request.Product, product);
+                    if (product == null)
+                    {
+                        throw new Exception("Could not find product.");
+                    }
 
-                    await _context.SaveChangesAsync(cancellationToken);
-                    _logger.LogInformation("The operation editing product was cancelled.");
+                    product.Price = request.Product.Price;
+                    product.DeliveryPrice = request.Product.DeliveryPrice;
+                    product.Description = request.Product.Description;
+                    product.ModifiedOn = DateTime.Now;
+
+                    _context.Products.Update(product);
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("The product was updated successfully.");
                 }
                 catch (Exception)
                 {

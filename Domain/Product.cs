@@ -3,11 +3,11 @@ using Domain.Model;
 
 namespace Domain
 {
-    public class Product : BaseDeletableModel<Guid>
+    public class Product : BaseDeletableModel<string>
     {
         public Product()
         {
-            this.Id = Guid.NewGuid();
+            this.Id = Guid.NewGuid().ToString();
         }
         public string Name { get; set; }
 
@@ -15,7 +15,7 @@ namespace Domain
 
         public double Quantity { get; set; }
 
-        public Guid UnitId { get; set; }
+        public string UnitId { get; set; }
         
         [ForeignKey("UnitId")]
         public virtual Unit Unit { get; set; }
@@ -25,5 +25,8 @@ namespace Domain
         public decimal Price { get; set; }
 
         public decimal DeliveryPrice { get; set; }
+
+        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; }
     }
 }

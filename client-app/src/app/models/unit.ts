@@ -1,11 +1,5 @@
 export interface Unit {
-    name: string
-    acronym: string
-    type: string
-    products: []
-    isDeleted: boolean
-    deletedOn: string
+    unitName: string
+    unitAcronym: string
     id: string
-    createdOn: string
-    modifiedOn: string
 }

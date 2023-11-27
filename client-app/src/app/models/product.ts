@@ -1,11 +1,10 @@
-import { Unit } from "./unit"
-
 export interface Product {
     name: string
     category: string
     quantity: number
     unitId: string
-    unit: Unit
+    unitName: string
+    unitAcronym: string
     description: string
     price: number
     deliveryPrice: number

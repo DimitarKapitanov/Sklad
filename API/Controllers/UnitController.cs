@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Unit>> GetUnit(Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult<Unit>> GetUnit(string id, CancellationToken cancellationToken)
         {
             return await Mediator.Send(new UnitDetails.Query { Id = id } , cancellationToken);
         }
@@ -33,7 +33,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditUnit(Guid id, Unit unit, CancellationToken cancellationToken)
+        public async Task<IActionResult> EditUnit(string id, Unit unit, CancellationToken cancellationToken)
         {
             unit.Id = id;
             await Mediator.Send(new UnitEdit.Command { Unit = unit }, cancellationToken);
@@ -42,7 +42,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUnit(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteUnit(string id, CancellationToken cancellationToken)
         {
             await Mediator.Send(new UnitDelete.Command { Id = id }, cancellationToken);
 

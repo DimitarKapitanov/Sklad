@@ -9,7 +9,7 @@ namespace Application.Products
     {
         public class Query : IRequest<Product>
         {
-            public Guid Id { get; set; }
+            public string Id { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Product>

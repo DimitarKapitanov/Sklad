@@ -1,5 +1,6 @@
 using Domain;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence;
 
@@ -25,8 +26,12 @@ namespace Application.Products
             {
                 try
                 {
-                    _context.Products.Add(request.Product);
-                    cancellationToken.ThrowIfCancellationRequested();
+                    if (await _context.Products.FirstOrDefaultAsync(x => x.Name == request.Product.Name) != null)
+                    {
+                        throw new Exception("Product already exists.");
+                    }
+
+                    await _context.Products.AddAsync(request.Product);
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception)
