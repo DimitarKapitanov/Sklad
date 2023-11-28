@@ -8,7 +8,7 @@ export default class ProductStore {
     selectedProduct: Product | undefined = undefined;
     editMode = false;
     loading = false;
-    loadingInitial = false;
+    loadingInitial = true;
 
     constructor() {
         makeAutoObservable(this);
@@ -20,7 +20,6 @@ export default class ProductStore {
     }
 
     loadProducts = async () => {
-        this.loadingInitial = true;
         try {
             const products = await agent.Products.filterList();
             runInAction(() => {
@@ -43,7 +42,7 @@ export default class ProductStore {
         this.loadingInitial = state;
     }
 
-    slelectProduct = (id: string) => {
+    selectProduct = (id: string) => {
         this.selectedProduct = this.productRegistry.get(id);
     }
 
@@ -52,7 +51,7 @@ export default class ProductStore {
     }
 
     openForm = (id?: string) => {
-        id ? this.slelectProduct(id) : this.cancelSelectedProduct();
+        id ? this.selectProduct(id) : this.cancelSelectedProduct();
         this.editMode = true;
     }
 
