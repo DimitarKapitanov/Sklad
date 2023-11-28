@@ -5,3 +5,21 @@ body {
 .ui.inverted.top.fixed.menu {
     background-image: linear-gradient(135deg, rgb(24,42,115) 0%, rgb(33,138,174) 69%, rgb(32,167,172) 89%) !important;
 }
+
+.sort-button {
+    background-color: transparent !important;
+    border: none;
+
+    padding: 5px 10px;
+    margin: 0;
+    line-height: 1;
+    font-size: 15px;
+    color: black;
+    cursor: pointer;
+
+    transition: transform 0.5s ease-out;
+}
+
+.sort-reverse {
+    transform: rotate(180deg);
+}
