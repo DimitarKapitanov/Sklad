@@ -43,16 +43,13 @@ namespace Application.Products
                         {
                             Id = p.Unit.Id,
                             Acronym = p.Unit.Acronym,
-                            CreatedOn = p.Unit.CreatedOn,
                             IsDeleted = p.Unit.IsDeleted,
-                            ModifiedOn = p.Unit.ModifiedOn,
-                            DeletedOn = p.Unit.DeletedOn,
                         },
                         UnitId = p.UnitId,
-                        CreatedOn = p.CreatedOn,
                         IsDeleted = p.IsDeleted,
-                        ModifiedOn = p.ModifiedOn,
+                        CreatedOn = p.CreatedOn,
                         DeletedOn = p.DeletedOn,
+                        ModifiedOn = p.ModifiedOn,
                     }).ToListAsync();
 
                     cancellationToken.ThrowIfCancellationRequested();

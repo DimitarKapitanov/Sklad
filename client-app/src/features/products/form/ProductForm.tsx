@@ -6,8 +6,9 @@ interface Props {
     product: Product | undefined;
     closeForm: () => void;
     createOrEdit: (product: Product) => void;
+    submitting: boolean;
 }
-export default function ProductForm({ product: selectedProduct, closeForm, createOrEdit }: Props) {
+export default function ProductForm({ product: selectedProduct, closeForm, createOrEdit, submitting }: Props) {
     console.log(selectedProduct);
 
     const initialState = selectedProduct ?? {
@@ -21,10 +22,10 @@ export default function ProductForm({ product: selectedProduct, closeForm, creat
         unitName: '',
         unitAcronym: '',
         description: '',
-        createdOn: Date.now().toString(),
-        modifiedOn: Date.now().toString(),
+        createdOn: new Date(),
+        modifiedOn: new Date(),
         isDeleted: false,
-        deletedOn: '',
+        deletedOn: null,
     }
 
     const [product, setProduct] = useState(initialState)
@@ -57,7 +58,7 @@ export default function ProductForm({ product: selectedProduct, closeForm, creat
                 }
 
                 <ButtonGroup floated="right" >
-                    <Button type='submit' positive>Изпрати</Button>
+                    <Button loading={submitting} type='submit' positive>Изпрати</Button>
                     <Button color='red' type="button" content='Отказ' onClick={closeForm} />
                 </ButtonGroup>
             </Form>

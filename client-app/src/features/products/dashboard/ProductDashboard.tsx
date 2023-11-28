@@ -1,4 +1,4 @@
-import { Grid, } from "semantic-ui-react";
+import { Button, Grid, } from "semantic-ui-react";
 import { Product } from "../../../app/models/product";
 import ProductTable from "./ProductTable";
 import ProductDetails from "../details/ProductDetails";
@@ -14,35 +14,37 @@ interface Props {
     closeForm: () => void;
     createOrEdit: (product: Product) => void;
     deleteProduct: (id: string) => void;
+    submitting: boolean;
+    getAllProducts: () => void;
 }
 
-export default function ProductDashboard({ products, cancelSelectProduct, selectProduct, selectedProduct, editMode, closeForm, openForm, createOrEdit, deleteProduct }: Props) {
-
-    const tableHeader = ["Име", "Количество", "Доставна цена", "Продажна цена", "Категория", "Мярка", "Описание", "Edit/Delete"];
+export default function ProductDashboard({ products, cancelSelectProduct, selectProduct, selectedProduct, editMode, closeForm, openForm, createOrEdit, deleteProduct, submitting, getAllProducts }: Props) {
 
     return (
-        <Grid style={{ marginLeft: '20px' }} >
-            <Grid.Column width="11">
-                <ProductTable
-                    products={products}
-                    tableHeader={tableHeader}
-                    selectProduct={selectProduct}
-                    deleteProduct={deleteProduct}
-                />
-            </Grid.Column>
-            <Grid.Column width="5">
-                {selectedProduct && !editMode &&
-                    <ProductDetails
-                        product={selectedProduct}
-                        cancelSelectProduct={cancelSelectProduct}
-                        openForm={openForm}
+        <>
+            <Button content='Всички продукти' style={{ marginLeft: '35px', marginBottom: '20px' }} onClick={getAllProducts} />
+            <Grid style={{ marginLeft: '20px' }} >
+                <Grid.Column width="11">
+                    <ProductTable
+                        products={products}
+                        selectProduct={selectProduct}
+                        deleteProduct={deleteProduct}
+                        submitting={submitting}
                     />
-                }
-                {editMode &&
-                    <ProductForm closeForm={closeForm} product={selectedProduct} createOrEdit={createOrEdit} />
-                }
-            </Grid.Column>
-        </Grid>
-
+                </Grid.Column>
+                <Grid.Column width="5">
+                    {selectedProduct && !editMode &&
+                        <ProductDetails
+                            product={selectedProduct}
+                            cancelSelectProduct={cancelSelectProduct}
+                            openForm={openForm}
+                        />
+                    }
+                    {editMode &&
+                        <ProductForm closeForm={closeForm} product={selectedProduct} createOrEdit={createOrEdit} submitting={submitting} />
+                    }
+                </Grid.Column>
+            </Grid>
+        </>
     )
 }

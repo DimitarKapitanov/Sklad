@@ -9,8 +9,8 @@ export interface Product {
     price: number
     deliveryPrice: number
     isDeleted: boolean
-    deletedOn: string
     id: string
-    createdOn: string
-    modifiedOn: string
+    createdOn: Date | null
+    modifiedOn: Date | null
+    deletedOn: Date | null
 }

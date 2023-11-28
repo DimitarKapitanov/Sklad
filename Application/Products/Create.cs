@@ -30,7 +30,7 @@ namespace Application.Products
                     {
                         throw new Exception("Product already exists.");
                     }
-
+                    _logger.LogInformation(message: request.Product.DeletedOn.ToString());
                     await _context.Products.AddAsync(request.Product);
                     await _context.SaveChangesAsync();
                 }

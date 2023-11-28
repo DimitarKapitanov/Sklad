@@ -37,7 +37,8 @@ namespace Application.Products
                     {
                         throw new Exception("Could not find product.");
                     }
-
+                    
+                    product.Name = request.Product.Name;
                     product.Price = request.Product.Price;
                     product.DeliveryPrice = request.Product.DeliveryPrice;
                     product.Description = request.Product.Description;

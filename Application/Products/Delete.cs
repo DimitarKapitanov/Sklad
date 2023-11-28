@@ -29,6 +29,7 @@ namespace Application.Products
                     cancellationToken.ThrowIfCancellationRequested();
                     var product = await _context.Products.FindAsync(request.Id);
                     product.IsDeleted = true;
+                    product.DeletedOn = DateTime.Now;
                     _context.Products.Update(product);
                     await _context.SaveChangesAsync();
                 }

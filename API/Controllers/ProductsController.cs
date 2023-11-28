@@ -1,11 +1,18 @@
 using Application.Products;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
     public class ProductsController : BaseApiController
     {
+        private readonly ILogger<ProductsController> _logger;
+        public ProductsController(ILogger<ProductsController> logger)
+        {
+            _logger = logger;
+        }
+      
         [HttpGet()]
         public async Task<ActionResult<List<Product>>> GetProducts(CancellationToken cancellationToken)
         {
@@ -27,6 +34,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct(Product product, CancellationToken cancellationToken)
         {
+            _logger.LogInformation(message: product.Name);
             await Mediator.Send(new Create.Command { Product = product }, cancellationToken);
 
             return Ok();
@@ -35,7 +43,6 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditProduct(string id, Product product, CancellationToken cancellationToken)
         {
-            product.Id = id;
             await Mediator.Send(new Edit.Command { Product = product }, cancellationToken);
 
             return Ok();
