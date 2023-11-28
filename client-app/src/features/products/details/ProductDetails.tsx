@@ -1,13 +1,15 @@
 import { Button, ButtonGroup, Card, } from "semantic-ui-react";
-import { Product } from "../../../app/models/product";
+import { useStore } from "../../../app/stores/store";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-    product: Product;
-    cancelSelectProduct: () => void;
-    openForm: (id: string) => void;
-}
+export default observer(function ProductDetails() {
 
-export default function ProductDetails({ product, cancelSelectProduct, openForm }: Props) {
+    const { productStore } = useStore();
+    const { selectedProduct: product, openForm, cancelSelectedProduct } = productStore;
+
+    if (!product) return <LoadingComponent/>;
+
     return (
         <Card fluid>
             <Card.Content>
@@ -21,16 +23,16 @@ export default function ProductDetails({ product, cancelSelectProduct, openForm 
                 <Card.Description content={`Мярка ${product.unitAcronym}`}/>
                 <Card.Description content={`Категория ${product.category}`}/>
                 <Card.Description content={`Описание ${product.description}`}/>
-                <Card.Description content={`Създаден на ${product.createdOn}`}/>
-                <Card.Description content={`Променен на ${product.modifiedOn}`}/>
+                <Card.Description content={`Създаден на ${product.createdOn?.toString().split('T')[0]}`}/>
+                <Card.Description content={`Променен на ${product.modifiedOn?.toString().split('T')[0]}`}/>
                 <Card.Description content={`${product.isDeleted ? 'Изтрит' : 'Активен'} ${product.isDeleted ? `на ${product.deletedOn}`: ''}`}/>
             </Card.Content>
             <Card.Content extra>
             <ButtonGroup floated="right" >
                 <Button color="yellow" onClick={()=> openForm(product.id)}>Промени</Button>
-                <Button color='red' content='Отказ' onClick={cancelSelectProduct} />
+                <Button color='red' content='Отказ' onClick={cancelSelectedProduct} />
             </ButtonGroup>
             </Card.Content>
         </Card>
     )
-}
+})

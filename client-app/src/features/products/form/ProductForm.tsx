@@ -1,15 +1,11 @@
 import { ChangeEvent, useState } from "react";
 import { Button, ButtonGroup, Form, Segment } from "semantic-ui-react";
-import { Product } from "../../../app/models/product";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-    product: Product | undefined;
-    closeForm: () => void;
-    createOrEdit: (product: Product) => void;
-    submitting: boolean;
-}
-export default function ProductForm({ product: selectedProduct, closeForm, createOrEdit, submitting }: Props) {
-    console.log(selectedProduct);
+export default observer(function ProductForm() {
+    const {productStore} = useStore();
+    const {selectedProduct, closeForm, createProduct, updateProduct, loading} = productStore;
 
     const initialState = selectedProduct ?? {
         id: '',
@@ -31,9 +27,7 @@ export default function ProductForm({ product: selectedProduct, closeForm, creat
     const [product, setProduct] = useState(initialState)
 
     function handleSubmit() {
-        console.log(product);
-        
-        createOrEdit(product)
+        product.id ? updateProduct(product) : createProduct(product);
     }
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -58,10 +52,10 @@ export default function ProductForm({ product: selectedProduct, closeForm, creat
                 }
 
                 <ButtonGroup floated="right" >
-                    <Button loading={submitting} type='submit' positive>Изпрати</Button>
+                    <Button loading={loading} type='submit' positive>Изпрати</Button>
                     <Button color='red' type="button" content='Отказ' onClick={closeForm} />
                 </ButtonGroup>
             </Form>
         </Segment>
     )
-}
+})
