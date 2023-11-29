@@ -5,12 +5,21 @@ import { observer } from "mobx-react-lite";
 
 export default observer(function ProductTable() {
     const { productStore } = useStore();
-    const { productsByName, deleteProduct, loading } = productStore;
-
-    const tableHeader = ["Име", "Количество", "Доставна цена", "Продажна цена", "Категория", "Мярка", "Описание", "Edit/Delete"];
+    const { productsSort, deleteProduct, loading, tableHeader } = productStore;
 
     const [target, setTarget] = useState('');
+    const [products, setProducts] = useState(productsSort);
+    const [order, setOrder] = useState('asc');
 
+    function sortProd(keySort: string, order: string) {
+        if (order === 'asc') {
+            setProducts([...productsSort].sort((a, b) => (a[keySort] > b[keySort]) ? 1 : -1));
+            setOrder('desc');
+        } else {
+            setProducts([...productsSort].sort((a, b) => (a[keySort] < b[keySort]) ? 1 : -1));
+            setOrder('asc');
+        }
+    }
     function handleDeleteProduct(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
         deleteProduct(id);
@@ -22,13 +31,15 @@ export default observer(function ProductTable() {
             <Table.Header>
                 <Table.Row className="product-tale-head">
                     {tableHeader.map((row) => (
-                        <Table.HeaderCell key={row} className="table-header">{row}</Table.HeaderCell>
+                        <Table.HeaderCell key={row.key} className="table-header" onClick={() => sortProd(row.key, order)}>{row.label}
+                            <Icon name="angle down" className={`${row.key ===  && order === 'desc' ? 'sort-button sort-reverse' : 'sort-button'}`} />
+                        </Table.HeaderCell>
                     ))}
                 </Table.Row>
             </Table.Header>
 
             <Table.Body>
-                {productsByName.map((product) => (
+                {products.map((product) => (
                     <Table.Row key={product.id}>
                         <Table.Cell>{product.name}</Table.Cell>
                         <Table.Cell>{product.quantity}</Table.Cell>
@@ -54,3 +65,7 @@ export default observer(function ProductTable() {
         </Table>
     )
 })
+
+function useEffect(arg0: () => void, arg1: import("../../../app/models/product").Product[][]) {
+    throw new Error("Function not implemented.");
+}

@@ -4,8 +4,19 @@ import agent from "../api/Agent";
 import { v4 as uuid } from 'uuid';
 
 export default class ProductStore {
+   
     productRegistry = new Map<string, Product>();
     selectedProduct: Product | undefined = undefined;
+    tableHeader: {key: string, label: string}[] = [
+        { key: "name", label: "Име" },
+        { key: "quantity", label: "Количество" },
+        { key: "deliveryPrice", label: "Доставна цена" },
+        { key: "price", label: "Продажна цена" },
+        { key: "category", label: "Категория" },
+        { key: "unitAcronym", label: "Мярка" },
+        { key: "description", label: "Описание" },
+        { key: "isDeleted", label: "Edit/Delete" }
+    ];
     editMode = false;
     loading = false;
     loadingInitial = true;
@@ -14,9 +25,8 @@ export default class ProductStore {
         makeAutoObservable(this);
     }
 
-    get productsByName() {
-        return Array.from(this.productRegistry.values())
-            .sort((a ,b) => a.name.localeCompare(b.name));
+    get productsSort() {
+        return Array.from(this.productRegistry.values());
     }
 
     loadProducts = async () => {

@@ -7,16 +7,7 @@ body {
 }
 
 .sort-button {
-    background-color: transparent !important;
-    border: none;
-
-    padding: 5px 5px;
-    margin: 0;
-    line-height: 1;
-    font-size: 15px;
-    color: black;
     cursor: pointer;
-
     transition: transform 0.5s ease-out;
 }
 
