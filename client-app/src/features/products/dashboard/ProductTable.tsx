@@ -1,45 +1,47 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useReducer, useState } from "react";
 import { Button, Icon, Table } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { Product } from "../../../app/models/product";
+import exampleReducer from "../../../app/stores/sort"
+
 
 export default observer(function ProductTable() {
     const { productStore } = useStore();
     const { productsSort, deleteProduct, loading, tableHeader } = productStore;
 
     const [target, setTarget] = useState('');
-    const [products, setProducts] = useState(productsSort);
-    const [order, setOrder] = useState('asc');
+    const [state, dispatch] = useReducer(exampleReducer, {
+        column: null,
+        data: productsSort,
+        direction: null,
+    })
+    const { column, data, direction } = state
 
-    function sortProd(keySort: string, order: string) {
-        if (order === 'asc') {
-            setProducts([...productsSort].sort((a, b) => (a[keySort] > b[keySort]) ? 1 : -1));
-            setOrder('desc');
-        } else {
-            setProducts([...productsSort].sort((a, b) => (a[keySort] < b[keySort]) ? 1 : -1));
-            setOrder('asc');
-        }
-    }
     function handleDeleteProduct(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
         deleteProduct(id);
     }
-
 
     return (
         <Table celled padded selectable className="product-table">
             <Table.Header>
                 <Table.Row className="product-tale-head">
                     {tableHeader.map((row) => (
-                        <Table.HeaderCell key={row.key} className="table-header" onClick={() => sortProd(row.key, order)}>{row.label}
-                            <Icon name="angle down" className={`${row.key ===  && order === 'desc' ? 'sort-button sort-reverse' : 'sort-button'}`} />
+                        <Table.HeaderCell
+                            key={row.key}
+                            className="table-header sort-button"
+                            sorted={column === 'name' ? direction : null}
+                            onClick={() => dispatch({ type: 'CHANGE_SORT', column: `${row.key}` })}
+                        >
+                            {row.label}
                         </Table.HeaderCell>
                     ))}
                 </Table.Row>
             </Table.Header>
 
             <Table.Body>
-                {products.map((product) => (
+                {data.map((product: Product) => (
                     <Table.Row key={product.id}>
                         <Table.Cell>{product.name}</Table.Cell>
                         <Table.Cell>{product.quantity}</Table.Cell>
@@ -65,7 +67,3 @@ export default observer(function ProductTable() {
         </Table>
     )
 })
-
-function useEffect(arg0: () => void, arg1: import("../../../app/models/product").Product[][]) {
-    throw new Error("Function not implemented.");
-}
