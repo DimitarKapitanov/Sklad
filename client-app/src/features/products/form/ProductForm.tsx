@@ -31,6 +31,17 @@ export default observer(function ProductForm() {
         isDeleted: false,
         deletedOn: null,
     })
+    const [additionalRows, setAdditionalRows] = useState<number>(1);
+
+    function handleAddRow(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        event.preventDefault();
+        setAdditionalRows(prevRows => prevRows + 1);
+    }
+
+    function handleRemoveRow(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        event.preventDefault();
+        if (additionalRows > 1) setAdditionalRows(additionalRows => additionalRows - 1);
+    }
 
     useEffect(() => {
         if (id) loadProduct(id).then(product => setProduct(product!))
@@ -57,23 +68,31 @@ export default observer(function ProductForm() {
     return (
         <Segment clearing>
             <Form onSubmit={handleSubmit} autoComplete='off'>
-                <Form.Input placeholder='Име' label='Име' value={product.name} name='name' onChange={handleInputChange} />
-                <Form.Input placeholder='Продажна цена' type="number" label='Продажна цена' value={product.price} name='price' onChange={handleInputChange} />
-                <Form.Input placeholder='Доставна цена' type="number" label='Доставна цена' value={product.deliveryPrice} name='deliveryPrice' onChange={handleInputChange} />
-                <Form.TextArea placeholder='Описание' label='Допълнително описание' value={product.description} name='description' onChange={handleInputChange} />
-                {!product.id &&
-                    <>
-                        <Form.Input placeholder='Категория' type="text" label='Категория' value={product.category} name='category' onChange={handleInputChange} />
-                        <Form.Input placeholder='Мярка' type="text" label='Мярка' value={product.unitAcronym} name='unitAcronym' onChange={handleInputChange} />
-                        <Form.Input placeholder='Количество' type="number" label='Количество' value={product.quantity} name='quantity' onChange={handleInputChange} />
-                        <Form.Input placeholder='Име на мерната единица' type="text" value={product.unitName} name='unitName' onChange={handleInputChange} />
-                    </>
-                }
-
+                {[...Array(additionalRows)].map((_, index) => (
+                    <Form.Group key={index} inline widths='equal'>
+                        <Form.Input required fluid placeholder='Име' label='Име' value={product.name} name='name' onChange={handleInputChange} />
+                        <Form.Input required fluid placeholder='Продажна цена' type="number" label='Продажна цена' value={product.price} name='price' onChange={handleInputChange} />
+                        <Form.Input required fluid placeholder='Доставна цена' type="number" label='Доставна цена' value={product.deliveryPrice} name='deliveryPrice' onChange={handleInputChange} />
+                        <Form.Input fluid placeholder='Описание' label='Допълнително описание' value={product.description} name='description' onChange={handleInputChange} />
+                        {!product.id &&
+                            <>
+                                <Form.Input fluid required placeholder='Категория' type="text" label='Категория' value={product.category} name='category' onChange={handleInputChange} />
+                                <Form.Input fluid required placeholder='Мярка' type="text" label='Мярка' value={product.unitAcronym} name='unitAcronym' onChange={handleInputChange} />
+                                <Form.Input fluid required placeholder='Количество' type="number" label='Количество' value={product.quantity} name='quantity' onChange={handleInputChange} />
+                            </>
+                        }
+                    </Form.Group>
+                ))}
                 <ButtonGroup floated="right" >
                     <Button loading={loading} type='submit' positive>Изпрати</Button>
                     <Button as={Link} to='/products' color='red' type="button" content='Отказ' />
                 </ButtonGroup>
+                {!product.id &&
+                    <ButtonGroup floated="left" >
+                        <Button positive content='Добави ред' onClick={handleAddRow} />
+                        <Button content='Изтрий' onClick={handleRemoveRow} />
+                    </ButtonGroup>
+                }
             </Form>
         </Segment>
     )
