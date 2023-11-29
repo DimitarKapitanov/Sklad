@@ -4,10 +4,10 @@ import agent from "../api/Agent";
 import { v4 as uuid } from 'uuid';
 
 export default class ProductStore {
-   
+
     productRegistry = new Map<string, Product>();
     selectedProduct: Product | undefined = undefined;
-    tableHeader: {key: string, label: string}[] = [
+    tableHeader: { key: string, label: string }[] = [
         { key: "name", label: "Име" },
         { key: "quantity", label: "Количество" },
         { key: "deliveryPrice", label: "Доставна цена" },
@@ -19,7 +19,7 @@ export default class ProductStore {
     ];
     editMode = false;
     loading = false;
-    loadingInitial = true;
+    loadingInitial = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -30,11 +30,12 @@ export default class ProductStore {
     }
 
     loadProducts = async () => {
+        this.setLoadingInitial(true);
         try {
             const products = await agent.Products.filterList();
             runInAction(() => {
                 products.forEach(product => {
-                    this.productRegistry.set(product.id, product);
+                    this.setProduct(product)
                 })
 
                 this.loadingInitial = false;
@@ -48,30 +49,43 @@ export default class ProductStore {
         }
     }
 
+    private getProducts = (id: string) => {
+        return this.productRegistry.get(id);
+    }
+
+    private setProduct = (product: Product) => {
+        this.productRegistry.set(product.id, product);
+    }
+
+    loadProduct = async (id: string) => {
+        let product = this.getProducts(id);
+        if (product) {
+            this.selectedProduct = product;
+            return product;
+        }
+        else {
+            this.setLoadingInitial(true);
+            try {
+                product = await agent.Products.details(id);
+                this.setProduct(product);
+                runInAction(() => this.selectedProduct = product);
+                this.setLoadingInitial(false);
+                return product;
+            }
+            catch (error) {
+                console.log(error);
+                this.setLoadingInitial(false);
+            }
+        }
+    }
     setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
-    }
-
-    selectProduct = (id: string) => {
-        this.selectedProduct = this.productRegistry.get(id);
-    }
-
-    cancelSelectedProduct = () => {
-        this.selectedProduct = undefined;
-    }
-
-    openForm = (id?: string) => {
-        id ? this.selectProduct(id) : this.cancelSelectedProduct();
-        this.editMode = true;
-    }
-
-    closeForm = () => {
-        this.editMode = false;
     }
 
     createProduct = async (product: Product) => {
         this.loading = true;
         product.id = uuid();
+        product.unitId = '00000000-0000-0000-0000-000000000001';
         try {
             await agent.Products.create(product);
             runInAction(() => {
@@ -115,7 +129,6 @@ export default class ProductStore {
             await agent.Products.delete(id);
             runInAction(() => {
                 this.productRegistry.delete(id);
-                if (this.selectedProduct?.id === id) this.cancelSelectedProduct();
                 this.loading = false;
             })
         }
@@ -126,19 +139,4 @@ export default class ProductStore {
             })
         }
     }
-
-    // loadAllProducts = async () => {
-    //     this.loadingInitial = true;
-    //     try {
-    //         const products = await agent.Products.list();
-    //         products.forEach(product => {
-    //             this.products.push(product);
-    //         })
-    //         this.loadingInitial = false;
-    //     }
-    //     catch (error) {
-    //         console.log(error);
-    //         this.loadingInitial = false;
-    //     }
-    // }
 }

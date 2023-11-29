@@ -1,13 +1,21 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Button, ButtonGroup, Form, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { Product } from "../../../app/models/product";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { v4 as uuid } from 'uuid';
 
 export default observer(function ProductForm() {
-    const {productStore} = useStore();
-    const {selectedProduct, closeForm, createProduct, updateProduct, loading} = productStore;
+    const { productStore } = useStore();
+    const { createProduct, updateProduct, loading,
+        loadProduct, loadingInitial } = productStore;
 
-    const initialState = selectedProduct ?? {
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    const [product, setProduct] = useState<Product>({
         id: '',
         name: '',
         quantity: 0,
@@ -22,18 +30,29 @@ export default observer(function ProductForm() {
         modifiedOn: new Date(),
         isDeleted: false,
         deletedOn: null,
-    }
+    })
 
-    const [product, setProduct] = useState(initialState)
+    useEffect(() => {
+        if (id) loadProduct(id).then(product => setProduct(product!))
+    }, [id, loadProduct]);
 
     function handleSubmit() {
-        product.id ? updateProduct(product) : createProduct(product);
+        if (!product.id) {
+            product.id = uuid();
+            product.unitId = '00000000-0000-0000-0000-000000000001';
+            createProduct(product).then(() => navigate(`/products/${product.id}`));
+        } else {
+            updateProduct(product).then(() => navigate(`/products/${product.id}`));
+        }
     }
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const { name, value } = event.target;
         setProduct({ ...product, [name]: value });
     }
+
+
+    if (loadingInitial) return <LoadingComponent content='Зареждане...' />
 
     return (
         <Segment clearing>
@@ -42,7 +61,7 @@ export default observer(function ProductForm() {
                 <Form.Input placeholder='Продажна цена' type="number" label='Продажна цена' value={product.price} name='price' onChange={handleInputChange} />
                 <Form.Input placeholder='Доставна цена' type="number" label='Доставна цена' value={product.deliveryPrice} name='deliveryPrice' onChange={handleInputChange} />
                 <Form.TextArea placeholder='Описание' label='Допълнително описание' value={product.description} name='description' onChange={handleInputChange} />
-                {!selectedProduct &&
+                {!product.id &&
                     <>
                         <Form.Input placeholder='Категория' type="text" label='Категория' value={product.category} name='category' onChange={handleInputChange} />
                         <Form.Input placeholder='Мярка' type="text" label='Мярка' value={product.unitAcronym} name='unitAcronym' onChange={handleInputChange} />
@@ -53,7 +72,7 @@ export default observer(function ProductForm() {
 
                 <ButtonGroup floated="right" >
                     <Button loading={loading} type='submit' positive>Изпрати</Button>
-                    <Button color='red' type="button" content='Отказ' onClick={closeForm} />
+                    <Button as={Link} to='/products' color='red' type="button" content='Отказ' />
                 </ButtonGroup>
             </Form>
         </Segment>

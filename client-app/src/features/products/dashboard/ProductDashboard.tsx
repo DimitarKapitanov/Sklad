@@ -1,15 +1,20 @@
 import { Grid, } from "semantic-ui-react";
 import ProductTable from "./ProductTable";
-import ProductDetails from "../details/ProductDetails";
-import ProductForm from "../form/ProductForm";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 export default observer(function ProductDashboard() {
-
     const { productStore } = useStore();
-    const { selectedProduct, editMode } = productStore;
+    const { loadProducts, productRegistry } = productStore;
 
+    useEffect(() => {
+      if(productRegistry.size <= 1) loadProducts();
+    }, [loadProducts, productRegistry.size])
+  
+    if (productStore.loadingInitial) return <LoadingComponent content='Зареждане...' />
+    
     return (
         <>
             <Grid style={{ marginLeft: '20px' }} >
@@ -17,12 +22,7 @@ export default observer(function ProductDashboard() {
                     <ProductTable />
                 </Grid.Column>
                 <Grid.Column width="5">
-                    {selectedProduct && !editMode &&
-                        <ProductDetails />
-                    }
-                    {editMode &&
-                        <ProductForm />
-                    }
+                   <h2>Product filters</h2>
                 </Grid.Column>
             </Grid>
         </>

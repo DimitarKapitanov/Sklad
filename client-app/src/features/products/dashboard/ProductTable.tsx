@@ -1,28 +1,31 @@
-import { SyntheticEvent, useReducer, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { Button, Icon, Table } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { Product } from "../../../app/models/product";
-import exampleReducer from "../../../app/stores/sort"
-
+import { Link } from "react-router-dom";
 
 export default observer(function ProductTable() {
     const { productStore } = useStore();
-    const { productsSort, deleteProduct, loading, tableHeader } = productStore;
+    const { deleteProduct, loading, tableHeader, productsSort } = productStore;
 
     const [target, setTarget] = useState('');
-    const [state, dispatch] = useReducer(exampleReducer, {
-        column: null,
-        data: productsSort,
-        direction: null,
-    })
-    const { column, data, direction } = state
 
     function handleDeleteProduct(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
         deleteProduct(id);
     }
+    // const [state, dispatch] = useReducer(exampleReducer, {
+    //     column: null,
+    //     data: productsSort,
+    //     direction: null,
+    // });
 
+    // const { column, data, direction } = state;
+    // className="table-header sort-button"
+    // _sorted={column === row.key ? direction : null}
+    // onClick={() => dispatch({ type: 'CHANGE_SORT', column: row.key })}
+   
     return (
         <Table celled padded selectable className="product-table">
             <Table.Header>
@@ -30,9 +33,6 @@ export default observer(function ProductTable() {
                     {tableHeader.map((row) => (
                         <Table.HeaderCell
                             key={row.key}
-                            className="table-header sort-button"
-                            sorted={column === 'name' ? direction : null}
-                            onClick={() => dispatch({ type: 'CHANGE_SORT', column: `${row.key}` })}
                         >
                             {row.label}
                         </Table.HeaderCell>
@@ -41,7 +41,7 @@ export default observer(function ProductTable() {
             </Table.Header>
 
             <Table.Body>
-                {data.map((product: Product) => (
+                {productsSort.map((product: Product) => (
                     <Table.Row key={product.id}>
                         <Table.Cell>{product.name}</Table.Cell>
                         <Table.Cell>{product.quantity}</Table.Cell>
@@ -52,7 +52,7 @@ export default observer(function ProductTable() {
                         <Table.Cell>{product.description}</Table.Cell>
                         <Table.Cell>
                             <Button.Group size="small" icon>
-                                <Button color='yellow' onClick={() => productStore.selectProduct(product.id)}>
+                                <Button color='yellow' as={Link} to={`/products/${product.id}`}>
                                     <Icon name="edit" />
                                 </Button>
                                 <Button.Or text={'или'} />
