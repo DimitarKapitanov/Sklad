@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Model;
 
@@ -9,6 +10,7 @@ namespace Domain
         {
             this.Id = Guid.NewGuid().ToString();
         }
+        
         public string Name { get; set; }
 
         public string Category { get; set; }
@@ -16,10 +18,10 @@ namespace Domain
         public double Quantity { get; set; }
 
         public string UnitId { get; set; }
-        
+
         [ForeignKey("UnitId")]
         public virtual Unit Unit { get; set; }
-        
+
         public string Description { get; set; }
 
         public decimal Price { get; set; }

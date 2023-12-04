@@ -1,4 +1,5 @@
 using Domain;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,15 @@ namespace Application.Products
         public class Command : IRequest
         {
             public IList<Product> Products { get; set; }
+        }
+
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Products).NotEmpty();
+                RuleForEach(x => x.Products).SetValidator(new ProductValidator());
+            }
         }
 
         public class Handler : IRequestHandler<Command>
@@ -26,6 +36,7 @@ namespace Application.Products
             {
                 try
                 {
+                    new CommandValidator().ValidateAndThrow(request);
                     foreach (var product in request.Products)
                     {
                         var existingProduct = await _context.Products
@@ -48,9 +59,9 @@ namespace Application.Products
 
                     await _context.SaveChangesAsync();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    _logger.LogInformation("The operation creating product was cancelled.");
+                    _logger.LogInformation(ex.Message);
                 }
             }
         }

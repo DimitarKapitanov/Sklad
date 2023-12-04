@@ -1,6 +1,8 @@
 using Application.Core;
 using Application.Products;
 using Application.Units;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -33,6 +35,8 @@ namespace API.Extensions
                 cfg.RegisterServicesFromAssemblies(typeof(UnitList.Handler).Assembly);
             });
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<Create>();
 
             return services;
         }
