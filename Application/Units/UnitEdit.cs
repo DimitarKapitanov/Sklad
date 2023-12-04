@@ -31,7 +31,7 @@ namespace Application.Units
 
                     _mapper.Map(request.Unit, unit);
 
-                    await _context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync();
                     _logger.LogInformation("The operation editing unit was cancelled.");
                 }
                 catch (Exception)

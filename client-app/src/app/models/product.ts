@@ -1,10 +1,11 @@
+import { Unit } from "./unit"
+
 export interface Product {
     name: string
     category: string
     quantity: number
     unitId: string
-    unitName: string
-    unitAcronym: string
+    unitAcronym: string | undefined
     description: string
     price: number
     deliveryPrice: number
@@ -13,4 +14,5 @@ export interface Product {
     createdOn: Date | null
     modifiedOn: Date | null
     deletedOn: Date | null
+    unit: Unit
 }

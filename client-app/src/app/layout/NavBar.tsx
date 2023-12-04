@@ -9,9 +9,12 @@ export default function NavBar() {
                     <img src="/assets/logo.png" alt="logo" style={{ marginRight: "10px" }} />
                     Sklad
                 </Menu.Item>
-                <Menu.Item as={NavLink} to='products' name="Products" />
+                <Menu.Item as={NavLink} to='products' name="Products" content="Продукти" />
                 <Menu.Item>
-                    <Button as={NavLink} to='/createProduct' positive content="Create Product" />
+                    <Button as={NavLink} to='/createProduct' positive content="Създай продукт" />
+                </Menu.Item>
+                <Menu.Item>
+                    <Button as={NavLink} to='/createUnit' positive content="Създай единица" />
                 </Menu.Item>
             </Container>
         </Menu>

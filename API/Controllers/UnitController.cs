@@ -12,12 +12,6 @@ namespace API.Controllers
             return await Mediator.Send(new UnitList.Query(), cancellationToken);
         }
 
-        [HttpGet("filtered/{isDelited?}")]
-        public async Task<ActionResult<List<Unit>>> GetActiveUnits(bool? isDelited, CancellationToken cancellationToken)
-        {
-            return await Mediator.Send(new UnitList.Query { IsDelited = isDelited }, cancellationToken);
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<Unit>> GetUnit(string id, CancellationToken cancellationToken)
         {

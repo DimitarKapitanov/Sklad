@@ -13,6 +13,7 @@ export default observer(function ProductDetails() {
 
     useEffect(() => {
         if (id) loadProduct(id);
+        window.scrollTo(0, 0);
     }, [id, loadProduct]);
 
     if (loadingInitial || !product) return <LoadingComponent />;
@@ -24,7 +25,7 @@ export default observer(function ProductDetails() {
                 <Card.Meta>
                     <span>{product.category}</span>
                 </Card.Meta>
-                <Card.Description content={`Налично количество ${product.quantity} бр`} />
+                <Card.Description content={`Налично количество ${product.quantity} ${product.unitAcronym}`} />
                 <Card.Description content={`Продажна цена ${product.price} лв`} />
                 <Card.Description content={`Доставна цена ${product.deliveryPrice} лв`} />
                 <Card.Description content={`Мярка ${product.unitAcronym}`} />

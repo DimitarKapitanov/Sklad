@@ -32,10 +32,9 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(Product product, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateProduct(IList<Product> products, CancellationToken cancellationToken)
         {
-            _logger.LogInformation(message: product.Name);
-            await Mediator.Send(new Create.Command { Product = product }, cancellationToken);
+            await Mediator.Send(new Create.Command { Products = products }, cancellationToken);
 
             return Ok();
         }

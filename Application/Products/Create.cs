@@ -10,7 +10,7 @@ namespace Application.Products
     {
         public class Command : IRequest
         {
-            public Product Product { get; set; }
+            public IList<Product> Products { get; set; }
         }
 
         public class Handler : IRequestHandler<Command>
@@ -26,19 +26,32 @@ namespace Application.Products
             {
                 try
                 {
-                    if (await _context.Products.FirstOrDefaultAsync(x => x.Name == request.Product.Name) != null)
+                    foreach (var product in request.Products)
                     {
-                        throw new Exception("Product already exists.");
+                        var existingProduct = await _context.Products
+                            .FirstOrDefaultAsync(p => p.Name == product.Name);
+
+                        if (existingProduct != null)
+                        {
+                            // Update the existing product
+                            existingProduct.Description = product.Description;
+                            existingProduct.Price = product.Price;
+                            existingProduct.Quantity = product.Quantity;
+                            existingProduct.DeliveryPrice = product.DeliveryPrice;
+                        }
+                        else
+                        {
+                            // Add the new product
+                            await _context.Products.AddAsync(product);
+                        }
                     }
-                    _logger.LogInformation(message: request.Product.DeletedOn.ToString());
-                    await _context.Products.AddAsync(request.Product);
+
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception)
                 {
                     _logger.LogInformation("The operation creating product was cancelled.");
                 }
-
             }
         }
     }

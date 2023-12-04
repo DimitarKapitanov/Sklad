@@ -1,5 +1,4 @@
 export interface Unit {
-    unitName: string
-    unitAcronym: string
+    acronym: string | undefined
     id: string
 }

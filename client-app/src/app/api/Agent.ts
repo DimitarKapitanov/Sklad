@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { Product } from "../models/product";
+import { Unit } from "../models/unit";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -32,13 +33,22 @@ const Products = {
     list: () => requests.get<Product[]>("/products"),
     filterList: () => requests.get<Product[]>(`/products/filtered/${false}`),
     details: (id: string) => requests.get<Product>(`/products/${id}`),
-    create: (product: Product) => requests.post<void>("/products", product),
+    create: (product: Product[]) => requests.post<void>("/products", product),
     update: (product: Product) => requests.put<void>(`/products/${product.id}`, product),
     delete: (id: string) => requests.delete<void>(`/products/${id}`)
 };
 
+const Units = {
+    unitList: () => requests.get<Unit[]>("/unit"),
+    details: (id: string) => requests.get<Unit>(`/unit/${id}`),
+    create: (unit: Unit) => requests.post<void>("/unit", unit),
+    update: (unit: Unit) => requests.put<void>(`/unit/${unit.id}`, unit),
+    delete: (id: string) => requests.delete<void>(`/unit/${id}`)
+};
+
 const agent = {
-    Products
+    Products,
+    Units
 };
 
 export default agent;

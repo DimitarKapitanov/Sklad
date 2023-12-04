@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence;
 
@@ -24,8 +25,13 @@ namespace Application.Units
             {
                 try
                 {
-                    _context.Units.Add(request.Unit);
+                    var unit = await _context.Units.FirstOrDefaultAsync(u => u.Acronym == request.Unit.Acronym);
+                    if (unit != null)
+                    {
+                        return;
+                    }
                     cancellationToken.ThrowIfCancellationRequested();
+                    _context.Units.Add(request.Unit);
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception)
