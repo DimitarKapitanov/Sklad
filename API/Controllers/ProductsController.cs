@@ -33,8 +33,6 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditProduct(string id, Product product)
         {
-            
-
             return HandleResult(await Mediator.Send(new Edit.Command { Product = product }));
         }
 

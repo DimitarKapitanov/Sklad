@@ -62,7 +62,6 @@ namespace Application.Products
                 {
                     return Result<Unit>.Failure("Failed to update product");
                 }
-
             }
         }
     }

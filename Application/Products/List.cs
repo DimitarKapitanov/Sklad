@@ -26,35 +26,32 @@ namespace Application.Products
             }
             public async Task<Result<List<Product>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                
-                    var product = await _context.Products
-                    .Include(p => p.Unit)
-                    .Where(u => !request.IsDelited.HasValue || u.IsDeleted == request.IsDelited.Value)
-                    .Select(p => new Product
+                var product = await _context.Products
+                .Include(p => p.Unit)
+                .Where(u => !request.IsDelited.HasValue || u.IsDeleted == request.IsDelited.Value)
+                .Select(p => new Product
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    DeliveryPrice = p.DeliveryPrice,
+                    Category = p.Category,
+                    Quantity = p.Quantity,
+                    Unit = new Unit
                     {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Description = p.Description,
-                        Price = p.Price,
-                        DeliveryPrice = p.DeliveryPrice,
-                        Category = p.Category,
-                        Quantity = p.Quantity,
-                        Unit = new Unit
-                        {
-                            Id = p.Unit.Id,
-                            Acronym = p.Unit.Acronym,
-                            IsDeleted = p.Unit.IsDeleted,
-                        },
-                        UnitId = p.UnitId,
-                        IsDeleted = p.IsDeleted,
-                        CreatedOn = p.CreatedOn,
-                        DeletedOn = p.DeletedOn,
-                        ModifiedOn = p.ModifiedOn,
-                    }).ToListAsync();
+                        Id = p.Unit.Id,
+                        Acronym = p.Unit.Acronym,
+                        IsDeleted = p.Unit.IsDeleted,
+                    },
+                    UnitId = p.UnitId,
+                    IsDeleted = p.IsDeleted,
+                    CreatedOn = p.CreatedOn,
+                    DeletedOn = p.DeletedOn,
+                    ModifiedOn = p.ModifiedOn,
+                }).ToListAsync();
 
-
-                    return Result<List<Product>>.Success(product);
-               
+                return Result<List<Product>>.Success(product);
             }
         }
     }
