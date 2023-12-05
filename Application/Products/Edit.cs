@@ -1,15 +1,17 @@
+using Application.Core;
 using AutoMapper;
 using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Persistence;
+using Unit = MediatR.Unit;
 
 namespace Application.Products
 {
     public class Edit
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
             public Product Product { get; set; }
         }
@@ -22,7 +24,7 @@ namespace Application.Products
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -35,32 +37,32 @@ namespace Application.Products
                 _context = context;
             }
 
-            public async Task Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    new CommandValidator().ValidateAndThrow(request);
                     var product = await _context.Products.FindAsync(request.Product.Id);
 
-                    if (product == null)
-                    {
-                        throw new Exception("Could not find product.");
-                    }
-                    
-                    product.Name = request.Product.Name;
-                    product.Price = request.Product.Price;
-                    product.DeliveryPrice = request.Product.DeliveryPrice;
-                    product.Description = request.Product.Description;
-                    product.ModifiedOn = DateTime.Now;
+                    if (product == null) return null;
+
+                    _mapper.Map(request.Product, product);
 
                     _context.Products.Update(product);
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation("The product was updated successfully.");
+                    var result = await _context.SaveChangesAsync() > 0;
+
+                    return Result<Unit>.Success(Unit.Value);
+                }
+                catch (ValidationException ex)
+                {
+                    _logger.LogError(ex, "Validation exception");
+                    return Result<Unit>.Failure(ex.Message);
                 }
                 catch (Exception)
                 {
-                    _logger.LogInformation("The operation editing product was cancelled.");
+                    return Result<Unit>.Failure("Failed to update product");
                 }
+
             }
         }
     }

@@ -99,6 +99,7 @@ export default class ProductStore {
 
     loadProduct = async (id: string) => {
         let product = this.getProducts(id);
+        
         if (product) {
             this.selectedProduct = product;
             return product;
@@ -146,9 +147,9 @@ export default class ProductStore {
 
     updateProduct = async (product: Product) => {
         this.loading = true;
+        
         try {
-            product.unitId = '00000000-0000-0000-0000-000000000001';
-            await agent.Products.update(product);
+            await agent.Products.edit(product);
             runInAction(() => {
                 this.productRegistry.set(product.id, product);
                 this.selectedProduct = product;

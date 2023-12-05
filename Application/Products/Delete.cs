@@ -1,3 +1,4 @@
+using Application.Core;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Persistence;
@@ -6,12 +7,12 @@ namespace Application.Products
 {
     public class Delete
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
             public string Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
             private readonly ILogger<Delete> _logger;
@@ -22,22 +23,19 @@ namespace Application.Products
                 _context = context;
             }
 
-            public async Task Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                try
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var product = await _context.Products.FindAsync(request.Id);
-                    product.IsDeleted = true;
-                    product.DeletedOn = DateTime.Now;
-                    _context.Products.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (OperationCanceledException)
-                {
-                    _logger.LogError("The operation was cancelled.");
-                }
+                var product = await _context.Products.FindAsync(request.Id);
 
+                if (product == null) return null;
+                product.IsDeleted = true;
+                product.DeletedOn = DateTime.Now;
+                _context.Products.Update(product);
+                var result = await _context.SaveChangesAsync() > 0;
+
+                if (!result) return Result<Unit>.Failure("Failed to delete the product");
+
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }

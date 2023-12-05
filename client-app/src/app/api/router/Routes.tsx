@@ -5,6 +5,7 @@ import ProductForm from "../../../features/products/form/ProductForm";
 import ProductDetails from "../../../features/products/details/ProductDetails";
 import UpdateProductForm from "../../../features/products/form/UpdateProductForm";
 import UnitForm from "../../../features/units/form/UnitForm";
+import TestErrors from "../../../features/Errors/TestErrors";
 
 export const routes: RouteObject[] =[
     {
@@ -16,6 +17,7 @@ export const routes: RouteObject[] =[
             {path: 'products/:id', element: <ProductDetails />},
             {path: 'createProduct', element: <ProductForm key={'create'}/>},
             {path: 'manage/:id', element: <UpdateProductForm />},
+            {path: 'errors', element: <TestErrors />},
             {path: 'createUnit', element: <UnitForm />}
         ]
     },

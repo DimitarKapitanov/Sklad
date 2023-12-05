@@ -1,15 +1,17 @@
+using Application.Core;
 using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence;
+using Unit = MediatR.Unit;
 
 namespace Application.Products
 {
     public class Create
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<MediatR.Unit>>
         {
             public IList<Product> Products { get; set; }
         }
@@ -23,7 +25,7 @@ namespace Application.Products
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
             private readonly ILogger<Create> _logger;
@@ -32,7 +34,7 @@ namespace Application.Products
                 _logger = logger;
                 _context = context;
             }
-            public async Task Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 try
                 {
@@ -57,12 +59,20 @@ namespace Application.Products
                         }
                     }
 
-                    await _context.SaveChangesAsync();
+                    var result = await _context.SaveChangesAsync() > 0;
+
+                    return Result<Unit>.Success(Unit.Value);
                 }
-                catch (Exception ex)
+                catch (ValidationException ex)
                 {
-                    _logger.LogInformation(ex.Message);
+                    _logger.LogError(ex, ex.Message);
+                    return Result<Unit>.Failure(ex.Message);
                 }
+                catch (Exception)
+                {
+                    return Result<Unit>.Failure("Failed to create product");
+                }
+
             }
         }
     }

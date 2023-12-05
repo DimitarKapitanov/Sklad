@@ -34,7 +34,7 @@ const Products = {
     filterList: () => requests.get<Product[]>(`/products/filtered/${false}`),
     details: (id: string) => requests.get<Product>(`/products/${id}`),
     create: (product: Product[]) => requests.post<void>("/products", product),
-    update: (product: Product) => requests.put<void>(`/products/${product.id}`, product),
+    edit: (product: Product) => requests.put<void>(`/products/${product.id}`, product),
     delete: (id: string) => requests.delete<void>(`/products/${id}`)
 };
 
@@ -42,7 +42,7 @@ const Units = {
     unitList: () => requests.get<Unit[]>("/unit"),
     details: (id: string) => requests.get<Unit>(`/unit/${id}`),
     create: (unit: Unit) => requests.post<void>("/unit", unit),
-    update: (unit: Unit) => requests.put<void>(`/unit/${unit.id}`, unit),
+    edit: (unit: Unit) => requests.put<void>(`/unit/${unit.id}`, unit),
     delete: (id: string) => requests.delete<void>(`/unit/${id}`)
 };
 

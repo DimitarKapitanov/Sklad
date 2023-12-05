@@ -7,7 +7,8 @@ namespace Application.Products
     {
         public ProductValidator()
         {
-            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.Id).NotEmpty().MinimumLength(36);
+            RuleFor(x => x.Name).NotEmpty().MinimumLength(3).MaximumLength(50);
             RuleFor(x => x.Category).NotEmpty();
             RuleFor(x => x.Quantity).NotEmpty();
             RuleFor(x => x.UnitId).NotEmpty();

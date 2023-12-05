@@ -14,6 +14,9 @@ export default function NavBar() {
                     <Button as={NavLink} to='/createProduct' positive content="Създай продукт" />
                 </Menu.Item>
                 <Menu.Item>
+                    <Button as={NavLink} to='/errors' positive content="Errors" />
+                </Menu.Item>
+                <Menu.Item>
                     <Button as={NavLink} to='/createUnit' positive content="Създай единица" />
                 </Menu.Item>
             </Container>

@@ -1,4 +1,6 @@
+using Application.Core;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Persistence;
@@ -7,12 +9,20 @@ namespace Application.Products
 {
     public class Details
     {
-        public class Query : IRequest<Product>
+        public class Query : IRequest<Result<Product>>
         {
             public string Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Product>
+        public class CommandValidator : AbstractValidator<Product>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Id).NotEmpty().MinimumLength(36);
+            }
+        }
+
+        public class Handler : IRequestHandler<Query, Result<Product>>
         {
             private readonly DataContext _context;
             private readonly ILogger<Details> _logger;
@@ -21,19 +31,10 @@ namespace Application.Products
                 _logger = logger;
                 _context = context;
             }
-            public async Task<Product> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<Product>> Handle(Query request, CancellationToken cancellationToken)
             {
-                try
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var product = await _context.Products.FindAsync(request.Id);
-                    return product;
-                }
-                catch (OperationCanceledException)
-                {
-                    _logger.LogInformation("The operation was cancelled.");
-                    return new Product();
-                }
+                var product = await _context.Products.FindAsync(request.Id);
+                return Result<Product>.Success(product);
             }
         }
     }

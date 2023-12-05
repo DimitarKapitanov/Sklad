@@ -1,58 +1,47 @@
 using Application.Products;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
     public class ProductsController : BaseApiController
     {
-        private readonly ILogger<ProductsController> _logger;
-        public ProductsController(ILogger<ProductsController> logger)
-        {
-            _logger = logger;
-        }
-      
         [HttpGet()]
-        public async Task<ActionResult<List<Product>>> GetProducts(CancellationToken cancellationToken)
+        public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            return await Mediator.Send(new List.Query(), cancellationToken);
+            return HandleResult(await Mediator.Send(new List.Query()));
         }
 
-        [HttpGet("filtered/{isDelited?}")]
-        public async Task<ActionResult<List<Product>>> GetActiveProducts(bool? isDelited, CancellationToken cancellationToken)
+        [HttpGet("filtered/{isDeleted?}")]
+        public async Task<IActionResult> GetActiveProducts(bool? isDelited)
         {
-            return await Mediator.Send(new List.Query { IsDelited = isDelited }, cancellationToken);
+            return HandleResult(await Mediator.Send(new List.Query { IsDelited = isDelited }));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetProduct(string id)
         {
-            return await Mediator.Send(new Details.Query { Id = id }, cancellationToken);
+            return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(IList<Product> products, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateProduct(IList<Product> products)
         {
-            await Mediator.Send(new Create.Command { Products = products }, cancellationToken);
-
-            return Ok();
+            return HandleResult(await Mediator.Send(new Create.Command { Products = products }));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditProduct(string id, Product product, CancellationToken cancellationToken)
+        public async Task<IActionResult> EditProduct(string id, Product product)
         {
-            await Mediator.Send(new Edit.Command { Product = product }, cancellationToken);
+            
 
-            return Ok();
+            return HandleResult(await Mediator.Send(new Edit.Command { Product = product }));
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteProduct(string id)
         {
-            await Mediator.Send(new Delete.Command { Id = id }, cancellationToken);
-
-            return Ok();
+            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
     }
 }

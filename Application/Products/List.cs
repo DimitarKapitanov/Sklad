@@ -1,3 +1,4 @@
+using Application.Core;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +10,12 @@ namespace Application.Products
 {
     public class List
     {
-        public class Query : IRequest<List<Product>>
+        public class Query : IRequest<Result<List<Product>>>
         {
             public bool? IsDelited { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, List<Product>>
+        public class Handler : IRequestHandler<Query, Result<List<Product>>>
         {
             private readonly DataContext _context;
             private readonly ILogger<List> _logger;
@@ -23,10 +24,9 @@ namespace Application.Products
                 _logger = logger;
                 _context = context;
             }
-            public async Task<List<Product>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<Product>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                try
-                {
+                
                     var product = await _context.Products
                     .Include(p => p.Unit)
                     .Where(u => !request.IsDelited.HasValue || u.IsDeleted == request.IsDelited.Value)
@@ -52,15 +52,9 @@ namespace Application.Products
                         ModifiedOn = p.ModifiedOn,
                     }).ToListAsync();
 
-                    cancellationToken.ThrowIfCancellationRequested();
 
-                    return product;
-                }
-                catch (OperationCanceledException)
-                {
-                    _logger.LogInformation("The operation was cancelled.");
-                    return new List<Product>();
-                }
+                    return Result<List<Product>>.Success(product);
+               
             }
         }
     }
