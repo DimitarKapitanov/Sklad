@@ -2,14 +2,14 @@ using Domain.Model;
 
 namespace Domain
 {
-    public class Customer : BaseDeletableModel<string>
+    public class Customer : BaseDeletableModel<Guid>
     {
         public Customer()
         {
-            this.Id = Guid.NewGuid().ToString();
+            this.Id = Guid.NewGuid();
         }
         
-        public string CompanyId { get; set; }
+        public Guid CompanyId { get; set; }
 
         public virtual Company Company { get; set; }
         

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Application.Core;
 using Domain;
 using FluentValidation;
@@ -20,7 +21,9 @@ namespace Application.Products
         {
             public CommandValidator()
             {
-                RuleFor(x => x.Products).NotEmpty();
+                RuleFor(x => x.Products)
+                .NotEmpty().WithMessage("Трябва да има поне едн продукт")
+                .NotNull().WithMessage("Добавените продукти трябва да бъдат поне 1");
                 RuleForEach(x => x.Products).SetValidator(new ProductValidator());
             }
         }
@@ -36,43 +39,35 @@ namespace Application.Products
             }
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                try
+
+                var validationResult = new CommandValidator().Validate(request);
+                if (!validationResult.IsValid) return Result<Unit>.Failure(error: JsonSerializer.Serialize(validationResult.Errors));
+
+                foreach (var product in request.Products)
                 {
-                    new CommandValidator().ValidateAndThrow(request);
-                    foreach (var product in request.Products)
+                    var existingProduct = await _context.Products
+                        .FirstOrDefaultAsync(p => p.Name == product.Name);
+
+                    if (existingProduct != null)
                     {
-                        var existingProduct = await _context.Products
-                            .FirstOrDefaultAsync(p => p.Name == product.Name);
-
-                        if (existingProduct != null)
-                        {
-                            // Update the existing product
-                            existingProduct.Description = product.Description;
-                            existingProduct.Price = product.Price;
-                            existingProduct.Quantity = product.Quantity;
-                            existingProduct.DeliveryPrice = product.DeliveryPrice;
-                        }
-                        else
-                        {
-                            // Add the new product
-                            await _context.Products.AddAsync(product);
-                        }
+                        // Update the existing product
+                        existingProduct.Description = product.Description;
+                        existingProduct.Price = product.Price;
+                        existingProduct.Quantity = product.Quantity;
+                        existingProduct.DeliveryPrice = product.DeliveryPrice;
                     }
-
-                    var result = await _context.SaveChangesAsync() > 0;
-
-                    return Result<Unit>.Success(Unit.Value);
-                }
-                catch (ValidationException ex)
-                {
-                    _logger.LogError(ex, ex.Message);
-                    return Result<Unit>.Failure(ex.Message);
-                }
-                catch (Exception)
-                {
-                    return Result<Unit>.Failure("Failed to create product");
+                    else
+                    {
+                        // Add the new product
+                        await _context.Products.AddAsync(product);
+                    }
                 }
 
+                var result = await _context.SaveChangesAsync() > 0;
+
+                if (!result) return Result<Unit>.Failure(error: "Неуспешно добавяне на продуктите");
+
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }

@@ -2,11 +2,11 @@ using Domain.Model;
 
 namespace Domain
 {
-    public class Company : BaseDeletableModel<string>
+    public class Company : BaseDeletableModel<Guid>
     {
         public Company()
         {
-            this.Id = Guid.NewGuid().ToString();
+            this.Id = Guid.NewGuid();
         }
 
         public string Name { get; set; }

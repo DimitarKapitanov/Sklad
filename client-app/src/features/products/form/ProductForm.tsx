@@ -21,14 +21,14 @@ export default observer(function ProductForm() {
         deliveryPrice: 0,
         price: 0,
         category: '',
-        unitId: '',
+        unitId: '00000000-0000-0000-0000-000000000003',
         unitAcronym: '',
         description: '',
         createdOn: new Date(),
         modifiedOn: new Date(),
         isDeleted: false,
         deletedOn: null,
-        unit: { id:'', acronym: ''}
+        unit: { id:'00000000-0000-0000-0000-000000000003', acronym: ''}
     }]);
     const [additionalRows, setAdditionalRows] = useState<number>(1);
 
@@ -68,7 +68,7 @@ export default observer(function ProductForm() {
 
     function handleSubmit() {
         products.forEach(product => { product.id = uuid() });
-        createProduct(products).then(() => navigate('/latest'));
+        createProduct(products).then(() => navigate('/products'));
     }
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {

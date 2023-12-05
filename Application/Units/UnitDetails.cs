@@ -7,7 +7,7 @@ namespace Application.Units
     {
         public class Query : IRequest<Domain.Unit>
         {
-            public string Id { get; set; }
+            public Guid Id { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Domain.Unit>

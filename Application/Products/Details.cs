@@ -11,14 +11,14 @@ namespace Application.Products
     {
         public class Query : IRequest<Result<Product>>
         {
-            public string Id { get; set; }
+            public Guid Id { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Product>
         {
             public CommandValidator()
             {
-                RuleFor(x => x.Id).NotEmpty().MinimumLength(36);
+                RuleFor(x => x.Id).NotEmpty();
             }
         }
 

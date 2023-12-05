@@ -2,11 +2,11 @@ using Domain.Model;
 
 namespace Domain
 {
-    public class Unit : BaseDeletableModel<string>
+    public class Unit : BaseDeletableModel<Guid>
     {
         public Unit()
         {
-            this.Id = Guid.NewGuid().ToString();
+            this.Id = Guid.NewGuid();
         }
 
         public string Acronym { get; set; }

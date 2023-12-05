@@ -2,18 +2,18 @@ using Domain.Model;
 
 namespace Domain
 {
-    public class Order : BaseDeletableModel<string>
+    public class Order : BaseDeletableModel<Guid>
     {
         public Order()
         {
-            this.Id = Guid.NewGuid().ToString();
+            this.Id = Guid.NewGuid();
         }
         
-        public string CustomerId { get; set; }
+        public Guid CustomerId { get; set; }
         
         public virtual Customer Customer { get; set; }
 
-        public string WarehouseId { get; set; }
+        public Guid WarehouseId { get; set; }
 
         public virtual Warehouse Warehouse { get; set; }
 

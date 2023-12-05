@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProduct(string id)
+        public async Task<IActionResult> GetProduct(Guid id)
         {
             return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
         }
@@ -31,13 +31,13 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditProduct(string id, Product product)
+        public async Task<IActionResult> EditProduct(Guid id, Product product)
         {
             return HandleResult(await Mediator.Send(new Edit.Command { Product = product }));
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(string id)
+        public async Task<IActionResult> DeleteProduct(Guid id)
         {
             return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }

@@ -103,7 +103,7 @@ export default class UnitStore {
         this.loading = true;
         try {
             unit.id = uuid();
-            await agent.Units.update(unit);
+            await agent.Units.edit(unit);
             runInAction(() => {
                 this.unitRegistry.set(unit.id, unit);
                 this.selectedUnit = unit;
