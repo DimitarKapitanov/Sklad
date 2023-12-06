@@ -24,5 +24,16 @@ namespace Persistence
         public DbSet<Warehouse> Warehouses { get; set; }
 
         public DbSet<WarehouseProduct> WarehouseProducts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Product>()
+                .Property(p => p.Price).HasPrecision(18, 4);
+
+            builder.Entity<Product>()
+                .Property(p => p.DeliveryPrice).HasPrecision(18, 4);
+        }
     }
 }

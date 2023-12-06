@@ -39,9 +39,8 @@ namespace Application.Products
             }
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-
-                var validationResult = new CommandValidator().Validate(request);
-                if (!validationResult.IsValid) return Result<Unit>.Failure(error: JsonSerializer.Serialize(validationResult.Errors));
+                if (!new CommandValidator().Validate(request).IsValid)
+                    return Result<Unit>.Failure(error: JsonSerializer.Serialize(new CommandValidator().Validate(request)));
 
                 foreach (var product in request.Products)
                 {
@@ -65,7 +64,7 @@ namespace Application.Products
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                if (!result) return Result<Unit>.Failure(error: "Неуспешно добавяне на продуктите");
+                if (!result) return Result<Unit>.Failure("Неуспешно добавяне на продуктите");
 
                 return Result<Unit>.Success(Unit.Value);
             }

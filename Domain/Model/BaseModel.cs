@@ -7,6 +7,7 @@ namespace Domain.Model
         protected BaseModel()
         {
             this.CreatedOn = DateTime.UtcNow;
+            this.ModifiedOn = DateTime.UtcNow;
         }
         [Key]
         public TKey Id { get; set; }

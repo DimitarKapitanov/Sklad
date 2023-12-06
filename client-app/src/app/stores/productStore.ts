@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { Product } from "../models/product";
-import agent from "../api/Agent";
+import agent from "../api/agent";
 
 export default class ProductStore {
     productRegistry = new Map<string, Product>();
@@ -149,6 +149,7 @@ export default class ProductStore {
         this.loading = true;
         
         try {
+            product.modifiedOn = new Date();
             await agent.Products.edit(product);
             runInAction(() => {
                 this.productRegistry.set(product.id, product);

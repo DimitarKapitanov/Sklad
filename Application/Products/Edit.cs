@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Application.Core;
 using AutoMapper;
 using Domain;
@@ -39,29 +40,22 @@ namespace Application.Products
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                try
-                {
-                    new CommandValidator().ValidateAndThrow(request);
-                    var product = await _context.Products.FindAsync(request.Product.Id);
+                _logger.LogInformation($"{string.Join(", ", request.Product)}");
+                if (!new CommandValidator().Validate(request).IsValid)
+                    return Result<Unit>.Failure(error: JsonSerializer.Serialize(new CommandValidator().Validate(request)));
 
-                    if (product == null) return null;
+                var product = await _context.Products.FindAsync(request.Product.Id);
 
-                    _mapper.Map(request.Product, product);
+                if (product == null) return null;
 
-                    _context.Products.Update(product);
-                    var result = await _context.SaveChangesAsync() > 0;
+                _mapper.Map(request.Product, product);
 
-                    return Result<Unit>.Success(Unit.Value);
-                }
-                catch (ValidationException ex)
-                {
-                    _logger.LogError(ex, "Validation exception");
-                    return Result<Unit>.Failure(ex.Message);
-                }
-                catch (Exception)
-                {
-                    return Result<Unit>.Failure("Failed to update product");
-                }
+                _context.Products.Update(product);
+                var result = await _context.SaveChangesAsync() > 0;
+
+                if (!result) return Result<Unit>.Failure("Failed to update product");
+
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }
