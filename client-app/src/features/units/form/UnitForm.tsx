@@ -16,7 +16,8 @@ export default function UnitForm() {
         id: '',
         acronym: ''
     });
-
+    console.log(loadUnit);
+    
     useEffect(() => {
         if (id) {
             loadUnit(id).then(unit => setUnit(unit!));

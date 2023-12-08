@@ -4,6 +4,7 @@ import { Unit } from "../models/unit";
 import { toast } from "react-toastify";
 import { router } from "./router/Routes";
 import { store } from "../stores/store";
+import { ProductWithoutUnit } from "../models/productsWithoutUnit";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -67,7 +68,7 @@ const Products = {
     list: () => requests.get<Product[]>("/products"),
     filterList: () => requests.get<Product[]>(`/products/filtered/${false}`),
     details: (id: string) => requests.get<Product>(`/products/${id}`),
-    create: (product: Product[]) => requests.post<void>("/products", product),
+    create: (product: ProductWithoutUnit[]) => requests.post<void>("/products", product),
     edit: (product: Product) => requests.put<void>(`/products/${product.id}`, product),
     delete: (id: string) => requests.delete<void>(`/products/${id}`)
 };

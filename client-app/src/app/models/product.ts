@@ -5,7 +5,7 @@ export interface Product {
     category: string
     quantity: number
     unitId: string
-    unitAcronym: string | undefined
+    unitAcronym: string
     description: string
     price: number
     deliveryPrice: number

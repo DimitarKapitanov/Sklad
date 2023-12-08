@@ -13,6 +13,7 @@ export default function ProductTableList({ product }: Props) {
     const { deleteProduct, loading } = productStore;
 
     const [target, setTarget] = useState('');
+    console.log(typeof product.deliveryPrice);
     
     function handleDeleteProduct(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
@@ -24,7 +25,6 @@ export default function ProductTableList({ product }: Props) {
             <Table.Cell>{product.quantity}</Table.Cell>
             <Table.Cell>{product.deliveryPrice}</Table.Cell>
             <Table.Cell>{product.price}</Table.Cell>
-            <Table.Cell>{product.category}</Table.Cell>
             <Table.Cell>{product.unitAcronym}</Table.Cell>
             <Table.Cell>{product.description}</Table.Cell>
             <Table.Cell>

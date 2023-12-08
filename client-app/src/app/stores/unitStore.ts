@@ -21,8 +21,6 @@ export default class UnitStore {
         const units = Array.from(this.unitRegistry.values()).sort((a, b) => {
             return a.id.localeCompare(b.id);
         });
-        console.log(units);
-
         return units;
     }
 

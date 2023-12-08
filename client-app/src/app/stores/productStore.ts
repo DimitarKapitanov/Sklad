@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { Product } from "../models/product";
 import agent from "../api/agent";
+import { ProductWithoutUnit } from "../models/productsWithoutUnit";
 
 export default class ProductStore {
     productRegistry = new Map<string, Product>();
@@ -11,7 +12,6 @@ export default class ProductStore {
         { key: "quantity", label: "Количество" },
         { key: "deliveryPrice", label: "Доставна цена" },
         { key: "price", label: "Продажна цена" },
-        { key: "category", label: "Категория" },
         { key: "unitAcronym", label: "Мярка" },
         { key: "description", label: "Описание" },
         { key: "isDeleted", label: "Edit/Delete" }
@@ -37,7 +37,7 @@ export default class ProductStore {
         const sortedProducts = [...this.productsSort].sort((a, b) => {
             const aValue = a[this.sortCategory as keyof Product];
             const bValue = b[this.sortCategory as keyof Product];
-    
+
             if (typeof aValue === 'number' && typeof bValue === 'number') {
                 return this.sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
             } else if (typeof aValue === 'string' && typeof bValue === 'string') {
@@ -75,7 +75,7 @@ export default class ProductStore {
             const products = await agent.Products.filterList();
             runInAction(() => {
                 products.forEach(product => {
-                    product.unitAcronym = product.unit.acronym;
+                    product.unitAcronym = product.unit.acronym!;
                     this.setProduct(product)
                 })
                 this.loadingInitial = false;
@@ -99,6 +99,7 @@ export default class ProductStore {
 
     loadProduct = async (id: string) => {
         let product = this.getProducts(id);
+        console.log(product);
         
         if (product) {
             this.selectedProduct = product;
@@ -127,11 +128,13 @@ export default class ProductStore {
     createProduct = async (products: Product[]) => {
         this.loading = true;
         try {
-            await agent.Products.create(products);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const productsWithoutUnit: ProductWithoutUnit[] = products.map(({ unit: _unit, ...rest }) => rest);
+            await agent.Products.create(productsWithoutUnit);
             runInAction(() => {
                 for (const product of products) {
                     this.productRegistry.set(product.id, product);
-                    this.lastAddedProducts.set(product.id, product);
+                    // this.lastAddedProducts.set(product.id, product);
                 }
                 this.editMode = false;
                 this.loading = false;
@@ -147,7 +150,7 @@ export default class ProductStore {
 
     updateProduct = async (product: Product) => {
         this.loading = true;
-        
+
         try {
             product.modifiedOn = new Date();
             await agent.Products.edit(product);

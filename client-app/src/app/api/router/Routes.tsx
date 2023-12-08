@@ -23,7 +23,7 @@ export const routes: RouteObject[] =[
             {path: 'createUnit', element: <UnitForm />},
             {path: 'not-found', element: <NotFound />},
             {path: 'server-error', element: <ServerError /> },
-            {path: '*', element: <Navigate replace to='/not-found' />}
+            {path: '*', element: <Navigate replace to='/not-found' />},
             
         ]
     },

@@ -1,14 +1,17 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { Button, ButtonGroup, Form, Segment } from "semantic-ui-react";
+import { useEffect, useState } from "react";
+import { Button, ButtonGroup, Container, Header, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { Product } from "../../../app/models/product";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { Formik, Form } from "formik";
+import MyTextInput from "../../../app/common/form/MyTextInput";
 
 export default observer(function ProductForm() {
-    const { productStore } = useStore();
+    const { productStore, commonStore } = useStore();
     const { updateProduct, loading, loadProduct, loadingInitial } = productStore;
+    const { validationSchemaEdit } = commonStore;
 
     const navigate = useNavigate();
     const { id } = useParams();
@@ -34,31 +37,35 @@ export default observer(function ProductForm() {
         if (id) loadProduct(id).then(product => setProduct(product!))
     }, [id, loadProduct]);
 
-    function handleSubmit() {
+    function handleProductEditSubmit(product: Product) {
         updateProduct(product!).then(() => navigate(`/products/${product.id}`));
-    }
-
-    function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        const { name, value } = event.target;
-        setProduct({ ...product, [name]: value });
     }
 
     if (loadingInitial) return <LoadingComponent content='Зареждане...' />
 
     return (
-        <Segment clearing>
-            <Form onSubmit={handleSubmit} autoComplete='off'>
-                <Form.Group key={product!.id} inline widths='equal'>
-                    <Form.Input required fluid placeholder='Име' label='Име' value={product!.name} name='name' onChange={handleInputChange} />
-                    <Form.Input required fluid placeholder='Продажна цена' type="number" label='Продажна цена' value={product!.price} name='price' onChange={handleInputChange} />
-                    <Form.Input required fluid placeholder='Доставна цена' type="number" label='Доставна цена' value={product!.deliveryPrice} name='deliveryPrice' onChange={handleInputChange} />
-                    <Form.Input fluid placeholder='Описание' label='Допълнително описание' value={product!.description} name='description' onChange={handleInputChange} />
-                </Form.Group>
-                <ButtonGroup floated="right" >
-                    <Button loading={loading} type='submit' positive>Изпрати</Button>
-                    <Button as={Link} to='/products' color='red' type="button" content='Отказ' />
-                </ButtonGroup>
-            </Form>
-        </Segment>
+        <Container text>
+            <Header as={'h2'} content='Промени продукт' color='teal' textAlign='center' />
+            <Segment clearing size="small" >
+                <Formik
+                    validationSchema={validationSchemaEdit}
+                    enableReinitialize
+                    initialValues={product}
+                    onSubmit={values => handleProductEditSubmit(values)}>
+                    {({ handleSubmit }) => (
+                        <Form className="ui form" onSubmit={handleSubmit} autoComplete='off'>
+                            <MyTextInput name='name' placeholder='Име' label='Име' />
+                            <MyTextInput placeholder='Продажна цена' label='Продажна цена' name='price' />
+                            <MyTextInput placeholder='Доставна цена' label='Доставна цена' name='deliveryPrice' />
+                            <MyTextInput placeholder='Описание' label='Допълнително описание' name='description' />
+                            <ButtonGroup floated="right" >
+                                <Button loading={loading} type='submit' positive>Изпрати</Button>
+                                <Button as={Link} to='/products' color='red' type="button" content='Отказ' />
+                            </ButtonGroup>
+                        </Form>
+                    )}
+                </Formik>
+            </Segment>
+        </Container>
     )
 })

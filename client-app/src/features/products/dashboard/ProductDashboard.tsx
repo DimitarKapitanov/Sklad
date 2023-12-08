@@ -9,9 +9,11 @@ import ProductFilters from "./ProductFilters";
 export default observer(function ProductDashboard() {
     const { productStore } = useStore();
     const { loadProducts, productRegistry } = productStore;
+
     useEffect(() => {
         if (productRegistry.size <= 1) loadProducts();
     }, [loadProducts, productRegistry.size])
+
 
     if (productStore.loadingInitial) return <LoadingComponent content='Зареждане...' />
 
@@ -22,7 +24,7 @@ export default observer(function ProductDashboard() {
                     <ProductTable />
                 </Grid.Column>
                 <Grid.Column width="4">
-                    <ProductFilters/>
+                    <ProductFilters />
                 </Grid.Column>
             </Grid>
         </>

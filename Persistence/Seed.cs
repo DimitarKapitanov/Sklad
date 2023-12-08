@@ -42,30 +42,7 @@ namespace Persistence
                         ModifiedOn = DateTime.UtcNow,
                         IsDeleted = false,
                     },
-                    new Unit
-                    {
-                        Id = Guid.Parse("00000000-0000-0000-0000-000000000005"),
-                        Acronym = "l",
-                        CreatedOn = DateTime.UtcNow,
-                        ModifiedOn = DateTime.UtcNow,
-                        IsDeleted = false,
-                    },
-                    new Unit
-                    {
-                        Id = Guid.Parse("00000000-0000-0000-0000-000000000006"),
-                        Acronym = "l",
-                        CreatedOn = DateTime.UtcNow,
-                        ModifiedOn = DateTime.UtcNow,
-                        IsDeleted = false,
-                    },
-                    new Unit
-                    {
-                        Id = Guid.Parse("00000000-0000-0000-0000-000000000007"),
-                        Acronym = "l",
-                        CreatedOn = DateTime.UtcNow,
-                        ModifiedOn = DateTime.UtcNow,
-                        IsDeleted = false,
-                    }
+                                    
                 };
                 await context.Units.AddRangeAsync(units);
 
