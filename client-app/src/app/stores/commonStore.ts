@@ -27,8 +27,6 @@ export default class CommonStore {
             })
             .test('is-greater-than-price', 'Цената за доставка трябва да е по-малка от цената!', function (value) {
                 const price = this.parent.price;
-                console.log(price);
-                
                 const deliveryPrice = value;
                 return Number(deliveryPrice.replace(',', '.')) < Number(price.replace(',', '.'));
             }),
@@ -59,8 +57,6 @@ export default class CommonStore {
                     })
                     .test('is-greater-than-price', 'Цената за доставка трябва да е по-малка от цената!', function (value) {
                         const price = this.parent.price;
-                        console.log(price);
-                        
                         const deliveryPrice = value;
                         return Number(deliveryPrice.replace(',', '.')) < Number(price.replace(',', '.'));
                     }),
@@ -69,6 +65,9 @@ export default class CommonStore {
                 category: Yup.string().required('Категорията е задължителна'),
             }).required('Трябва да има поне един продукт'))
     });
+
+    token: string | null | undefined = null;
+    appLoaded = false;
     
     constructor() {
         makeAutoObservable(this);
@@ -78,5 +77,12 @@ export default class CommonStore {
         this.error = error;
     }
 
-    
+    setToken = (token: string | null) => {
+        if (token) localStorage.setItem('jwt', token);
+        this.token = token;
+    }
+
+    setAppLoaded = () => {
+        this.appLoaded = true;
+    }
 }

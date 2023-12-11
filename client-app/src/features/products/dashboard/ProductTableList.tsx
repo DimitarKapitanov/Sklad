@@ -13,7 +13,6 @@ export default function ProductTableList({ product }: Props) {
     const { deleteProduct, loading } = productStore;
 
     const [target, setTarget] = useState('');
-    console.log(typeof product.deliveryPrice);
     
     function handleDeleteProduct(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);

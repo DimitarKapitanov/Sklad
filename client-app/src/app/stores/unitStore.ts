@@ -80,8 +80,6 @@ export default class UnitStore {
     createUnit = async (unit: Unit) => {
         this.loading = true;
         try {
-            console.log(unit);
-            
             await agent.Units.create(unit);
             runInAction(() => {
                 this.unitRegistry.set(unit.id, unit);

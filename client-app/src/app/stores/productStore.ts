@@ -99,7 +99,6 @@ export default class ProductStore {
 
     loadProduct = async (id: string) => {
         let product = this.getProducts(id);
-        console.log(product);
         
         if (product) {
             this.selectedProduct = product;
