@@ -15,19 +15,19 @@ namespace Persistence
                     {
                         UserName = "bob",
                         Email = "bob@abv.bg",
-                        DislpayName = "Bob",
+                        DisplayName = "Bob",
                     },
                     new AppUser
                     {
                         UserName = "tom",
                         Email = "tom@abv.bg",
-                        DislpayName = "Tom",
+                        DisplayName = "Tom",
                     },
                     new AppUser
                     {
                         UserName = "pena",
                         Email = "pena@abv.bg",
-                        DislpayName = "Pena",
+                        DisplayName = "Pena",
                     },
                 };
                 foreach (var user in users)

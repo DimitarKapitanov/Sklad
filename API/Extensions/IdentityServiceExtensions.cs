@@ -18,10 +18,11 @@ namespace API.Extensions
                     opt.Password.RequireUppercase = true;
                     opt.Password.RequireLowercase = true;
                     opt.Password.RequiredLength = 6;
+                    opt.User.RequireUniqueEmail = true;
                 })
                 .AddEntityFrameworkStores<DataContext>();
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("@!z]}6;(XFSr3H!43wD]1h5khK@(v<dP}PIX#iU:X=7AuS8EMP'=k6?0y,oO0vGJ"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(opt =>
@@ -34,7 +35,7 @@ namespace API.Extensions
                         ValidateAudience = false,
                         ValidateLifetime = true,
                         // ClockSkew = TimeSpan.Zero
-                };
+                    };
                 });
 
             services.AddScoped<TokenSrvice>();
