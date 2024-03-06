@@ -1,0 +1,253 @@
+@import '../resolutions';
+
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .content {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        width: 100%;
+
+        .profile-card {
+            display: flex;
+            flex-direction: column;
+            min-width: fit-content;
+            width: 30%;
+            height: fit-content;
+            padding: 20px;
+            // position: sticky;
+            top: 10vh;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+
+            .first-section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .profile-image {
+                    aspect-ratio: 1/1;
+                    width: 120px;
+                    border-radius: 100%;
+                }
+
+                .name {
+                    margin-top: 20px;
+                    font-weight: bold;
+                    font-size: 17px;
+                }
+
+                .position {
+                    margin-top: 5px;
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: rgba(0, 0, 0, 0.5);
+                }
+
+                .location {
+                    margin: 10px 0;
+                    color: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 5px;
+
+
+                    .location-text {
+                        font-size: 14px;
+                        font-weight: 650;
+                        color: rgba(0, 0, 0, 0.7);
+                    }
+                }
+            }
+
+            .second-section {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                padding: 10px;
+
+                .contact-box {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 5px;
+                    font-size: 17px;
+                    cursor: pointer;
+
+                    .contact-text {
+                        font-size: 14px;
+                        font-weight: 650;
+                        color: rgba(0, 0, 0, 0.7);
+                    }
+                }
+            }
+
+            .third-section {
+                display: flex;
+                flex-direction: column;
+                padding: 0 10px;
+
+                .warehouse {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 5px;
+
+                    .warehouse-label {
+                        display: flex;
+                        flex-direction: row;
+                        gap: 5px;
+                        font-weight: 650;
+                        font-size: 15px;
+
+                        .warehouse-label-text {
+                            font-size: 12px;
+                        }
+                    }
+
+                    .warehouse-text {
+                        font-size: 13px;
+                        font-weight: 650;
+                        color: rgba(0, 0, 0, 0.7);
+                    }
+
+                }
+            }
+        }
+
+        .profile-info {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+
+            .ui.attached.segment {
+                border: none;
+            }
+
+            .about-user {
+                margin: 0;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+                border-radius: 10px;
+            }
+
+            .general-profile-info {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+        }
+    }
+}
+
+.custom-text-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 20px 0;
+
+    input,
+    textarea {
+        border: 1px solid rgba(204, 204, 204, 0.8);
+        padding: 10px 15px;
+        border-radius: 10px;
+        cursor: unset;
+        transition: all 0.3s;
+
+        label {
+            font-weight: bold;
+            font-size: 15px;
+            margin-left: 10px;
+        }
+
+        &:focus {
+            outline: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+    }
+}
+
+
+
+@include media('small-desktop') {
+    .profile-page {
+        .content {
+            flex-direction: column;
+            align-items: center;
+
+            .profile-card {
+                position: unset;
+                width: 80%;
+            }
+
+            .profile-info {
+                width: 80%;
+
+
+
+                .general-profile-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0;
+                }
+            }
+        }
+    }
+}
+
+@include media('tablet') {
+    .profile-page {
+        .content {
+            .profile-card {
+                width: 100%;
+            }
+
+            .profile-info {
+                width: 100%;
+
+                &.wrapped {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+
+                    .ui.grid {
+                        width: 100%;
+                        flex-direction: column-reverse;
+                        margin: 0;
+
+                        .column {
+                            width: 100% !important;
+
+                            .ui.stackable.grid {
+                                margin: 0 !important;
+                            }
+                        }
+                    }
+
+                    .ui.stackable.grid.photo-container {
+                        flex-direction: column !important;
+
+                        .photo-image {
+                            flex-direction: column;
+
+                            .ui.card {
+                                width: 100%;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .ui.container.body-container.nav-inactive {
+        padding-right: 0 !important;
+    }
+}

@@ -1,5 +1,4 @@
 import { useField } from "formik";
-import React from "react";
 import { Form, Label } from "semantic-ui-react";
 import DatePicker, { ReactDatePickerProps } from "react-datepicker";
 
@@ -7,10 +6,11 @@ export default function MyDateInput(props: Partial<ReactDatePickerProps>) {
     const [field, meta, helpers] = useField(props.name!);
 
     return (
-        <Form.Field className='ui grid' style={{ flex: 1, flexFlow: 'column', height: '75px' }} error={meta.touched && !!meta.error}>
+        <Form.Field className='ui grid' style={{ flex: 1, flexFlow: 'column', height: '35px' }} error={meta.touched && !!meta.error}>
             <DatePicker
                 {...field}
                 {...props}
+                dateFormat="dd.MM.yyyy"
                 selected={(field.value && new Date(field.value)) || null}
                 onChange={value => helpers.setValue(value)}
                 onBlur={() => helpers.setTouched(true)}

@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.Text.Json;
 using Application.Core;
+using Application.DTOs.ProductDTOs;
 using AutoMapper;
 using Domain;
 using FluentValidation;
@@ -14,7 +16,7 @@ namespace Application.Products
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public Product Product { get; set; }
+            public ProductDto Product { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -29,18 +31,17 @@ namespace Application.Products
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
-            private readonly ILogger<Edit> _logger;
+            private readonly ILogger<Product> _logger;
 
-            public Handler(DataContext context, IMapper mapper, ILogger<Edit> logger)
+            public Handler(DataContext context, IMapper mapper, ILogger<Product> logger)
             {
-                _mapper = mapper;
                 _logger = logger;
+                _mapper = mapper;
                 _context = context;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                _logger.LogInformation($"{string.Join(", ", request.Product)}");
                 if (!new CommandValidator().Validate(request).IsValid)
                     return Result<Unit>.Failure(error: JsonSerializer.Serialize(new CommandValidator().Validate(request)));
 

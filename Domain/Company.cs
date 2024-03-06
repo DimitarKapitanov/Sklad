@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Model;
 
 namespace Domain
@@ -10,7 +11,7 @@ namespace Domain
         }
 
         public string Name { get; set; }
-        
+
         public string City { get; set; }
 
         public string Address { get; set; }
@@ -22,5 +23,11 @@ namespace Domain
         public string Email { get; set; }
 
         public string CompanyOwnerName { get; set; }
+
+        public bool IsClient { get; set; }
+
+        public bool IsSupplier { get; set; }
+
+        public virtual Partner Partner { get; set; }
     }
 }

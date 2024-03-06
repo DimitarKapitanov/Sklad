@@ -1,9 +1,10 @@
-using Domain;
+using System.Globalization;
+using Application.DTOs.ProductDTOs;
 using FluentValidation;
 
 namespace Application.Products
 {
-    public class ProductValidator : AbstractValidator<Product>
+    public class ProductValidator : AbstractValidator<ProductDto>
     {
         public ProductValidator()
         {
@@ -15,7 +16,7 @@ namespace Application.Products
             .Must(x => x != null && x.Length < 50).WithMessage("Името трябва да е по-малко от 50 символа")
             .Must(x => x != null && !x.StartsWith(" ")).WithMessage("Името не може да започва с празно място")
             .Must(x => x != null && !x.EndsWith(" ")).WithMessage("Името не може да завършва с празно място")
-            .Matches(@"^[a-zA-Z\s]*$|^[а-яА-Я0-9\s]*$").WithMessage("Името може да съдържа само букви и цифри");
+            .Matches(@"^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$").WithMessage("Името може да съдържа само букви и цифри");
 
 
             RuleFor(x => x.Category)
@@ -24,7 +25,7 @@ namespace Application.Products
             .Must(x => x != null && x.Length < 50).WithMessage("Категорията трябва да е по-малко от 50 символа")
             .Must(x => x != null && !x.StartsWith(" ")).WithMessage("Категорията не може да започва с празно място")
             .Must(x => x != null && !x.EndsWith(" ")).WithMessage("Категорията не може да завършва с празно място")
-            .Matches(@"^[a-zA-Z\s]*$|^[а-яА-Я0-9\s]*$").WithMessage("Категорията и името могат да съдържат само букви и цифри");
+            .Matches(@"^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$").WithMessage("Категорията и името могат да съдържат само букви и цифри");
 
             RuleFor(x => x.Quantity)
                 .NotNull().WithMessage("Количество не може да бъде празно")
@@ -43,18 +44,19 @@ namespace Application.Products
                 .LessThan(decimal.MaxValue).WithMessage($"Цената трябва да е по-малка от {decimal.MaxValue}")
                 .PrecisionScale(18, 4, false).WithMessage("Цената трябва да е с максимум 4 цифри след десетичната запетая")
                 .GreaterThan(x => x.DeliveryPrice).WithMessage("Цената трябва да е по-голяма от цената на доставката")
-                .Must(x => x.ToString() != null && x.ToString().Contains(',')).WithMessage("Цената трябва да е с десетична запетая")
+                .Must(x => x.ToString(CultureInfo.InvariantCulture) != null && x.ToString(CultureInfo.InvariantCulture).Contains('.'))
+                .WithMessage("Цената трябва да е с десетична запетая")
                 .Must(x =>
                 {
-                    if (!x.ToString().Contains(',')) return false;
-                    var parts = x.ToString().Split(",");
+                    if (!x.ToString(CultureInfo.InvariantCulture).Contains('.')) return false;
+                    var parts = x.ToString(CultureInfo.InvariantCulture).Split(".");
                     return parts.Length > 1 && parts[1].Length <= 4;
 
                 }).WithMessage("Цената трябва да е с максимум 4 цифри след десетичната запетая")
                 .Must(x =>
                 {
-                    if (!x.ToString().Contains(',')) return false;
-                    var parts = x.ToString().Split(",");
+                    if (!x.ToString(CultureInfo.InvariantCulture).Contains('.')) return false;
+                    var parts = x.ToString(CultureInfo.InvariantCulture).Split(".");
                     return parts.Length > 1 && parts[0].Length >= 1;
                 }).WithMessage("Цената трябва да е с минимум 1 цифри преди десетичната запетая");
 
@@ -65,20 +67,26 @@ namespace Application.Products
                 .GreaterThan(0).WithMessage("Цената на доставката трябва да е по-голяма от 0")
                 .LessThan(decimal.MaxValue).WithMessage($"Цената на доставката трябва да е по-малка от {decimal.MaxValue}")
                 .PrecisionScale(18, 4, true).WithMessage("Цената трябва да е с максимум 4 цифри след десетичната запетая")
-                .Must(x => x.ToString() != null && x.ToString().Contains(',')).WithMessage("Цената на доставката трябва да е с десетична запетая")
+                .Must(x => x.ToString(CultureInfo.InvariantCulture) != null && x.ToString(CultureInfo.InvariantCulture).Contains('.'))
+                .WithMessage("Цената на доставката трябва да е с десетична запетая")
                 .Must(x =>
                 {
-                    if (!x.ToString().Contains(',')) return false;
-                    var parts = x.ToString().Split(",");
+                    if (!x.ToString(CultureInfo.InvariantCulture).Contains('.')) return false;
+                    var parts = x.ToString(CultureInfo.InvariantCulture).Split(".");
                     return parts.Length > 1 && parts[1].Length <= 4;
                 }).WithMessage("Цената на доставката трябва да е с максимум 4 цифри след десетичната запетая")
                 .Must(x =>
                 {
-                    if (!x.ToString().Contains(',')) return false;
-                    var parts = x.ToString().Split(",");
+                    if (!x.ToString(CultureInfo.InvariantCulture).Contains('.')) return false;
+                    var parts = x.ToString(CultureInfo.InvariantCulture).Split(".");
                     return parts.Length > 1 && parts[0].Length >= 1;
                 }).WithMessage("Цената на доставката трябва да е с минимум 1 цифри преди десетичната запетая")
                 .LessThan(x => x.Price).WithMessage("Цената на доставката трябва да е по-малка от цената на продукта");
+
+            RuleFor(x => x.Description)
+                .MaximumLength(200).WithMessage("Описанието трябва да е по-малко от 200 символа")
+                .Matches(@"^(?!.*<.*>).*$")
+                .WithMessage("Описанието не трябва да съдържа символите '<' и '>'");
         }
     }
 }

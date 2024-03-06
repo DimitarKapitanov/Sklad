@@ -1,0 +1,120 @@
+@import '../resolutions.scss';
+
+.partner-create {
+    .partner-create_company {
+        display: "flex";
+        flex-direction: "row";
+        justify-content: "space-between";
+        padding-bottom: 20px;
+
+        .partner-create_company-check_fields {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
+    }
+}
+
+.partner-delivery-addresses {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: flex-start;
+    padding-bottom: 30px;
+
+    .partner-delivery-addresses-fields {
+        display: flex;
+        flex-direction: column;
+        width: 25%;
+        margin-top: 1em;
+    }
+}
+
+@include media('small-desktop') {
+    .partners {
+        overflow-x: scroll;
+    }
+
+    .partner-create {
+        .partner-create_company-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
+
+            .partner-create_company-info_fields {
+                display: flex;
+                flex-direction: row;
+                gap: 20px;
+            }
+        }
+    }
+
+    .partner-delivery-addresses {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        align-items: flex-start;
+        padding-bottom: 30px;
+
+        .partner-delivery-addresses-fields {
+            display: flex;
+            flex-direction: column;
+            width: 25%;
+        }
+    }
+}
+
+@include media('tablet') {
+    .partner-delivery {
+        .partner-delivery-addresses {
+            display: block;
+            padding-bottom: 30px;
+
+            .partner-delivery-addresses-fields {
+                width: 100%;
+                padding-bottom: 10px;
+            }
+        }
+    }
+}
+
+@include media('mobile') {
+    .partner-create {
+        .partner-create_company {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px !important;
+
+            .partner-create_company-check_fields {
+                display: flex;
+                flex-direction: row;
+                gap: 20px;
+            }
+        }
+
+        .partner-create_company-info-fields {
+            .row.company-info-fields {
+                flex-direction: column;
+
+                .column {
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
+            }
+        }
+    }
+
+    .partner-delivery {
+        .partner-delivery-addresses {
+            display: block;
+            padding-bottom: 30px;
+
+            .partner-delivery-addresses-fields {
+                width: 100%;
+                padding-bottom: 10px;
+            }
+        }
+    }
+}

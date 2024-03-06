@@ -1,9 +1,11 @@
 using Application.Units;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = "Admin, Manager")]
     public class UnitController : BaseApiController
     {
         [HttpGet]

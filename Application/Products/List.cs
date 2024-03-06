@@ -1,57 +1,70 @@
 using Application.Core;
-using Domain;
+using Application.DTOs.ProductDTOs;
+using Application.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Persistence;
-using Unit = Domain.Unit;
 
 namespace Application.Products
 {
     public class List
     {
-        public class Query : IRequest<Result<List<Product>>>
+        public class Query : IRequest<Result<PageList<ProductDto>>>
         {
-            public bool? IsDelited { get; set; }
+            public ProductParams Params { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<Product>>>
+        public class Handler : IRequestHandler<Query, Result<PageList<ProductDto>>>
         {
             private readonly DataContext _context;
-            private readonly ILogger<List> _logger;
-            public Handler(DataContext context, ILogger<List> logger)
+            private readonly IMapper _mapper;
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
-                _logger = logger;
+                _userAccessor = userAccessor;
+                _mapper = mapper;
                 _context = context;
             }
-            public async Task<Result<List<Product>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<PageList<ProductDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var product = await _context.Products
-                .Include(p => p.Unit)
-                .Where(u => !request.IsDelited.HasValue || u.IsDeleted == request.IsDelited.Value)
-                .Select(p => new Product
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    DeliveryPrice = p.DeliveryPrice,
-                    Category = p.Category,
-                    Quantity = p.Quantity,
-                    Unit = new Unit
-                    {
-                        Id = p.Unit.Id,
-                        Acronym = p.Unit.Acronym,
-                        IsDeleted = p.Unit.IsDeleted,
-                    },
-                    UnitId = p.UnitId,
-                    IsDeleted = p.IsDeleted,
-                    CreatedOn = p.CreatedOn,
-                    DeletedOn = p.DeletedOn,
-                    ModifiedOn = p.ModifiedOn,
-                }).ToListAsync();
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName());
+                if (user == null) return null;
 
-                return Result<List<Product>>.Success(product);
+                var query = _context.Products
+                    .Where(p => string.IsNullOrEmpty(request.Params.Search) || p.Name.Contains(request.Params.Search))
+                    .Where(d => d.IsDeleted == request.Params.IsDeleted)
+                    .OrderBy(x => x.Name)
+                    .ProjectTo<ProductDto>(_mapper.ConfigurationProvider);
+
+                if (request.Params.IsDeleted)
+                {
+                    query = query.Where(x => x.IsDeleted == request.Params.IsDeleted);
+                }
+
+                if (request.Params.IsZeroQuantity && !request.Params.IsDeleted)
+                {
+                    query = query.Where(x => x.Quantity == 0 && !x.IsDeleted);
+                }
+
+                if (request.Params.DecreasingQuantity > 0
+                    && request.Params.DecreasingQuantity <= 10
+                    && !request.Params.IsDeleted
+                    && !request.Params.IsZeroQuantity
+                    )
+                {
+                    query = query.Where(x => x.Quantity > 0 && x.Quantity <= request.Params.DecreasingQuantity && !x.IsDeleted);
+                }
+
+                if (!string.IsNullOrEmpty(request.Params.Category) && !request.Params.IsDeleted)
+                {
+                    query = query.Where(x => x.Category == request.Params.Category);
+                }
+
+                var result = Result<PageList<ProductDto>>.Success(
+                    await PageList<ProductDto>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize));
+                return result;
             }
         }
     }

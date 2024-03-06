@@ -1,32 +1,47 @@
-import { Grid, } from "semantic-ui-react";
-import ProductTable from "./ProductTable";
-import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import LoadingComponent from "../../../app/layout/LoadingComponent";
-import ProductFilters from "./ProductFilters";
+import { Grid, Pagination, PaginationProps } from "semantic-ui-react";
+import { PagingParams } from "../../../app/models/pagination";
+import { useStore } from "../../../app/stores/store";
+import ProductTable from "./ProductTable";
+import ProductsActions from "./ProductsActions";
 
 export default observer(function ProductDashboard() {
-    const { productStore } = useStore();
-    const { loadProducts, productRegistry } = productStore;
+  const { productStore } = useStore();
+  const { loadProducts, productPagingRegistry, setPagingParams, pagination } =
+    productStore;
 
-    useEffect(() => {
-        if (productRegistry.size <= 1) loadProducts();
-    }, [loadProducts, productRegistry.size])
+  function handlePageChange(
+    _: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    data: PaginationProps
+  ) {
+    const activePage = data.activePage as number;
+    setPagingParams(new PagingParams(activePage));
+    loadProducts();
+  }
 
+  useEffect(() => {
+    if (productPagingRegistry.size < 1) loadProducts();
+  }, [loadProducts, productPagingRegistry.size]);
 
-    if (productStore.loadingInitial) return <LoadingComponent content='Зареждане...' />
-
-    return (
-        <>
-            <Grid style={{ marginLeft: '20px' }} >
-                <Grid.Column width="12">
-                    <ProductTable />
-                </Grid.Column>
-                <Grid.Column width="4">
-                    <ProductFilters />
-                </Grid.Column>
-            </Grid>
-        </>
-    )
-})
+  return (
+    <>
+      <ProductsActions />
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width="16" className="product-page">
+            <ProductTable />
+            {pagination && (
+              <Pagination
+                defaultActivePage={1}
+                activePage={pagination.currentPage || 1}
+                onPageChange={handlePageChange}
+                totalPages={pagination.totalPages || 1}
+              />
+            )}
+          </Grid.Column>
+        </Grid.Row>
+      </Grid >
+    </>
+  );
+});

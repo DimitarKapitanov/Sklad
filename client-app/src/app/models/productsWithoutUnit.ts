@@ -1,4 +1,9 @@
 
+export interface Delivery {
+    deliveryCompanyId: string;
+    products: ProductWithoutUnit[];
+}
+
 export interface ProductWithoutUnit {
     name: string;
     category: string;

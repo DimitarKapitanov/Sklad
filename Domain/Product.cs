@@ -28,7 +28,6 @@ namespace Domain
 
         public decimal DeliveryPrice { get; set; }
 
-        public virtual ICollection<Order> Orders { get; set; }
-        public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; }
+        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
     }
 }

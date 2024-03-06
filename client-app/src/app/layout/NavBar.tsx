@@ -1,38 +1,62 @@
-import { Menu, Container, Button, Image, Dropdown } from "semantic-ui-react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import CheckBox from "../common/checkbox/CheckBox";
 import { useStore } from "../stores/store";
-import { observer } from "mobx-react-lite";
+import logo from "/assets/logo.png";
 
-export default observer(function NavBar() {
-    const { userStore: { user, logout } } = useStore();
+const routes = [
+  { path: "products", name: "Продукти" },
+  { path: "statistics", name: "Статистика" },
+  { path: "orders", name: "Поръчки" },
+  { path: "warehouses", name: "Складове" },
+  { path: "partners", name: "Клиенти" },
+  { path: "users", name: "Персонал" },
+];
 
-    return (
-        <Menu inverted fixed="top">
-            <Container>
-                <Menu.Item as={NavLink} to='/' header>
-                    <img src="/assets/logo.png" alt="logo" style={{ marginRight: "10px" }} />
-                    Sklad
-                </Menu.Item>
-                <Menu.Item as={NavLink} to='products' name="Products" content="Продукти" />
-                <Menu.Item>
-                    <Button as={NavLink} to='/createProduct' positive content="Създай продукт" />
-                </Menu.Item>
-                <Menu.Item>
-                    <Button as={NavLink} to='/errors' positive content="Errors" />
-                </Menu.Item>
-                <Menu.Item>
-                    <Button as={NavLink} to='/createUnit' positive content="Създай единица" />
-                </Menu.Item>
-                <Menu.Item position='right'>
-                    <Image src={user?.image || '/assets/user.png'} avatar spaced='right' />
-                    <Dropdown pointing='top left' text={user?.displayName}>
-                        <Dropdown.Menu>
-                            <Dropdown.Item as={NavLink} to={`/profile/${user?.userName}`} text='Моят профил' icon='user' />
-                            <Dropdown.Item onClick={logout} text='Излез' icon='power' />
-                        </Dropdown.Menu>
-                    </Dropdown>
-                </Menu.Item>
-            </Container>
-        </Menu>
-    )
-})
+const Navbar = () => {
+  const [showNavbar, setShowNavbar] = useState(false);
+  const {
+    userStore: { user, logout },
+  } = useStore();
+
+  const handleShowNavbar = () => {
+    setShowNavbar(!showNavbar);
+  };
+
+  if (showNavbar) {
+    document.body.classList.add("no-scroll");
+  } else {
+    document.body.classList.remove("no-scroll");
+  }
+
+  return (
+    <nav>
+      <img src={logo} className="logo" />
+      <div>
+        <CheckBox toggleFunc={handleShowNavbar} isOpen={showNavbar} />
+      </div>
+
+      <ul className={`menu ${showNavbar ? "active" : ""}`}>
+        <div>
+          {routes.map((route, index) => (
+            <li key={index} onClick={handleShowNavbar}>
+              <NavLink to={route.path}>{route.name}</NavLink>
+            </li>
+          ))}
+        </div>
+        <div>
+          <li>
+            <NavLink to={`/profile/${user?.userName}`}>Моят профил</NavLink>
+          </li>
+          <li>
+            <a onClick={logout} style={{ cursor: "pointer" }}>
+              Изход
+            </a>
+          </li>
+        </div>
+      </ul>
+    </nav>
+  );
+};
+
+export default Navbar;

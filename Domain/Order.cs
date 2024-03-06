@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Model;
 
 namespace Domain
@@ -8,10 +9,10 @@ namespace Domain
         {
             this.Id = Guid.NewGuid();
         }
-        
-        public Guid CustomerId { get; set; }
-        
-        public virtual Customer Customer { get; set; }
+
+        public Guid PartnerId { get; set; }
+
+        public virtual Partner Partner { get; set; }
 
         public Guid WarehouseId { get; set; }
 
@@ -19,7 +20,18 @@ namespace Domain
 
         public bool IsCompleted { get; set; }
 
-        public DateTime CompletedDate { get; set; }
-        public virtual ICollection<Product> Products { get; set; }
+        public DateTime? CompletedDate { get; set; }
+
+        public string CompletedBy { get; set; }
+
+        [ForeignKey("CompletedBy")]
+        public virtual AppUser CompletedByUser { get; set; }
+
+        public string CreatedBy { get; set; }
+
+        [ForeignKey("CreatedBy")]
+        public virtual AppUser CreatedByUser { get; set; }
+
+        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
     }
 }

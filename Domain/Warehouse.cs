@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Model;
 
 namespace Domain
@@ -12,12 +13,11 @@ namespace Domain
 
         public string ContactPersonId { get; set; }
         
-        //[ForeignKey("ContactPersonId")]
-        // public User User { get; set; }
+        [ForeignKey("ContactPersonId")]
+        public AppUser User { get; set; }
 
         public string Description { get; set; }
 
-        public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; }
-
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

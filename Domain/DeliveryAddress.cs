@@ -8,13 +8,13 @@ namespace Domain
         {
             this.Id = Guid.NewGuid();
         }
-        
-        public Guid CustomerId { get; set; }
 
-        public virtual Customer Customer { get; set; }
-        
+        public Guid PartnerId { get; set; }
+
+        public virtual Partner Partner { get; set; }
+
         public string City { get; set; }
 
-        public string Address { get; set; } 
+        public string Address { get; set; }
     }
 }

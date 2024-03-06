@@ -1,0 +1,20 @@
+export const tableHeaderProduct: { key: string, label: string }[] = [
+    { key: "name", label: "Име" },
+    { key: "quantity", label: "Количество" },
+    { key: "deliveryPrice", label: "Доставна цена" },
+    { key: "price", label: "Продажна цена" },
+    { key: "category", label: "Категория" },
+    { key: "unitAcronym", label: "Мярка" },
+    { key: "description", label: "Описание" },
+];
+
+export const productTableHeader: { key: string, label: string }[] = [
+    { key: "name", label: "Име" },
+    { key: "category", label: "Категория" },
+    { key: "unitAcronym", label: "Мярка" },
+    { key: "quantity", label: "Количество" },
+    { key: "price", label: "Единична цена" },
+    { key: "total", label: "Общо без ДДС" },
+    { key: "vat", label: "ДДС" },
+    { key: "totalPrice", label: "Крайна цена" },
+];

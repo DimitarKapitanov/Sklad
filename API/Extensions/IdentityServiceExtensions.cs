@@ -2,6 +2,7 @@ using System.Text;
 using API.Services;
 using Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 
@@ -20,6 +21,7 @@ namespace API.Extensions
                     opt.Password.RequiredLength = 6;
                     opt.User.RequireUniqueEmail = true;
                 })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<DataContext>();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
@@ -34,11 +36,10 @@ namespace API.Extensions
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = true,
-                        // ClockSkew = TimeSpan.Zero
                     };
                 });
 
-            services.AddScoped<TokenSrvice>();
+            services.AddScoped<TokenService>();
 
             return services;
         }

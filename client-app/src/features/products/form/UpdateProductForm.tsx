@@ -1,20 +1,18 @@
+import { Form, Formik } from "formik";
+import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { Button, ButtonGroup, Container, Header, Segment } from "semantic-ui-react";
-import { useStore } from "../../../app/stores/store";
-import { observer } from "mobx-react-lite";
-import { Product } from "../../../app/models/product";
-import LoadingComponent from "../../../app/layout/LoadingComponent";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Formik, Form } from "formik";
 import MyTextInput from "../../../app/common/form/MyTextInput";
-
-export default observer(function ProductForm() {
-    const { productStore, commonStore } = useStore();
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { Product } from "../../../app/models/product";
+import { useStore } from "../../../app/stores/store";
+interface Props {
+    id: string;
+}
+export default observer(function ProductForm({ id }: Props) {
+    const { productStore, commonStore, modalStore } = useStore();
     const { updateProduct, loading, loadProduct, loadingInitial } = productStore;
     const { validationSchemaEdit } = commonStore;
-
-    const navigate = useNavigate();
-    const { id } = useParams();
 
     const [product, setProduct] = useState<Product>({
         id: '',
@@ -30,7 +28,8 @@ export default observer(function ProductForm() {
         modifiedOn: new Date(),
         isDeleted: false,
         deletedOn: null,
-        unit: { id: '', acronym: '' }
+        unitDto: { id: '', acronym: '' },
+        deliveryCompanyId: ''
     })
 
     useEffect(() => {
@@ -38,7 +37,7 @@ export default observer(function ProductForm() {
     }, [id, loadProduct]);
 
     function handleProductEditSubmit(product: Product) {
-        updateProduct(product!).then(() => navigate(`/products/${product.id}`));
+        updateProduct(product!).then(() => modalStore.closeModal());
     }
 
     if (loadingInitial) return <LoadingComponent content='Зареждане...' />
@@ -60,7 +59,7 @@ export default observer(function ProductForm() {
                             <MyTextInput placeholder='Описание' label='Допълнително описание' name='description' />
                             <ButtonGroup floated="right" >
                                 <Button loading={loading} type='submit' positive>Изпрати</Button>
-                                <Button as={Link} to='/products' color='red' type="button" content='Отказ' />
+                                <Button onClick={() => modalStore.closeModal()} color='red' type="button" content='Отказ' />
                             </ButtonGroup>
                         </Form>
                     )}

@@ -11,5 +11,6 @@ namespace Domain
 
         public string Acronym { get; set; }
         public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<DeliveredProduct> DeliveredProducts { get; set; }
     }
 }

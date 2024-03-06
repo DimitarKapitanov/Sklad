@@ -1,26 +1,26 @@
+using Application.DTOs.ProductDTOs;
 using Application.Products;
-using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    // [Authorize(Roles = "Admin, Manager")]
     [AllowAnonymous]
     public class ProductsController : BaseApiController
     {
+        private readonly ILogger<ProductsController> _logger;
+        public ProductsController(ILogger<ProductsController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet()]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<List<ProductDto>>> GetProducts([FromQuery] ProductParams pagingParams)
         {
-            return HandleResult(await Mediator.Send(new List.Query()));
+            return HandlePageResult(await Mediator.Send(new List.Query { Params = pagingParams }));
         }
 
-        [HttpGet("filtered/{isDeleted?}")]
-        public async Task<IActionResult> GetActiveProducts(bool? isDelited)
-        {
-            return HandleResult(await Mediator.Send(new List.Query { IsDelited = isDelited }));
-        }
-
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(Guid id)
         {
@@ -28,13 +28,14 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(IList<Product> products)
+        public async Task<IActionResult> CreateProduct(DeliverDto deliver)
         {
-            return HandleResult(await Mediator.Send(new Create.Command { Products = products }));
+            _logger.LogInformation("CreateProduct");
+            return HandleResult(await Mediator.Send(new Create.Command { Deliver = deliver }));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditProduct(Guid id, Product product)
+        public async Task<IActionResult> EditProduct(Guid id, ProductDto product)
         {
             return HandleResult(await Mediator.Send(new Edit.Command { Product = product }));
         }

@@ -1,59 +1,90 @@
+import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { observer } from "mobx-react-lite";
 import { Fragment, useEffect, useState } from "react";
 import { Table } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
-import { observer } from "mobx-react-lite";
-import { Product } from "../../../app/models/product";
 import ProductTableList from "./ProductTableList";
+import ProductsListItemPlaceholder from "./ProductsListItemPlaceholder";
 
 export default observer(function ProductTable() {
-    const { productStore } = useStore();
-    const { tableHeader, groupedProducts, sortProducts, latestProducts } = productStore;
-    const [showLatest, setShowLatest] = useState(false);
-    
-    useEffect(() => {
-        if (window.location.pathname === "/latest") {
-            setShowLatest(true);
-        } else {
-            setShowLatest(false);
-        }
-    }, []);
+  const { productStore } = useStore();
+  const {
+    tableHeader,
+    sortProducts,
+    sortCategory,
+    sortDirection,
+    filter,
+    loadingInitial,
+  } = productStore;
+  const [localTableHeader, setLocalTableHeader] = useState(tableHeader);
 
-    return (
-        <>
-            <Table compact celled sortable selectable className="product-table">
-                <Table.Header>
-                    <Table.Row className="product-tale-head groupe-product">
-                        {tableHeader.map((row) => (
-                            <Table.HeaderCell
-                                key={row.key}
-                                onClick={() => sortProducts(row.key)}
-                                className="groupe-product"
-                            >
-                                {row.label}
-                            </Table.HeaderCell>
-                        ))}
-                    </Table.Row>
-                </Table.Header>
-                {groupedProducts.map(([group, products]) => (
-                    <Fragment key={group}>
-                        <Table.Header >
-                            <Table.Row>
-                                <Table.HeaderCell colSpan="8" className="groupe-product">
-                                    {group.toLocaleUpperCase()}
-                                </Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {(showLatest ? latestProducts : products).map((product: Product) => (
-                                <ProductTableList
-                                    key={product.id}
-                                    product={product}
-                                />
-                            ))}
-                        </Table.Body>
-                    </Fragment>
-                ))}
-            </Table >
-        </>
-    )
-})
+  useEffect(() => {
+    if (window.location.pathname === "/products") {
+      setLocalTableHeader([
+        ...tableHeader,
+        { key: "isDeleted", label: "Edit/Delete" },
+      ]);
+    }
+  }, [tableHeader]);
+
+  return (
+    <>
+      <Table
+        size={"small"}
+        celled
+        sortable
+        selectable
+        className="product-table"
+        unstackable
+      >
+        <Table.Header>
+          <Table.Row className="product-tale-head groupe-product">
+            {localTableHeader.map((row) => {
+              if (row.key === "isDeleted" && filter === 1) return null;
+              return (
+                <Table.HeaderCell
+                  key={row.key}
+                  onClick={() => {
+                    if (row.key != "isDeleted") sortProducts(row.key);
+                  }}
+                  className="groupe-product"
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: "5px",
+                    }}
+                  >
+                    {row.key === sortCategory ? (
+                      sortDirection === "asc" ? (
+                        <FontAwesomeIcon icon={faArrowUp} />
+                      ) : (
+                        <FontAwesomeIcon icon={faArrowDown} />
+                      )
+                    ) : null}
+                    {row.label}
+                  </div>
+                </Table.HeaderCell>
+              );
+            })}
+          </Table.Row>
+        </Table.Header>
+
+        <Fragment>
+          <Table.Body>
+            {loadingInitial ? (
+              <ProductsListItemPlaceholder />
+            ) : (
+              productStore.pagedGroupedProducts.map((products, index) => (
+                <ProductTableList key={index} product={products} />
+              ))
+            )}
+          </Table.Body>
+        </Fragment>
+      </Table>
+    </>
+  );
+});

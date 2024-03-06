@@ -1,7 +1,11 @@
 using Application.Core;
+using Application.DTOs.ProductDTOs;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence;
 
@@ -9,12 +13,12 @@ namespace Application.Products
 {
     public class Details
     {
-        public class Query : IRequest<Result<Product>>
+        public class Query : IRequest<Result<GetProductDto>>
         {
             public Guid Id { get; set; }
         }
 
-        public class CommandValidator : AbstractValidator<Product>
+        public class CommandValidator : AbstractValidator<GetProductDto>
         {
             public CommandValidator()
             {
@@ -22,19 +26,22 @@ namespace Application.Products
             }
         }
 
-        public class Handler : IRequestHandler<Query, Result<Product>>
+        public class Handler : IRequestHandler<Query, Result<GetProductDto>>
         {
             private readonly DataContext _context;
-            private readonly ILogger<Details> _logger;
-            public Handler(DataContext context, ILogger<Details> logger)
+            private readonly IMapper _mapper;
+            public Handler(DataContext context, IMapper mapper)
             {
-                _logger = logger;
+                _mapper = mapper;
                 _context = context;
             }
-            public async Task<Result<Product>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<GetProductDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var product = await _context.Products.FindAsync(request.Id);
-                return Result<Product>.Success(product);
+                var product = await _context.Products
+                .ProjectTo<GetProductDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(x => x.Id == request.Id);
+
+                return Result<GetProductDto>.Success(product);
             }
         }
     }

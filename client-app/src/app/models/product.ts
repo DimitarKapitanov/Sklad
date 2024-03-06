@@ -14,5 +14,5 @@ export interface Product {
     createdOn: Date | null
     modifiedOn: Date | null
     deletedOn: Date | null
-    unit: Unit
+    unitDto: Unit
 }

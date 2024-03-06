@@ -16,7 +16,7 @@ builder.Services.AddControllers(opt =>
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
 });
-builder.Services.AddApplicetionSevices(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
@@ -28,10 +28,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("CorsPolicy");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors("CorsPolicy");
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();
@@ -41,9 +43,11 @@ try
 {
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
     await context.Database.MigrateAsync();
-    await Seed.SeedData(context, userManager);
+
+    await Seed.SeedData(context, userManager, roleManager);
 }
 catch (Exception ex)
 {
