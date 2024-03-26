@@ -31,7 +31,6 @@ export default observer(function ProductTable() {
   return (
     <>
       <Table
-        size={"small"}
         celled
         sortable
         selectable
@@ -58,6 +57,7 @@ export default observer(function ProductTable() {
                       gap: "5px",
                     }}
                   >
+                    {row.label}
                     {row.key === sortCategory ? (
                       sortDirection === "asc" ? (
                         <FontAwesomeIcon icon={faArrowUp} />
@@ -65,14 +65,12 @@ export default observer(function ProductTable() {
                         <FontAwesomeIcon icon={faArrowDown} />
                       )
                     ) : null}
-                    {row.label}
                   </div>
                 </Table.HeaderCell>
               );
             })}
           </Table.Row>
         </Table.Header>
-
         <Fragment>
           <Table.Body>
             {loadingInitial ? (

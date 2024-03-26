@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default observer(function ProductDetails({ orderId, modalName }: Props) {
-    const { orderStore, modalStore } = useStore();
+    const { orderStore, modalStore, userStore: { user } } = useStore();
     const { selectedOrder: order, loadingDetails, loading, completeOrder, loadOrder } = orderStore;
 
     const { id } = useParams();
@@ -31,13 +31,13 @@ export default observer(function ProductDetails({ orderId, modalName }: Props) {
 
     return (
         <Container style={{ marginTop: '7em', paddingBottom: '2em' }}>
-            <Header as="h2" content={`Поръчка № ${order.id}`} />
+            <Header as="h2" content={`Поръчка № ${order.orderNumber}`} />
             <OrderPartnerInformation order={order} />
             <Card fluid>
                 <Card.Content style={{ overflowX: 'auto' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }} className="order-table-header">
                         <Card.Header as="h2">Продукти</Card.Header>
-                        {!order.isCompleted && !orderId &&
+                        {!order.isCompleted && !orderId && user?.role.includes("Admin") || user?.role.includes("Manager") ? (
                             <Card.Header>
                                 <Button
                                     icon='pencil'
@@ -46,7 +46,7 @@ export default observer(function ProductDetails({ orderId, modalName }: Props) {
                                     onClick={() => setIsEditClicked(!isEditClicked)}
                                 />
                             </Card.Header>
-                        }
+                        ) : null}
                     </div>
                     <OrderTableList order={order} isEditClicked={isEditClicked} />
                 </Card.Content>

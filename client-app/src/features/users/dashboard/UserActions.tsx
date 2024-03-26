@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 import {
   Button,
   Header,
@@ -6,12 +7,11 @@ import {
   MenuItem,
   MenuMenu,
 } from "semantic-ui-react";
-import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import CreateUser from "../CreateUser";
 
 export default observer(function UserActions() {
-  const {  modalStore, userStore } = useStore();
+  const { modalStore, userStore } = useStore();
   const { openModal } = modalStore;
   const { setSearch, search } = userStore;
 
@@ -23,10 +23,10 @@ export default observer(function UserActions() {
           <Button
             primary
             onClick={() => openModal(<CreateUser />, "tiny")}
-
-          >
-            Добави потребител
-          </Button>
+            content="Добави потребител"
+            icon="user plus"
+            size="tiny"
+          />
         </div>
       </div>
       <Menu pointing secondary>
@@ -38,7 +38,7 @@ export default observer(function UserActions() {
               placeholder="Търси..."
               style={{ paddingLeft: "0" }}
               value={search}
-              onChange={(e) => {setSearch(e.target.value)}}
+              onChange={(e) => { setSearch(e.target.value) }}
             />
           </MenuItem>
         </MenuMenu>

@@ -1,0 +1,17 @@
+.order-form {
+    .company-select {
+        width: 100%;
+    }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 1023px) {
+    .order-form {
+        overflow-x: auto;
+    }
+}
+
+@media only screen and (min-width: 321px) and (max-width: 599px) {
+    .order-form {
+        overflow-x: auto;
+    }
+}

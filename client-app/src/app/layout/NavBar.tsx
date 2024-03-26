@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import CheckBox from "../common/checkbox/CheckBox";
@@ -9,11 +10,11 @@ const routes = [
   { path: "statistics", name: "Статистика" },
   { path: "orders", name: "Поръчки" },
   { path: "warehouses", name: "Складове" },
-  { path: "partners", name: "Клиенти" },
+  { path: "partners", name: "Партньори" },
   { path: "users", name: "Персонал" },
 ];
 
-const Navbar = () => {
+export default observer(function Navbar() {
   const [showNavbar, setShowNavbar] = useState(false);
   const {
     userStore: { user, logout },
@@ -45,7 +46,7 @@ const Navbar = () => {
           ))}
         </div>
         <div>
-          <li>
+          <li onClick={handleShowNavbar}>
             <NavLink to={`/profile/${user?.userName}`}>Моят профил</NavLink>
           </li>
           <li>
@@ -57,6 +58,4 @@ const Navbar = () => {
       </ul>
     </nav>
   );
-};
-
-export default Navbar;
+});

@@ -10,7 +10,7 @@ interface Props {
 }
 export default observer(function ProductDetails({ id }: Props) {
 
-    const { productStore, modalStore } = useStore();
+    const { productStore, modalStore, commonStore: { dateString }, userStore: { user } } = useStore();
     const { selectedProduct: product, loadProduct, loadingInitial } = productStore;
     // const { id } = useParams();
 
@@ -30,22 +30,24 @@ export default observer(function ProductDetails({ id }: Props) {
                     <Card.Meta>
                         <span>{product.category}</span>
                     </Card.Meta>
-                    <Card.Description content={`Налично количество: ${product.quantity} ${product.unitAcronym}`} />
+                    <Card.Description content={`Налично количество: ${product.quantity} ${product.unitDto.acronym}`} />
                     <Card.Description content={`Продажна цена: ${product.price} лв`} />
                     <Card.Description content={`Доставна цена: ${product.deliveryPrice} лв`} />
                     <Card.Description content={`Мярка: ${product.unitAcronym}`} />
                     <Card.Description content={`Категория: ${product.category}`} />
                     <Card.Description content={`Описание: ${product.description}`} />
-                    <Card.Description content={`Създаден на: ${product.createdOn?.toString().split('T')[0]}`} />
-                    <Card.Description content={`Променен на: ${product.modifiedOn?.toString().split('T')[0]}`} />
-                    <Card.Description content={`${product.isDeleted ? 'Изтрит' : 'Активен'} ${product.isDeleted ? `на ${product.deletedOn}` : ''}`} />
+                    <Card.Description content={`Създаден на: ${dateString(product.createdOn)}`} />
+                    <Card.Description content={`Променен на: ${dateString(product.modifiedOn)}`} />
+                    <Card.Description content={`${product.isDeleted ? 'Изтрит' : 'Активен'} ${product.isDeleted ? `на ${dateString(product.deletedOn)}` : ''}`} />
                 </Card.Content>
-                <Card.Content extra>
-                    <ButtonGroup floated="right" >
-                        <Button color="yellow" onClick={() => modalStore.openModal(<UpdateProductForm id={id} />, "small")}>Промени</Button>
-                        <Button color='red' onClick={() => modalStore.closeModal()} content='Отказ' />
-                    </ButtonGroup>
-                </Card.Content>
+                {user?.role.includes("Admin") || user?.role.includes("Manager") ? (
+                    <Card.Content extra>
+                        <ButtonGroup floated="right" >
+                            <Button color="yellow" onClick={() => modalStore.openModal(<UpdateProductForm id={id} />, "small")}>Промени</Button>
+                            <Button color='red' onClick={() => modalStore.closeModal()} content='Отказ' />
+                        </ButtonGroup>
+                    </Card.Content>
+                ) : null}
             </Card>
         </Container>
     )

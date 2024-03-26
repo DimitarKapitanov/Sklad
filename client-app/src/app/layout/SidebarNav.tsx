@@ -46,13 +46,19 @@ export default observer(function SidebarNav(props: Props) {
         <Image src="/assets/logo.png" alt="logo" height={60} as={Link} size="tiny" to="/" />
       </Menu.Item>
       <Container>
-        <MenuItem as={NavLink} to="products" icon="boxes" name="Продукти" />
-        <MenuItem
-          as={NavLink}
-          to="statistics"
-          icon="signal"
-          name="Статистика"
-        />
+        {(user?.role.includes("Admin") || user?.role.includes("Manager")) ? (
+          <>
+            <MenuItem as={NavLink} to="products" icon="boxes" name="Продукти" />
+            <MenuItem
+              as={NavLink}
+              to="statistics"
+              icon="signal"
+              name="Статистика"
+            />
+            <MenuItem as={NavLink} to="partners" icon="users" name="Партньори" />
+            <MenuItem as={NavLink} to="users" icon="address book" name="Персонал" />
+          </>
+        ) : null}
         <MenuItem
           as={NavLink}
           to="orders"
@@ -65,8 +71,6 @@ export default observer(function SidebarNav(props: Props) {
           icon="warehouse"
           name="Складове"
         />
-        <MenuItem as={NavLink} to="partners" icon="users" name="Партньори" />
-        <MenuItem as={NavLink} to="users" icon="address book" name="Персонал" />
       </Container>
       <Menu.Item
         className="navbar-footer"
@@ -105,7 +109,7 @@ export default observer(function SidebarNav(props: Props) {
             }}
           >
             <Icon name="user" />
-            Login
+            Влез
           </Button>
         )}
       </Menu.Item>

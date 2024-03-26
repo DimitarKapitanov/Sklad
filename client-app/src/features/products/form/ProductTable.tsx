@@ -1,4 +1,5 @@
 import { FieldArray } from "formik";
+import { observer } from "mobx-react-lite";
 import { useCallback } from "react";
 import {
   Button,
@@ -24,8 +25,8 @@ const product: Product = {
   id: "",
   name: "",
   quantity: 0,
-  deliveryPrice: 0,
-  price: 0,
+  deliveryPrice: '',
+  price: '',
   category: "",
   unitId: "",
   unitAcronym: "",
@@ -36,12 +37,13 @@ const product: Product = {
   deletedOn: null,
   unitDto: { id: "", acronym: "" },
 };
+
 interface Values {
   products: Product[];
   deliveryCompany: string;
 }
 
-export default function ProductTable({
+export default observer(function ProductTable({
   values,
   setFieldValue,
 }: {
@@ -54,8 +56,8 @@ export default function ProductTable({
 }) {
   const { unitStore, supplierStore } = useStore();
   const { unitSort } = unitStore;
-  const { getSuppliersOptions } = supplierStore;
-  const selectedSupplier = getSuppliersOptions.find(
+  const { supplierOptions } = supplierStore;
+  const selectedSupplier = supplierOptions.find(
     (s) => s.key === values.deliveryCompany
   );
 
@@ -126,6 +128,10 @@ export default function ProductTable({
                         placeholder="Категория"
                         name={`products[${index}].category`}
                       />
+                      {/* <MyTextInput
+                        placeholder="Категория"
+                        name={`products[${index}].category`}
+                      /> */}
                     </TableCell>
 
                     <TableCell className="">
@@ -195,4 +201,4 @@ export default function ProductTable({
       </FieldArray>
     </div>
   );
-}
+});

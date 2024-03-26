@@ -67,18 +67,10 @@ export default class SupplierStore {
         return params;
     }
 
-    get getSuppliersOptions() {
-        const suppliers = Array.from(this.supplierRegistry.values());
-        suppliers.map(supplier => {
-            supplier.map(s => {
-                return this.supplierOptions.push({ key: s.id, text: s.name, value: s.id })
-            })
-        })
-        return this.supplierOptions
-    }
-
     get getSuppliers() {
-        if (this.pagination) return this.supplierRegistry.get(this.pagination?.currentPage.toString());
+        if (this.pagination) {
+            return this.supplierRegistry.get(this.pagination?.currentPage.toString());
+        }
     }
 
     loadSuppliers = async () => {
@@ -87,6 +79,7 @@ export default class SupplierStore {
             runInAction(() => {
                 this.setPagination(result.pagination);
                 this.setSuppliers(result.data);
+                this.setSupplierOptions();
             })
         } catch (error) {
             console.log(error);
@@ -95,7 +88,20 @@ export default class SupplierStore {
         }
     };
 
+    setSupplierOptions = () => {
+        const suppliers = this.supplierRegistry.get(this.pagination!.currentPage.toString());
+        if (suppliers) suppliers.forEach(s => this.supplierOptions.push({ key: s.id, text: s.name, value: s.id }));
+    }
+
     private setSuppliers(supplier: Supplier[]) {
         if (this.pagination) this.supplierRegistry.set(this.pagination?.currentPage.toString(), supplier);
     }
+
+    clearSupplierOptions = () => {
+        this.supplierOptions = [];
+    }
+
+    clearSupplier = () => {
+        this.supplierRegistry.clear();
+    };
 }

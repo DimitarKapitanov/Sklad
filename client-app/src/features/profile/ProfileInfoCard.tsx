@@ -2,7 +2,6 @@ import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { faMapPin, faPhone, faWarehouse } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { observer } from "mobx-react-lite";
-import { Divider } from "semantic-ui-react";
 import { Profile } from "../../app/models/profile";
 import { Warehouse } from "../../app/models/warehouse";
 
@@ -17,32 +16,30 @@ export default observer(function ProfileInfoCard(props: Props) {
     return (
         <div className="profile-card">
             <div className="first-section">
-                <img className="profile-image" src={props.profile?.image || "/assets/user.png"} alt="" />
-                <span className="name">{props.profile?.displayName}</span>
-                <span className="position">{props.profile?.role}</span>
+                <img className="profile-image" src={props.profile.image || "/assets/user.png"} alt="" />
+                <div className="role">
+                    <span className="name">{props.profile.displayName}</span>
+                    <span className="position">{props.profile.role}</span>
+                </div>
+
+            </div>
+            <div className="second-section">
                 <div className="location">
                     <FontAwesomeIcon icon={faMapPin} />
                     <span className="location-text">{props.location}</span>
                 </div>
-            </div>
-            <Divider />
-            <div className="second-section">
                 <div className="contact-box">
                     <FontAwesomeIcon icon={faPhone} />
-                    <span className="contact-text">{props.profile?.phoneNumber}</span>
+                    <span className="contact-text">{props.profile.phoneNumber}</span>
                 </div>
                 <div className="contact-box">
                     <FontAwesomeIcon icon={faEnvelope} />
-                    <span className="contact-text">{props.profile?.email}</span>
+                    <span className="contact-text">{props.profile.email}</span>
                 </div>
-            </div>
-            <Divider />
-            <div className="third-section">
                 <div className="warehouse">
                     <div className="warehouse-label">
                         <FontAwesomeIcon icon={faWarehouse} />
-                        <span className="warehouse-label-text">Склад: </span>
-                        <span className="warehouse-text">{props.warehouse?.name}</span>
+                        <span className="warehouse-label-text">{`Склад: ${props.warehouse?.name}`}</span>
                     </div>
                 </div>
             </div>

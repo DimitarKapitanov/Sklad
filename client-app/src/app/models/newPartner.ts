@@ -10,6 +10,8 @@ export interface NewPartner {
         phone: string;
         email: string;
         companyOwnerName: string;
+        isSupplier: boolean;
+        isClient: boolean;
     };
     phone: string;
     email: string;
@@ -19,6 +21,4 @@ export interface NewPartner {
         city: string;
         address: string;
     }[];
-    isDelivery: boolean;
-    isClient: boolean;
 }

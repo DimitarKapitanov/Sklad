@@ -18,9 +18,10 @@ export default observer(function ProductInfoTable({ order }: Props) {
         })
         return total;
     }
+
     return (
         <Container fluid>
-            <Table celled compact striped stackable sortable selectable structured verticalAlign="middle">
+            <Table celled unstackable compact striped stackable sortable selectable structured verticalAlign="middle">
                 <Table.Header fullWidth>
                     <Table.Row textAlign="center" verticalAlign="middle">
                         <Table.HeaderCell colSpan={tableHeadersProductInfo.length} className="groupe-product">

@@ -19,8 +19,9 @@ export default observer(function PartnerDashboard() {
     loadPartners,
     partnerRegistry,
     loadingInitial,
-    // clearSelectedPartner,
-    setPagingParams, partnerDashboardPagination
+    setPagingParams,
+    partnerDashboardPagination,
+    primaryPredicate,
   } = partnerStore;
 
   const [loadingNext, setLoadingNext] = useState(false);
@@ -35,7 +36,7 @@ export default observer(function PartnerDashboard() {
 
   useEffect(() => {
     if (partnerRegistry.size < 1) loadPartners();
-  }, [loadPartners, partnerRegistry.size]);
+  }, [loadPartners, partnerRegistry.size, primaryPredicate]);
 
   return (
     <Container fluid style={{ marginTop: 40 }}>

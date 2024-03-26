@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using API.DTOs;
 using API.Services;
+using AutoMapper;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,11 +17,18 @@ namespace API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, RoleManager<IdentityRole> roleManager, ILogger<AccountController> logger)
+        private readonly IMapper _mapper;
+        public AccountController(
+            UserManager<AppUser> userManager,
+            TokenService tokenService,
+            RoleManager<IdentityRole> roleManager,
+            ILogger<AccountController> logger,
+            IMapper mapper)
         {
             _roleManager = roleManager;
             _tokenService = tokenService;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -77,18 +85,63 @@ namespace API.Controllers
 
             var user = new AppUser
             {
-                PhoneNumber = registerDto.PhoneNumber,
-                DisplayName = registerDto.DisplayName,
-                Email = registerDto.Email,
-                UserName = registerDto.UserName,
-                Bio = registerDto.Bio
+                PhoneNumber = registerDto.PhoneNumber.Trim(),
+                DisplayName = registerDto.DisplayName.Trim(),
+                Email = registerDto.Email.Trim(),
+                UserName = registerDto.UserName.Trim(),
+                Bio = registerDto.Bio.Trim()
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded) return BadRequest(result.Errors);
 
-            await _userManager.AddToRoleAsync(user, registerDto.Role);
+            await _userManager.AddToRoleAsync(user, registerDto.Role.Trim());
+
+            return Ok();
+        }
+
+        [Authorize(Roles = "Admin, Manager")]
+        [HttpPost("edit-user")]
+        public async Task<ActionResult> EditUser(EditUserDto editUserDto)
+        {
+            var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (user == null) return Unauthorized();
+
+            var userUpdate = await _userManager.FindByNameAsync(editUserDto.UserName.Trim());
+            if (userUpdate == null) return NotFound();
+
+            if (editUserDto.UserName.Trim() != userUpdate.UserName)
+            {
+                return BadRequest(error: "Не може да се променя потребителското име");
+            }
+
+            if (editUserDto.Email.Trim() != userUpdate.Email)
+            {
+                if (await _userManager.Users.AnyAsync(x => x.Email == editUserDto.Email.Trim()))
+                {
+                    ModelState.AddModelError("email", "Емайл адресът е зает");
+                    return ValidationProblem();
+                }
+                userUpdate.Email = editUserDto.Email.Trim();
+            }
+
+            if (editUserDto.Password != null)
+            {
+                var passwordUpdateResult = await UpdatePassword(userUpdate, editUserDto.Password.Trim());
+                if (!passwordUpdateResult.Succeeded) return BadRequest(passwordUpdateResult.Errors);
+            }
+
+            userUpdate.PhoneNumber = editUserDto.PhoneNumber.Trim();
+            userUpdate.Bio = editUserDto.Bio.Trim();
+            userUpdate.DisplayName = editUserDto.DisplayName.Trim();
+
+            var roleUpdateResult = await UpdateRole(userUpdate, editUserDto.Role.Trim());
+            if (!roleUpdateResult.Succeeded) return BadRequest(roleUpdateResult.Errors);
+
+            var result = await _userManager.UpdateAsync(userUpdate);
+
+            if (!result.Succeeded) return BadRequest(result.Errors);
 
             return Ok();
         }
@@ -145,6 +198,7 @@ namespace API.Controllers
             return GetRolesDto(role);
         }
 
+
         [Authorize(Roles = "Admin, Manager")]
         [HttpGet("roles")]
         public async Task<ActionResult<List<RolesDto>>> GetRoles()
@@ -152,7 +206,7 @@ namespace API.Controllers
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
             if (user == null) return Unauthorized();
 
-            var roles = await _roleManager.Roles.ToListAsync();
+            var roles = await _roleManager.Roles.Where(x => x.Name != "Admin").ToListAsync();
             var roleNames = new List<RolesDto>();
 
             foreach (var role in roles)
@@ -189,6 +243,34 @@ namespace API.Controllers
                 Id = role.Id,
                 RoleName = role.Name
             };
+        }
+
+        private async Task<IdentityResult> UpdatePassword(AppUser user, string newPassword)
+        {
+            var passwordValidator = new PasswordValidator<AppUser>();
+            var passwordValidationResult = await passwordValidator.ValidateAsync(_userManager, user, newPassword);
+            if (!passwordValidationResult.Succeeded) return passwordValidationResult;
+
+            var removePasswordResult = await _userManager.RemovePasswordAsync(user);
+            if (!removePasswordResult.Succeeded) return removePasswordResult;
+
+            return await _userManager.AddPasswordAsync(user, newPassword);
+        }
+
+        private async Task<IdentityResult> UpdateRole(AppUser user, string newRole)
+        {
+            if (newRole != (await _userManager.GetRolesAsync(user))[0])
+            {
+                if (!await _roleManager.RoleExistsAsync(newRole))
+                {
+                    ModelState.AddModelError("role", "Ролята не съществува");
+                    return IdentityResult.Failed(new IdentityError { Description = "Ролята не съществува" });
+                }
+                var userRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRoleAsync(user, userRoles[0]);
+                return await _userManager.AddToRoleAsync(user, newRole);
+            }
+            return IdentityResult.Success;
         }
     }
 }

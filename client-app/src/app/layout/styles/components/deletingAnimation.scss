@@ -1,0 +1,179 @@
+.delete-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: "20px";
+
+    .delete-header {
+        text-align: center;
+        color: #640e18;
+    }
+
+    .printer {
+        background: #e03a4a;
+        width: 250px;
+        height: 100px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom-left-radius: 30px;
+        border-bottom-right-radius: 30px;
+        position: relative;
+        box-shadow: 0px 10px #b3182e;
+        margin: 150px;
+
+        .printer:before {
+            content: '';
+            width: 250px;
+            height: 12px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            background: #a9958f;
+            position: absolute;
+            top: 0;
+        }
+
+        .wrap {
+            display: flex;
+            justify-content: center;
+        }
+
+        .loader {
+            position: relative;
+        }
+
+        .loader div {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #b3182e;
+            position: absolute;
+            margin-top: 22px;
+            margin-left: 0px;
+        }
+
+        .loader div:nth-child(1) {
+            top: 9px;
+            left: 20px;
+            animation: sun 1s ease-in-out infinite 0s;
+        }
+
+        .loader div:nth-child(2) {
+            transform: rotate(42deg);
+            top: 14px;
+            left: 32px;
+            animation: sun 1s ease-in-out infinite 0.1s;
+        }
+
+        .loader div:nth-child(3) {
+            top: 27px;
+            left: 37px;
+            animation: sun 1s ease-in-out infinite 0.2s;
+        }
+
+        .loader div:nth-child(4) {
+            top: 40px;
+            left: 32px;
+            animation: sun 1s ease-in-out infinite 0.3s;
+        }
+
+        .loader div:nth-child(5) {
+            top: 46px;
+            left: 20px;
+            animation: sun 1s ease-in-out infinite 0.4s;
+        }
+
+        .loader div:nth-child(6) {
+            top: 40px;
+            left: 6px;
+            animation: sun 1s ease-in-out infinite 0.5s;
+        }
+
+        .loader div:nth-child(7) {
+            top: 27px;
+            left: 0px;
+            animation: sun 1s ease-in-out infinite 0.6s;
+        }
+
+        .loader div:nth-child(8) {
+            top: 14px;
+            left: 8px;
+            animation: sun 1s ease-in-out infinite 0.7s;
+        }
+
+        @keyframes sun {
+            0% {
+
+                background: #d43143;
+            }
+
+            25% {
+
+                background: #e64d5f;
+            }
+
+            50% {
+                background: #f59aa5;
+            }
+
+            75% {
+
+                background: #ad3644;
+            }
+
+            100% {
+                background: #b3182e;
+            }
+
+        }
+
+        .text {
+            color: #b3182e;
+            font-size: 22px;
+            margin-top: 41px;
+            margin-left: 55px;
+        }
+
+        .paper {
+            position: relative;
+            left: 0;
+            right: 0;
+            width: 200px;
+            height: 150px;
+            background: white;
+            box-shadow: 2px 2px 2px 0px #7b726e;
+            animation: cut 3s linear infinite;
+            margin-left: 26px;
+            z-index: -1;
+        }
+
+        .paper:after {
+            content: '';
+            background: white;
+            color: white;
+            width: 120px;
+            height: 6px;
+            position: absolute;
+            left: 135px;
+            right: 0;
+            bottom: -31px;
+            z-index: 3;
+            box-shadow: 0 13px, 0 26px, 0 39px, 0 52px, 0 65px, 0 78px, 0 91px, 0 104px, 0 117px, 0 130px, 0 143px, 0 155px, 0 167px, 0 180px, 0 192px;
+            transform: rotate(90deg);
+            border: 1px solid white;
+            border-color: white transparent transparent transparent;
+            border-radius: 50%/100px 100px 0 0;
+
+        }
+
+        @keyframes cut {
+            0% {
+                transform: translateY(-180px);
+            }
+
+            100% {
+                transform: translateY(-130px);
+            }
+        }
+    }
+}

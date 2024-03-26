@@ -3,7 +3,7 @@ import * as XLSX from "xlsx";
 import agent from "../api/Agent";
 import { tableHeaderProduct } from "../common/tableHeaders/tableHeaderProduct";
 import Pagination, { PaginatedResult, PagingParams } from "../models/pagination";
-import { Product } from "../models/product";
+import { Product, UploadedProduct } from "../models/product";
 import { Delivery } from "../models/productsWithoutUnit";
 
 export default class ProductStore {
@@ -35,12 +35,6 @@ export default class ProductStore {
     if (this.category == "Всички") this.category = "";
     else this.category = value;
   };
-
-  localSearch: string = "";
-
-  setLocalSearch = (value: string) => {
-    this.localSearch = value
-  }
 
   constructor() {
     makeAutoObservable(this);
@@ -222,6 +216,9 @@ export default class ProductStore {
     this.setLoadingInitial(true);
     try {
       const product = await agent.Products.details(id);
+      product.price = (product.price as unknown as number).toFixed(4);
+      product.deliveryPrice = (product.deliveryPrice as unknown as number).toFixed(4);
+
       this.setProduct(product);
       runInAction(() => (this.selectedProduct = product));
       this.setLoadingInitial(false);
@@ -242,7 +239,9 @@ export default class ProductStore {
       const delivery: Delivery = {
         deliveryCompanyId: deliveryCompanyId,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        products: products.map(({ unitDto: _unit, ...rest }) => rest)
+        products: products.map(({ unitDto: _unit, ...rest }) => ({
+          ...rest
+        }))
       };
       await agent.Products.create(delivery);
       runInAction(() => {
@@ -262,14 +261,38 @@ export default class ProductStore {
     }
   };
 
+  uploadProducts = async (products: UploadedProduct[]) => {
+    this.loading = true;
+    try {
+      await agent.Products.upload(products);
+      runInAction(() => {
+        this.loading = false;
+        this.productPagingRegistry.clear();
+        this.searchRegister.clear();
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  }
+
   updateProduct = async (product: Product) => {
     this.loading = true;
-
     try {
       product.modifiedOn = new Date();
       await agent.Products.edit(product);
       runInAction(() => {
         this.productRegistry.set(product.id, product);
+
+        // Update product in productPagingRegistry
+        this.productPagingRegistry.get(this.pagingParams.pageNumber.toString())?.forEach((p, index) => {
+          if (p.id === product.id) {
+            this.productPagingRegistry.get(this.pagingParams.pageNumber.toString())![index] = product;
+          }
+        });
+
         this.selectedProduct = product;
         this.editMode = false;
         this.loading = false;

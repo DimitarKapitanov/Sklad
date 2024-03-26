@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Button, Confirm, Header, Label } from "semantic-ui-react";
 import MySelectInput from "../../app/common/form/MySelectInput";
 import MyTextInput from "../../app/common/form/MyTextInput";
-import { UserInfo } from "../../app/models/user";
 import { Warehouse } from "../../app/models/warehouse";
 import { useStore } from "../../app/stores/store";
 
@@ -14,17 +13,11 @@ interface Props {
 
 export default observer(function EditWarehouse({ warehouseData }: Props) {
   const { warehouseStore, userStore, modalStore } = useStore();
-  const { getUsers, userRegistry, loadUsers } = userStore;
+  const { userRegistry, loadUsers, usersOptions } = userStore;
 
   useEffect(() => {
-    if (userRegistry.size <= 1) loadUsers();
+    if (userRegistry.size < 1) loadUsers();
   }, [userRegistry.size, loadUsers]);
-
-  const userOptions = getUsers.map((user: UserInfo) => ({
-    key: user.id,
-    text: user.userName,
-    value: user.userName,
-  }));
 
   const { editWarehouse, deleteWarehouse } = warehouseStore;
   const [deleteConfirmShow, setDeleteConfirmShow] = useState(false);
@@ -69,7 +62,7 @@ export default observer(function EditWarehouse({ warehouseData }: Props) {
                 label="Допълнителна информация"
               />
               <MySelectInput
-                options={userOptions}
+                options={usersOptions}
                 placeholder="Лице за контакт"
                 name="userName"
                 label="Лице за контакт"

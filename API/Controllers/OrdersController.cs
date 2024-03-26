@@ -6,23 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     public class OrdersController : BaseApiController
     {
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [HttpGet]
-        public async Task<ActionResult<List<GetOrdersDto>>> GetOrders()
+        public async Task<ActionResult<List<GetOrdersDto>>> GetOrders([FromQuery] OrderParams orderParams)
         {
-            return HandleResult(await Mediator.Send(new OrderList.Query()));
+            return HandlePageResult(await Mediator.Send(new OrderList.Query()));
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [HttpGet("{id}")]
         public async Task<ActionResult<GetOrderByIdDto>> GetOrder(Guid id)
         {
             return HandleResult(await Mediator.Send(new OrderDetails.Query { Id = id }));
         }
 
-        [AllowAnonymous]
-        // [Authorize(Roles = "Admin, Manager, Employee")]
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [HttpGet("user")]
         public async Task<ActionResult<List<GetOrdersDto>>> GetOrdersByUser([FromQuery] OrderParams orderParams)
         {
@@ -37,14 +38,7 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new OrderCreate.Command { CreateOrder = orderDto }));
         }
 
-        [Authorize(Roles = "Admin, Manager")]
-        [HttpPut]
-        public async Task<IActionResult> EditOrder(GetOrdersDto orderDto)
-        {
-            return HandleResult(await Mediator.Send(new OrderEdit.Command { OrderDto = orderDto }));
-        }
-
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [HttpGet("order-product/{id}")]
         public async Task<ActionResult<List<OrderDto>>> GetOrderProducts(Guid id, [FromQuery] OrderProductParams orderProductParams)
         {

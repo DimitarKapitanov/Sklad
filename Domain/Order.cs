@@ -10,6 +10,9 @@ namespace Domain
             this.Id = Guid.NewGuid();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int OrderNumber { get; set; }
+
         public Guid PartnerId { get; set; }
 
         public virtual Partner Partner { get; set; }
@@ -19,6 +22,8 @@ namespace Domain
         public virtual Warehouse Warehouse { get; set; }
 
         public bool IsCompleted { get; set; }
+        public Guid DeliveryAddressId { get; set; }
+        public virtual DeliveryAddress DeliveryAddress { get; set; }
 
         public DateTime? CompletedDate { get; set; }
 

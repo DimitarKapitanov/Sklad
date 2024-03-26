@@ -12,12 +12,12 @@ namespace Application.OrderList
 {
     public class OrderList
     {
-        public class Query : IRequest<Result<List<GetOrdersDto>>>
+        public class Query : IRequest<Result<PageList<GetOrdersDto>>>
         {
             public OrderParams Params { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<GetOrdersDto>>>
+        public class Handler : IRequestHandler<Query, Result<PageList<GetOrdersDto>>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -28,17 +28,18 @@ namespace Application.OrderList
                 _mapper = mapper;
                 _context = context;
             }
-            public async Task<Result<List<GetOrdersDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<PageList<GetOrdersDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName());
                 if (user == null) return null;
 
-                var orders = await _context.Orders
-                    .Where(x => x.IsDeleted == false && x.Warehouse.User.UserName == user.UserName)
-                    .ProjectTo<GetOrdersDto>(_mapper.ConfigurationProvider)
-                    .ToListAsync();
+                var query = _context.Orders
+                    .OrderByDescending(x => x.CreatedOn)
+                    .ThenByDescending(x => x.CreatedByUser.UserName)
+                    .ProjectTo<GetOrdersDto>(_mapper.ConfigurationProvider);
 
-                return Result<List<GetOrdersDto>>.Success(orders);
+                return Result<PageList<GetOrdersDto>>.Success(
+                    await PageList<GetOrdersDto>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize));
             }
         }
     }

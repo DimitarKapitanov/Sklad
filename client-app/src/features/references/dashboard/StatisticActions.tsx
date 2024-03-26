@@ -1,20 +1,15 @@
 import { observer } from "mobx-react-lite";
 import DatePicker from "react-datepicker";
-import { useNavigate } from "react-router-dom";
 import {
-    Button,
     Header,
     Input,
     Menu,
     MenuItem,
-    MenuMenu,
-    Select,
+    Select
 } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function StatisticActions() {
-    const navigate = useNavigate();
-
     const { warehouseStore: { wareHouseOptions }, statisticsStore, supplierStore } = useStore();
     const { predicate, setPredicate } = statisticsStore;
 
@@ -27,7 +22,8 @@ export default observer(function StatisticActions() {
                 }}
             >
                 <Header as="h2" content="Статистики" />
-                <MenuMenu position="right">
+                {/* To Do add export in excel */}
+                {/* <MenuMenu position="right">
                     <MenuItem>
                         <Button
                             primary
@@ -37,7 +33,7 @@ export default observer(function StatisticActions() {
                             content={"Изтегли в Excel"}
                         />
                     </MenuItem>
-                </MenuMenu>
+                </MenuMenu> */}
             </div>
             <Menu pointing secondary className="actions-sort">
                 <MenuItem

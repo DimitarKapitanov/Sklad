@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import { Button, Container, Header, Segment, Image } from "semantic-ui-react";
+import { Button, Container, Header, Image, Segment } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import LoginForm from "../users/LoginForm";
 
@@ -17,8 +17,8 @@ export default observer(function HomePage() {
                 {userStore.isLoggedIn ? (
                     <>
                         <Header as="h2" inverted content="Добре дошли в Склад" />
-                        <Button as={Link} to='/products' size="huge" inverted>
-                            Към продуктите
+                        <Button as={Link} to={userStore.user?.role.includes('Admin') || userStore.user?.role.includes('Manager') ? '/products' : '/orders'} size="huge" inverted>
+                            {userStore.user?.role.includes('Admin') || userStore.user?.role.includes('Manager') ? 'Към продуктите' : 'Към поръчките'}
                         </Button>
                     </>
 

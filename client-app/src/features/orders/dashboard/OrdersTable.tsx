@@ -7,7 +7,6 @@ import OrderTableList from "./OrderTableList";
 
 interface Props {
   id: string;
-  activeIndex: string | null;
 }
 
 export default observer(function OrderTable({ id }: Props) {
@@ -23,12 +22,10 @@ export default observer(function OrderTable({ id }: Props) {
     loadOrdersByWarehouse,
     pagination,
     ordersByWarehouse,
+    setLastWarehouseId,
   } = orderStore;
 
-  function handlePageChange(
-    _: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-    data: PaginationProps
-  ) {
+  function handlePageChange(_: React.MouseEvent<HTMLAnchorElement, MouseEvent>, data: PaginationProps) {
     const activePage = data.activePage as number;
     setPagingParams(new PagingParams(activePage));
     loadOrdersByWarehouse(id);
@@ -36,7 +33,7 @@ export default observer(function OrderTable({ id }: Props) {
 
   useEffect(() => {
     if (id) loadOrdersByWarehouse(id);
-  }, [id, loadOrdersByWarehouse]);
+  }, [id, loadOrdersByWarehouse, setLastWarehouseId]);
 
   return (
     <>

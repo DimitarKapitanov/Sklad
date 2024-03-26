@@ -17,6 +17,8 @@ interface Props {
   onChange?: (data: unknown) => void;
   search?: boolean;
   onSearchChange?: (e: React.SyntheticEvent<HTMLElement, Event>, data: { searchQuery: string }) => void;
+  onClear?: () => void;
+  required?: boolean;
 }
 
 export default observer(function MySelectInput(props: Props) {
@@ -28,8 +30,9 @@ export default observer(function MySelectInput(props: Props) {
         className="ui grid"
         style={{ flex: 1, flexFlow: "column" }}
         error={meta.touched && !!meta.error}
+        required={props.required}
       >
-        <label>{props.label}</label>
+        {props.label && <label>{props.label}</label>}
         <Select
           clearable
           options={props.options}
@@ -44,6 +47,9 @@ export default observer(function MySelectInput(props: Props) {
             }
             if (props.onChange) {
               props.onChange(d.value);
+            }
+            if (!d.value && props.onClear) {
+              props.onClear();
             }
           }}
           onBlur={() => helpers.setTouched(true)}

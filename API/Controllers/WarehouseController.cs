@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     public class WarehouseController : BaseApiController
     {
         [HttpGet]

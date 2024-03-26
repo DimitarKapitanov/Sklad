@@ -70,25 +70,38 @@ export default class UserStore {
     }
 
     createUser = async (user: NewUserFormValues) => {
+        this.loadingUsers = true;
         try {
             await agent.Account.createUser(user);
             runInAction(() => {
                 this.loadUsers();
+                this.loadingUsers = false;
                 store.modalStore.closeModal();
             });
         } catch (error) {
             console.log(error);
+            runInAction(() => this.loadingUsers = false);
         }
     }
 
     get getUsers() {
-        return Array.from(this.userRegistry.values()).filter(user =>
-            user.displayName?.toLowerCase().includes(this.search.toLowerCase().trim()) ||
-            user.email?.toLowerCase().includes(this.search.toLowerCase().trim()) ||
-            user.phoneNumber?.toLowerCase().includes(this.search.toLowerCase().trim()) ||
-            user.userName?.toLowerCase().includes(this.search.toLowerCase().trim()) ||
-            user.bio?.toLowerCase().includes(this.search.toLowerCase().trim()
-            ));
+        return Array.from(this.userRegistry.values());
+    }
+
+    updateUser = async (user: UserFormValues) => {
+        this.loadingUsers = true;
+        try {
+            await agent.Account.editUser(user);
+            runInAction(() => {
+                this.userRegistry.set(user.id!, user as UserInfo);
+                this.loadingUsers = false;
+            });
+        } catch (error) {
+            console.log(error);
+            runInAction(() => {
+                this.loadingUsers = false;
+            });
+        }
     }
 
     setLoadingUsers = (state: boolean) => {

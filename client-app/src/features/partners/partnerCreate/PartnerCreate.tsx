@@ -11,7 +11,7 @@ import {
   Segment,
 } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
-import MyTextInput from "../../../app/common/form/MyTextInput";
+import MyCustomInput from "../../../app/common/form/MyCustomInput";
 import { NewPartner } from "../../../app/models/newPartner";
 import { DeliveryAddress } from "../../../app/models/partner";
 import { useStore } from "../../../app/stores/store";
@@ -63,12 +63,12 @@ export default observer(function PartnerCreate() {
       phone: "",
       email: "",
       companyOwnerName: "",
+      isSupplier: false,
+      isClient: true,
     },
     phone: "",
     email: "",
     deliveryAddresses: [],
-    isDelivery: false,
-    isClient: true,
   });
 
   return (
@@ -84,10 +84,9 @@ export default observer(function PartnerCreate() {
           }}
           onSubmit={(values) => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { deliveryAddress, isDelivery, ...rest } = values;
+            const { deliveryAddress, ...rest } = values;
             submitCreatePartner({
               ...rest,
-              isDelivery: newPartner.isDelivery,
             });
           }}
           validationSchema={newPartnerValidationSchema}
@@ -110,52 +109,44 @@ export default observer(function PartnerCreate() {
                   <Header as="h3">Информация за фирма</Header>
                   <div className="partner-create_company-check_fields">
                     <Checkbox
+                      checked={values.createCompanyDto.isClient}
                       onChange={() => {
-                        setNewPartner({
-                          ...newPartner,
-                          isClient: !newPartner.isClient,
-                        });
+                        setFieldValue('createCompanyDto.isClient', !values.createCompanyDto.isClient);
                       }}
-                      checked={newPartner.isClient}
                       label="Клиент"
                       toggle
                     />
                     <Checkbox
-                      checked={newPartner.isDelivery}
-                      onChange={() =>
-                        setNewPartner({
-                          ...newPartner,
-                          isDelivery: !newPartner.isDelivery,
-                        })
-                      }
+                      checked={values.createCompanyDto.isSupplier}
+                      onChange={() => {
+                        setFieldValue('createCompanyDto.isSupplier', !values.createCompanyDto.isSupplier);
+                      }}
                       label="Доставчик"
                       toggle
                     />
                   </div>
                 </div>
-                {(newPartner.isClient || newPartner.isDelivery) && (
+                {(newPartner.createCompanyDto.isClient || newPartner.createCompanyDto.isSupplier) && (
                   <CompanyInfoFields
-                    isDelivery={newPartner.isDelivery}
-                    isClient={newPartner.isClient}
+                    isSupplier={newPartner.createCompanyDto.isSupplier}
+                    isClient={newPartner.createCompanyDto.isClient}
                   />
                 )}
               </div>
               <div>
-                {newPartner.isClient && (
+                {newPartner.createCompanyDto.isClient && (
                   <>
                     <Divider />
                     <div className="partner-delivery">
                       <Header as="h3">Информация за клиент</Header>
                       <div className="partner-delivery-addresses">
                         <div className="partner-delivery-addresses-fields">
-                          <MyTextInput
-                            name={`deliveryAddress.city`}
-                            value={values.deliveryAddress.city}
+                          <MyCustomInput
+                            name={'deliveryAddress.city'}
                             placeholder="Град"
                           />
-                          <MyTextInput
-                            name={`deliveryAddress.address`}
-                            value={values.deliveryAddress.address}
+                          <MyCustomInput
+                            name='deliveryAddress.address'
                             placeholder="Адрес"
                           />
                           <Button
@@ -163,10 +154,10 @@ export default observer(function PartnerCreate() {
                             positive
                             disabled={
                               values.deliveryAddress.address === "" ||
-                              values.deliveryAddress.city === ""
+                              values.deliveryAddress.city === "" || !isValid || !dirty
                             }
-                            onClick={(event) => {
-                              event.preventDefault();
+                            onClick={() => {
+                              // event.preventDefault();
                               addDeliveryAddress(
                                 values.deliveryAddress.address,
                                 values.deliveryAddress.city
@@ -196,7 +187,7 @@ export default observer(function PartnerCreate() {
                   (!dirty && !isValid) ||
                   isSubmitting ||
                   (newPartner.deliveryAddresses.length === 0 &&
-                    newPartner.isClient)
+                    newPartner.createCompanyDto.isClient)
                 }
               >
                 Създай

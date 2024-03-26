@@ -18,12 +18,14 @@ namespace Application.Core
             CreateMap<Unit, UnitDto>();
 
             CreateMap<UnitDto, Unit>();
-
+            CreateMap<DeliveryAddressDto, DeliveryAddress>();
+            CreateMap<DeliveryAddress, DeliveryAddressDto>();
             CreateMap<OrderProduct, OrderProductDto>();
             CreateMap<OrderProductDto, OrderProduct>();
-
+            CreateMap<UploadedProductsDto, Product>();
             CreateMap<OrderProduct, OrderProduct>();
-            CreateMap<Product, GetProductDto>();
+            CreateMap<Product, GetProductDto>()
+            .ForMember(d => d.UnitDto, o => o.MapFrom(s => s.Unit));
             CreateMap<Warehouse, WarehouseDto>()
             .ForMember(d => d.UserName, o => o.MapFrom(s => s.User.UserName));
             CreateMap<WarehouseDto, Warehouse>();
@@ -35,7 +37,9 @@ namespace Application.Core
             CreateMap<ProductDto, Product>()
             .ForMember(d => d.Unit, o => o.MapFrom(s => s.UnitDto));
 
-            CreateMap<OrderDto, Order>();
+            CreateMap<OrderDto, Order>()
+                .ForMember(d => d.DeliveryAddressId, o => o.MapFrom(s => s.DeliveryAddressId));
+
             CreateMap<Order, OrderDto>()
                 .ForMember(d => d.OrderProductDto, o => o.MapFrom(s => s.OrderProducts))
                 .ForMember(d => d.PartnerName, o => o.MapFrom(s => s.Partner.Company.Name))
@@ -45,7 +49,7 @@ namespace Application.Core
                 .ForMember(d => d.Phone, o => o.MapFrom(s => s.Partner.Phone))
                 .ForMember(d => d.Address, o => o.MapFrom(s => s.Partner.Company.Address))
                 .ForMember(d => d.Vat, o => o.MapFrom(s => s.Partner.Company.Bulstat))
-                .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.Partner.DeliveryAddresses.Select(c => c.Address).FirstOrDefault()))
+                .ForMember(d => d.DeliveryAddressId, o => o.MapFrom(s => s.DeliveryAddressId))
                 .ForMember(d => d.WarehouseName, o => o.MapFrom(s => s.Warehouse.Name))
                 .ForMember(d => d.CompletedDate, o => o.MapFrom(s => s.CompletedDate))
                 .ForMember(d => d.OrderCreated, o => o.MapFrom(s => s.CreatedOn))
@@ -59,7 +63,7 @@ namespace Application.Core
                 .ForMember(d => d.Phone, o => o.MapFrom(s => s.Partner.Phone))
                 .ForMember(d => d.Address, o => o.MapFrom(s => s.Partner.Company.Address))
                 .ForMember(d => d.Bulstat, o => o.MapFrom(s => s.Partner.Company.Bulstat))
-                .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.Partner.DeliveryAddresses.Select(c => c.Address).FirstOrDefault()))
+                .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.DeliveryAddress.Address))
                 .ForMember(d => d.WarehouseName, o => o.MapFrom(s => s.Warehouse.Name))
                 .ForMember(d => d.ContactPersonId, o => o.MapFrom(s => s.Warehouse.ContactPersonId))
                 .ForMember(d => d.ContactPersonName, o => o.MapFrom(s => s.Warehouse.User.DisplayName))
@@ -77,7 +81,8 @@ namespace Application.Core
                 .ForMember(d => d.Phone, o => o.MapFrom(s => s.Partner.Phone))
                 .ForMember(d => d.Address, o => o.MapFrom(s => s.Partner.Company.Address))
                 .ForMember(d => d.Bulstat, o => o.MapFrom(s => s.Partner.Company.Bulstat))
-                .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.Partner.DeliveryAddresses.Select(c => c.Address).FirstOrDefault()))
+                .ForMember(d => d.DeliveryCity, o => o.MapFrom(s => s.DeliveryAddress.City))
+                .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.DeliveryAddress.Address))
                 .ForMember(d => d.WarehouseName, o => o.MapFrom(s => s.Warehouse.Name))
                 .ForMember(d => d.ContactPersonId, o => o.MapFrom(s => s.Warehouse.ContactPersonId))
                 .ForMember(d => d.ContactPersonName, o => o.MapFrom(s => s.Warehouse.User.DisplayName))
@@ -94,8 +99,8 @@ namespace Application.Core
                 .ForMember(d => d.Phone, o => o.MapFrom(s => s.Partner.Phone))
                 .ForMember(d => d.Address, o => o.MapFrom(s => s.Partner.Company.Address))
                 .ForMember(d => d.Bulstat, o => o.MapFrom(s => s.Partner.Company.Bulstat))
-                .ForMember(d => d.DeliveryCity, o => o.MapFrom(s => s.Partner.DeliveryAddresses.Select(c => c.City).FirstOrDefault()))
-                .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.Partner.DeliveryAddresses.Select(c => c.Address).FirstOrDefault()))
+                .ForMember(d => d.DeliveryCity, o => o.MapFrom(s => s.DeliveryAddress.City))
+                .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.DeliveryAddress.Address))
                 .ForMember(d => d.WarehouseName, o => o.MapFrom(s => s.Warehouse.Name))
                 .ForMember(d => d.IsCompleted, o => o.MapFrom(s => s.IsCompleted))
                 .ForMember(d => d.CompletedDate, o => o.MapFrom(s => s.CompletedDate))
@@ -129,7 +134,7 @@ namespace Application.Core
                 .ForMember(d => d.Phone, o => o.MapFrom(s => s.Partner.Phone))
                 .ForMember(d => d.Address, o => o.MapFrom(s => s.Partner.Company.Address))
                 .ForMember(d => d.Vat, o => o.MapFrom(s => s.Partner.Company.Bulstat))
-                .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.Partner.DeliveryAddresses.Select(c => c.Address).FirstOrDefault()))
+                .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.DeliveryAddress.Address))
                 .ForMember(d => d.IsCompleted, o => o.MapFrom(s => s.IsCompleted))
                 .ForMember(d => d.CompletedDate, o => o.MapFrom(s => s.CompletedDate))
                 .ForMember(d => d.CreatedOn, o => o.MapFrom(s => s.CreatedOn))
@@ -142,8 +147,7 @@ namespace Application.Core
             CreateMap<Warehouse, WarehouseOrderDto>()
                 .ForMember(d => d.OrdersByWarehouse, o => o.MapFrom(s => s.Orders));
 
-            CreateMap<DeliveryAddressDto, DeliveryAddress>();
-            CreateMap<DeliveryAddress, DeliveryAddressDto>();
+
             CreateMap<CreateCompanyDto, Company>();
             CreateMap<CreatePartnerDto, Partner>()
                 .ForMember(d => d.Company, o => o.MapFrom(s => s.CreateCompanyDto));
@@ -162,7 +166,6 @@ namespace Application.Core
                 .ForMember(d => d.DeliveryAddress, o => o.MapFrom(s => s.DeliveryAddresses));
 
             CreateMap<Company, SupplierDto>();
-
             CreateMap<AppUser, Profiles.Profile>()
              .ForMember(d => d.Image, o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain).Url));
 

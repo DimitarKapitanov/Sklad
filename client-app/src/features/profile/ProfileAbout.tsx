@@ -13,8 +13,8 @@ export default observer(function ProfileAbout({ profile }: Props) {
     const { loadOrdersByUsername, orderRegistry, getOrderByUser } = orderStore;
 
     useEffect(() => {
-        if (orderRegistry.size < 1) loadOrdersByUsername(profile.username);
-    }, [loadOrdersByUsername, orderRegistry.size, profile.username])
+        if (orderRegistry.size < 1) loadOrdersByUsername(profile.displayName!);
+    }, [loadOrdersByUsername, orderRegistry.size, profile.displayName])
 
     return (
         <>

@@ -41,7 +41,6 @@ body {
   width: 100% !important;
   background: white !important;
   border: none !important;
-  font-family: Arial, Helvetica, sans-serif !important;
   line-height: 1.125em !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
 }
@@ -163,16 +162,17 @@ td {
 }
 
 input:focus {
-  border: 1px solid rgba(34, 36, 38, .15);
-  border-color: #85b7d9;
-  background: #fff;
-  color: rgba(0, 0, 0, .8);
-  box-shadow: none;
-  border-radius: .28571429rem;
-  outline: none;
+  border: 1px solid rgba(34, 36, 38, .15) !important;
+  border-color: #85b7d9 !important;
+  background: #fff !important;
+  color: rgba(0, 0, 0, .8) !important;
+  box-shadow: none !important;
+  border-radius: .28571429rem !important;
+  outline: none !important;
 }
 
-.actions-inputs.statistics-filter {
+.actions-inputs.statistics-filter,
+.actions-inputs.order-filter {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -189,6 +189,25 @@ input:focus {
   }
 }
 
+.custom-select.css-b62m3t-container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.animated-modal {
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @media only screen and (min-width: 600px) and (max-width: 1023px) {
 
   /* Your CSS rules for tablet devices go here */
@@ -196,7 +215,7 @@ input:focus {
     width: 90% !important;
     padding-right: 0 !important;
     padding-left: 0 !important;
-    margin: 0 auto !important;
+    margin: 40px auto !important;
 
     .ui.container {
       width: 100% !important;
@@ -262,6 +281,39 @@ input:focus {
       bottom: 12px;
     }
   }
+
+  .actions-inputs.statistics-filter,
+  .actions-inputs.order-filter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .search-warehouse-select,
+    .date-selectors {
+      display: flex;
+      flex-direction: column;
+      justify-content: left;
+      width: 100%;
+
+      .item,
+      .custom-search {
+        align-self: auto !important;
+        width: 100% !important;
+      }
+
+      .item {
+        &.custom-search {
+          padding: 0 !important;
+        }
+
+        padding: 0.85714286em 1.14285714em !important;
+      }
+    }
+  }
+
+  .profile-order {
+    overflow-x: auto;
+  }
 }
 
 @media only screen and (min-width: 321px) and (max-width: 599px) {
@@ -291,6 +343,31 @@ input:focus {
     }
   }
 
+  .actions-inputs.statistics-filter,
+  .actions-inputs.order-filter {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+
+    .search-warehouse-select,
+    .date-selectors {
+      display: flex;
+      flex-direction: column;
+      justify-content: left;
+      width: 100%;
+
+      .item,
+      .custom-search {
+        align-self: auto !important;
+      }
+
+      .item {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+    }
+  }
+
   .predicate {
     overflow-x: auto;
     padding-bottom: 10px;
@@ -314,6 +391,10 @@ input:focus {
   .actions-sort {
     overflow-x: scroll !important;
     padding-bottom: 20px;
+  }
+
+  .profile-order {
+    overflow-x: auto;
   }
 
   .product-actions {
@@ -393,9 +474,9 @@ input:focus {
     margin-right: 1rem;
   }
 
-  .horizontal-gradient {
-    background: linear-gradient(90deg, blue, pink) !important;
-  }
+  // .horizontal-gradient {
+  //   background: linear-gradient(90deg, blue, pink) !important;
+  // }
 }
 
 @import url("./components/profilePage.scss");
@@ -404,3 +485,4 @@ input:focus {
 @import url("./components/usersPage.scss");
 @import url("./components/checkbox.scss");
 @import url("./components/partner.scss");
+@import url("./components/deletingAnimation.scss");

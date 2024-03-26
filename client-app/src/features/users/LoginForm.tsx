@@ -40,7 +40,7 @@ export default observer(function LoginForm() {
           <Button
             loading={isSubmitting}
             positive
-            content="Login"
+            content="Влез"
             type="submit"
             fluid
           />

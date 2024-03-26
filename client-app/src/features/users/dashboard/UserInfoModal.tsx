@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Button, Header, Select } from "semantic-ui-react";
 import { UserInfo } from "../../../app/models/user";
@@ -12,11 +12,17 @@ interface Props {
 }
 
 export default observer(function UserInfoModal(props: Props) {
-    const { modalStore } = useStore();
+    const { modalStore, orderStore: { clearPagedOrderRegistry } } = useStore();
     const location = useLocation();
     const isUsersRoute = location.pathname === '/users';
 
     const [activeTab, setActiveTab] = useState("1");
+
+    useEffect(() => {
+        if (activeTab === "2") {
+            clearPagedOrderRegistry();
+        }
+    }, [activeTab, clearPagedOrderRegistry]);
 
     return (
         <>
@@ -26,7 +32,7 @@ export default observer(function UserInfoModal(props: Props) {
             <Select
                 options={[
                     { key: "1", value: "1", text: "Обща информация" },
-                    { key: "2", value: "2", text: "Завършени курсове" },
+                    { key: "2", value: "2", text: "Завършени поръчки" },
                 ]}
                 onChange={(_, data) => {
                     setActiveTab(data.value as string);
@@ -44,7 +50,7 @@ export default observer(function UserInfoModal(props: Props) {
                         <TextField label="Биография" value={props.user.bio || ""} name="bio" bigger={true} rows={5} />
                     </>
                 ) : activeTab === "2" &&
-                <ProfileOrders username={props.user.userName} />
+                <ProfileOrders displayName={props.user.displayName} />
             }
             {
                 isUsersRoute && (

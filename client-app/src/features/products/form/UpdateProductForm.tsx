@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { Button, ButtonGroup, Container, Header, Segment } from "semantic-ui-react";
-import MyTextInput from "../../../app/common/form/MyTextInput";
+import MyCustomInput from "../../../app/common/form/MyCustomInput";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { Product } from "../../../app/models/product";
 import { useStore } from "../../../app/stores/store";
@@ -18,8 +18,8 @@ export default observer(function ProductForm({ id }: Props) {
         id: '',
         name: '',
         quantity: 0,
-        deliveryPrice: 0,
-        price: 0,
+        deliveryPrice: '',
+        price: '',
         category: '',
         unitId: '',
         unitAcronym: '',
@@ -29,15 +29,14 @@ export default observer(function ProductForm({ id }: Props) {
         isDeleted: false,
         deletedOn: null,
         unitDto: { id: '', acronym: '' },
-        deliveryCompanyId: ''
-    })
+    });
 
     useEffect(() => {
         if (id) loadProduct(id).then(product => setProduct(product!))
     }, [id, loadProduct]);
 
     function handleProductEditSubmit(product: Product) {
-        updateProduct(product!).then(() => modalStore.closeModal());
+        updateProduct(product).then(() => modalStore.closeModal());
     }
 
     if (loadingInitial) return <LoadingComponent content='Зареждане...' />
@@ -53,10 +52,10 @@ export default observer(function ProductForm({ id }: Props) {
                     onSubmit={values => handleProductEditSubmit(values)}>
                     {({ handleSubmit }) => (
                         <Form className="ui form" onSubmit={handleSubmit} autoComplete='off'>
-                            <MyTextInput name='name' placeholder='Име' label='Име' />
-                            <MyTextInput placeholder='Продажна цена' label='Продажна цена' name='price' />
-                            <MyTextInput placeholder='Доставна цена' label='Доставна цена' name='deliveryPrice' />
-                            <MyTextInput placeholder='Описание' label='Допълнително описание' name='description' />
+                            <MyCustomInput name='name' placeholder='Име' label='Име' />
+                            <MyCustomInput placeholder='Продажна цена' label='Продажна цена' name='price' />
+                            <MyCustomInput placeholder='Доставна цена' label='Доставна цена' name='deliveryPrice' />
+                            <MyCustomInput placeholder='Описание' label='Допълнително описание' name='description' />
                             <ButtonGroup floated="right" >
                                 <Button loading={loading} type='submit' positive>Изпрати</Button>
                                 <Button onClick={() => modalStore.closeModal()} color='red' type="button" content='Отказ' />

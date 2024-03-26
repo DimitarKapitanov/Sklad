@@ -11,8 +11,8 @@ export interface ProductWithoutUnit {
     unitId: string;
     unitAcronym: string | undefined;
     description: string;
-    price: number;
-    deliveryPrice: number;
+    price: string;
+    deliveryPrice: string;
     isDeleted: boolean;
     id: string;
     createdOn: Date | null;

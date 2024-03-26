@@ -5,7 +5,7 @@ export interface User {
     token: string;
     image?: string;
     email: string;
-    roles: string[];
+    role: string;
     bio: string;
     phoneNumber: string;
 }
@@ -22,10 +22,14 @@ export interface UserInfo {
 }
 
 export interface UserFormValues {
+    id?: string;
     email: string;
     password: string;
     displayName?: string;
     userName?: string;
+    role?: string;
+    phoneNumber?: string;
+    bio?: string;
 }
 
 export interface NewUserFormValues {

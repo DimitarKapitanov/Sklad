@@ -11,7 +11,7 @@ interface Props {
   user: UserInfo;
 }
 
-export default observer(function UsersDashboard(props: Props) {
+export default observer(function UsersCard(props: Props) {
   const { modalStore } = useStore();
   const { openModals } = modalStore;
 

@@ -7,26 +7,28 @@
 
     .content {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: 20px;
         width: 100%;
 
         .profile-card {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             min-width: fit-content;
-            width: 30%;
+            width: 100%;
             height: fit-content;
             padding: 20px;
             // position: sticky;
             top: 10vh;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
             border-radius: 10px;
+            justify-content: space-between;
 
             .first-section {
                 display: flex;
-                flex-direction: column;
+                flex-direction: row;
                 align-items: center;
+                gap: 20px;
 
                 .profile-image {
                     aspect-ratio: 1/1;
@@ -34,32 +36,21 @@
                     border-radius: 100%;
                 }
 
-                .name {
-                    margin-top: 20px;
-                    font-weight: bold;
-                    font-size: 17px;
-                }
-
-                .position {
-                    margin-top: 5px;
-                    font-size: 15px;
-                    font-weight: 600;
-                    color: rgba(0, 0, 0, 0.5);
-                }
-
-                .location {
-                    margin: 10px 0;
-                    color: rgba(0, 0, 0, 0.5);
+                .role {
                     display: flex;
-                    flex-direction: row;
+                    flex-direction: column;
                     align-items: center;
-                    gap: 5px;
 
+                    .name {
+                        font-weight: bolder;
+                        font-size: 26px;
+                    }
 
-                    .location-text {
-                        font-size: 14px;
-                        font-weight: 650;
-                        color: rgba(0, 0, 0, 0.7);
+                    .position {
+                        margin-top: 5px;
+                        font-size: 15px;
+                        font-weight: 600;
+                        color: rgba(0, 0, 0, 0.5);
                     }
                 }
             }
@@ -84,12 +75,22 @@
                         color: rgba(0, 0, 0, 0.7);
                     }
                 }
-            }
 
-            .third-section {
-                display: flex;
-                flex-direction: column;
-                padding: 0 10px;
+                .location {
+                    margin: 10px 0;
+                    color: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    flex-direction: row;
+                    gap: 5px;
+                    align-items: center;
+
+
+                    .location-text {
+                        font-size: 14px;
+                        font-weight: 650;
+                        color: rgba(0, 0, 0, 0.7);
+                    }
+                }
 
                 .warehouse {
                     display: flex;
@@ -99,21 +100,14 @@
                     .warehouse-label {
                         display: flex;
                         flex-direction: row;
-                        gap: 5px;
                         font-weight: 650;
                         font-size: 15px;
+                        gap: 5px;
 
                         .warehouse-label-text {
-                            font-size: 12px;
+                            font-size: 14px;
                         }
                     }
-
-                    .warehouse-text {
-                        font-size: 13px;
-                        font-weight: 650;
-                        color: rgba(0, 0, 0, 0.7);
-                    }
-
                 }
             }
         }
@@ -176,7 +170,7 @@
 
 
 
-@include media('small-desktop') {
+@media only screen and (min-width: 600px) and (max-width: 1023px) {
     .profile-page {
         .content {
             flex-direction: column;
@@ -184,13 +178,41 @@
 
             .profile-card {
                 position: unset;
-                width: 80%;
+                width: 90%;
             }
 
             .profile-info {
-                width: 80%;
+                width: 90%;
 
+                &.wrapped {
+                    .ui.grid {
+                        width: 100%;
+                        flex-direction: column-reverse;
+                        margin: 0;
 
+                        .column {
+                            width: 100% !important;
+
+                            .ui.stackable.grid {
+                                margin: 0 !important;
+                            }
+                        }
+                    }
+
+                    .ui.stackable.grid.photo-container {
+                        flex-direction: row !important;
+
+                        .photo-upload {
+                            flex-direction: column !important;
+
+                            .column {
+                                max-width: none !important;
+                                display: flex;
+                                flex-direction: column;
+                            }
+                        }
+                    }
+                }
 
                 .general-profile-info {
                     display: flex;
@@ -202,10 +224,14 @@
     }
 }
 
-@include media('tablet') {
+@media only screen and (max-width: 599px) {
     .profile-page {
         .content {
+            flex-direction: column;
+            align-items: center;
+
             .profile-card {
+                flex-direction: column;
                 width: 100%;
             }
 
@@ -233,6 +259,17 @@
 
                     .ui.stackable.grid.photo-container {
                         flex-direction: column !important;
+
+                        .photo-upload {
+                            flex-direction: column !important;
+
+                            .column {
+                                max-width: none !important;
+                                display: flex;
+                                flex-direction: column;
+                                // align-items: center;
+                            }
+                        }
 
                         .photo-image {
                             flex-direction: column;

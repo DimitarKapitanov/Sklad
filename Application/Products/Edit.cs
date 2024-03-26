@@ -1,12 +1,9 @@
-using System.Globalization;
 using System.Text.Json;
 using Application.Core;
 using Application.DTOs.ProductDTOs;
 using AutoMapper;
-using Domain;
 using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Persistence;
 using Unit = MediatR.Unit;
 
@@ -31,11 +28,9 @@ namespace Application.Products
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
-            private readonly ILogger<Product> _logger;
 
-            public Handler(DataContext context, IMapper mapper, ILogger<Product> logger)
+            public Handler(DataContext context, IMapper mapper)
             {
-                _logger = logger;
                 _mapper = mapper;
                 _context = context;
             }

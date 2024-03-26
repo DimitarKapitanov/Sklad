@@ -153,7 +153,7 @@ export default class CommonStore {
   });
 
   orderCreateValidationSchema = Yup.object().shape({
-    partner: Yup.string().required('Изберете клиент'),
+    partner: Yup.string().required('Моля изберете партньор'),
     warehouse: Yup.string().required('Изберете склад'),
     deliveryAddress: Yup.string().required('Изберете адрес за доставка'),
     product: Yup.object().shape({
@@ -200,22 +200,27 @@ export default class CommonStore {
 
   newPartnerValidationSchema = Yup.object().shape({
     createCompanyDto: Yup.object({
-      name: Yup.string().required("Името на фирмата е задължително"),
-      city: Yup.string().required("Градът е задължителен"),
-      address: Yup.string().required("Адресът е задължителен"),
-      bulstat: Yup.string().required("Булстатът е задължителен"),
+      name: Yup.string().required("Името на фирмата е задължително")
+        .matches(/^[a-zA-Zа-яА-Я0-9._\\-\\s ]*$/, "Името на компанията трябва да съдържа само букви, цифри и интервали!"),
+      city: Yup.string().required("Градът е задължителен")
+        .matches(/^[a-zA-Zа-яА-Я ]*$/, "Градът трябва да съдържа само букви!"),
+      address: Yup.string().required("Адресът е задължителен")
+        .matches(/^[a-zA-Zа-яА-Я0-9.\\-\\s \\""]*$/, "Адресът трябва да съдържа само букви, цифри и интервали!"),
+      bulstat: Yup.string().required("Булстатът е задължителен")
+        .matches(/^[0-9]{9}$|^[0-9]{10}$|^[0-9]{13}$/, "Булстатът трябва да съдържа 9, 10 или 13 цифри"),
       phone: Yup.string()
         .required("Телефонът е задължителен")
         .matches(
           /^(\+)?([ 0-9]){10,}$/,
           "Телефонният номер трябва да е валиден"
-        ),
+        )
+        .matches(/^(\+[1-9][\d]*|00[1-9][\d]*|0[1-9][\d]*)$/, "Телефонният номер трябва да е валиден"),
       email: Yup.string()
         .required("Имейлът е задължителен")
         .email("Трябва да въведете валиден имейл"),
       companyOwnerName: Yup.string().required(
         "Името на собственика е задължително"
-      ),
+      ).matches(/^[a-zA-Zа-яА-Я ]*$/, "Името на собственика трябва да съдържа само букви!"),
     }).required("Трябва да има поне една фирма"),
     phone: Yup.string()
       .required("Телефонът е задължителен")
@@ -224,8 +229,8 @@ export default class CommonStore {
       .required("Имейлът е задължителен")
       .email("Трябва да въведете валиден имейл"),
     deliveryAddress: Yup.object({
-      city: Yup.string(),
-      address: Yup.string()
+      city: Yup.string().matches(/^[a-zA-Zа-яА-Я\s ]*$/, "Градът трябва да съдържа само букви!"),
+      address: Yup.string().matches(/^[a-zA-Zа-яА-Я0-9.\-\s "]*$/, "Адресът трябва да съдържа само букви, цифри и интервали!")
     })
   });
 
@@ -236,45 +241,45 @@ export default class CommonStore {
   });
 
   createUserValidationSchema = Yup.object({
-    displayName: Yup.string().required("Името е задължително"),
+    displayName: Yup.string().required("Името е задължително").matches(/^[a-zA-Zа-яА-Я\s]*$/, "Името трябва да се състои само от букви, цифри и интервали на латиница или кирилица"),
     userName: Yup.string().matches(
-      /^[a-zA-Z0-9]+$/,
-      "Потребителското име трябва да се състои само от букви и цифри"
+      /^[a-zA-Z0-9]*$/,
+      "Потребителското име трябва да се състои само от букви и цифри на латиница"
     ).required("Потребителското име е задължително"),
     email: Yup.string().required("Имейлът е задължителен").email("Въведете валиден имейл"),
     password: Yup.string()
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/,
         "Паролата трябва да съдържа малка буква, главна буква и цифра"
       )
-      .min(4, "Паролата трябва да е поне 4 символа")
-      .max(8, "Паролата трябва да е не повече от 8 символа")
+      .min(6, "Паролата трябва да е поне 6 символа")
       .required("Паролата е задължителна"),
     phoneNumber: Yup.string()
       .required("Телефонът е задължителен")
-      .matches(/^(\+)?([ 0-9]){10,}$/, "Телефонният номер трябва да е валиден"),
+      .matches(/^(\+[1-9][\d]*|00[1-9][\d]*|0[1-9][\d]*)$/, "Телефонният номер трябва да е валиден"),
+    role: Yup.string().required('Полето е задължително').matches(/^(Employee|Manager|Admin)$/, "Ролята трябва да бъде Служител, Мениджър или Администратор"),
+    bio: Yup.string().matches(
+      /^[\w\s.,!?а-яА-Я]*$/,
+      "Биографията трябва да се състои само от букви и цифри"
+    ).nullable()
   });
 
   userEditValidationSchema = Yup.object({
-    displayName: Yup.string().matches(
-      /^[a-zA-Zа-яА-Я0-9\s]+$/,
-      "Потребителското име трябва да се състои само от букви и цифри"
-    ).required("Полето е задължително"),
+    displayName: Yup.string().required("Името е задължително").matches(/^[a-zA-Zа-яА-Я\s]*$/, "Името трябва да се състои само от букви, цифри и интервали на латиница или кирилица"),
     email: Yup.string().required("Имейлът е задължителен").email("Въведете валиден имейл"),
     phoneNumber: Yup.string()
       .required("Телефонът е задължителен")
-      .matches(/^(\+)?([ 0-9]){10,}$/, "Телефонният номер трябва да е валиден"),
-    role: Yup.string().required('Полето е задължително'),
+      .matches(/^(\+[1-9][\d]*|00[1-9][\d]*|0[1-9][\d]*)$/, "Телефонният номер трябва да е валиден"),
+    role: Yup.string().required('Полето е задължително').matches(/^(Employee|Manager|Admin)$/, "Ролята трябва да бъде Служител, Мениджър или Администратор"),
     password: Yup.string()
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/,
         "Паролата трябва да съдържа малка буква, главна буква и цифра"
       )
-      .min(4, "Паролата трябва да е поне 4 символа")
-      .max(8, "Паролата трябва да е не повече от 8 символа")
+      .min(6, "Паролата трябва да е поне 6 символа")
       .nullable(),
     bio: Yup.string().matches(
-      /^[a-zA-Zа-яА-Я0-9\s]+$/,
+      /^[\w\s.,!?а-яА-Я]*$/,
       "Биографията трябва да се състои само от букви и цифри"
     ).nullable()
   })
@@ -310,11 +315,9 @@ export default class CommonStore {
     this.appLoaded = true;
   };
 
-
   dateString = (date: Date | null) => {
     if (date === null) return "";
     const dateToString = new Date(date);
     return dateToString.toLocaleString('bg-BG', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(',', '');
   }
-
 }

@@ -11,12 +11,9 @@ namespace Application.Orders
             RuleFor(x => x.Id).NotEmpty();
             RuleFor(x => x.PartnerId).NotEmpty();
             RuleFor(x => x.WarehouseId).NotEmpty();
-            RuleFor(x => x.DeliveryAddress).NotEmpty();
-            RuleFor(x => x.DeliveryAddress)
-                .NotEmpty().NotNull().WithMessage("Адресът за доставка е задължителен")
-                .Must(x => x != null && x.Length > 2).WithMessage("Адресът за доставка трябва да е поне 3 символа")
-                .Matches(@"^(?!.*<.*>).*$").WithMessage("Адресът за доставка не трябва да съдържа символите '<' и '>'")
-                .Matches(@"^[a-zA-Zа-яА-Я0-9\s]*$").WithMessage("Адресът за доставка трябва да съдържа само букви и цифри");
+            RuleFor(x => x.DeliveryAddressId).NotEmpty();
+            RuleFor(x => x.DeliveryAddressId)
+                .NotEmpty().NotNull().WithMessage("Адресът за доставка е задължителен");
             RuleFor(x => x.Address)
                 .NotEmpty().NotNull().WithMessage("Адресът е задължителен")
                 .Must(x => x != null && x.Length > 2).WithMessage("Адресът трябва да е поне 3 символа")
@@ -42,7 +39,7 @@ namespace Application.Orders
                 .Matches(@"^(0|00|\+)[0-9]{9,}$").WithMessage("Телефонният номер трябва да започва с '+', '00' или '0'");
             RuleFor(x => x.Vat)
                 .NotEmpty().NotNull().WithMessage("ЕИК номерът не може да бъде празен")
-                .Must(eik => eik.Length == 9 || eik.Length == 13).WithMessage("ЕИК номерът трябва да е с дължина 9 или 13 символа")
+                .Must(eik => eik.Length == 9 || eik.Length == 10 || eik.Length == 13).WithMessage("ЕИК номерът трябва да е с дължина 9, 10 или 13 символа")
                 .Matches(@"^\d+$").WithMessage("ЕИК номерът трябва да съдържа само цифри");
             RuleFor(x => x.OrderProductDto).NotEmpty();
             RuleFor(x => x.WarehouseName)
@@ -54,7 +51,7 @@ namespace Application.Orders
             .NotEmpty().NotNull().WithMessage("Името на клиента е задължително")
             .Must(x => x != null && x.Length > 2).WithMessage("Името на клиента трябва да е поне 3 символа")
             .Matches(@"^(?!.*<.*>).*$").WithMessage("Името на клиента не трябва да съдържа символите '<' и '>'")
-            .Matches(@"^[a-zA-Zа-яА-Я0-9\s]*$").WithMessage("Името на клиента трябва да съдържа само букви и цифри");
+            .Matches(@"^[a-zA-Zа-яА-Я0-9._\\-\\s ]*$").WithMessage("Името на клиента трябва да съдържа само букви и цифри");
         }
     }
 }

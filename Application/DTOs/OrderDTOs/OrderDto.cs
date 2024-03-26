@@ -3,6 +3,7 @@ namespace Application.DTOs.OrderDTOs
     public class OrderDto
     {
         public Guid Id { get; set; }
+        public int OrderNumber { get; set; }
         public bool IsCompleted { get; set; }
         public DateTime? CompletedDate { get; set; }
         public DateTime OrderCreated { get; set; }
@@ -14,7 +15,7 @@ namespace Application.DTOs.OrderDTOs
         public string Phone { get; set; }
         public string Address { get; set; }
         public string Vat { get; set; }
-        public string DeliveryAddress { get; set; }
+        public Guid DeliveryAddressId { get; set; }
         public Guid WarehouseId { get; set; }
         public string WarehouseName { get; set; }
         public string ContactPersonId { get; set; }

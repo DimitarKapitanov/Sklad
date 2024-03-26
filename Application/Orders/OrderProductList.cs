@@ -1,8 +1,10 @@
 using Application.Core;
 using Application.DTOs.OrderDTOs;
+using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Orders
@@ -19,15 +21,20 @@ namespace Application.Orders
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
+            private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context, IMapper mapper)
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _context = context;
                 _mapper = mapper;
             }
 
             public async Task<Result<PageList<OrderDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName());
+                if (user == null) return null;
+
                 var query = _context.Orders
                 .Where(x => x.WarehouseId == request.Id || x.WarehouseId == request.Params.WarehouseId)
                 .Where(x => string.IsNullOrEmpty(request.Params.Search) || x.Partner.Company.Name.Contains(request.Params.Search))
@@ -48,10 +55,8 @@ namespace Application.Orders
                     query = query.Where(x => x.IsCompleted != request.Params.IsActive);
                 }
 
-                var result = Result<PageList<OrderDto>>.Success(
+                return Result<PageList<OrderDto>>.Success(
                     await PageList<OrderDto>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize));
-
-                return result;
             }
         }
 

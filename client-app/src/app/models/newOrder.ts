@@ -12,7 +12,7 @@ export interface NewOrder {
     phone: string;
     address: string;
     vat: string;
-    deliveryAddress: string;
+    deliveryAddressId: string;
     warehouseId: string;
     warehouseName: string;
     contactPersonId: string;

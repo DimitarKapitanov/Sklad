@@ -28,7 +28,7 @@ export default observer(function OrderPartnerInformation({ order }: Props) {
                         <Card.Content>
                             <Card.Header>Допълнителна информация:</Card.Header>
                             <Card.Description style={{ marginTop: '1.5em' }}>
-                                <Header as='h5'>Адрес на доставка: {order.deliveryAddress}</Header>
+                                <Header as='h5'>Адрес на доставка: гр.{order.deliveryCity} {order.deliveryAddress}</Header>
                                 <Header as='h5'>Телефон: {order.phone}</Header>
                                 <Header as='h5'>Имейл: {order.email}</Header>
                                 <Header as='h5'>{order.isCompleted ? 'Поръчката е завършена.' : 'В процес на доставка!'}</Header>

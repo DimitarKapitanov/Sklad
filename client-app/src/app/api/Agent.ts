@@ -6,7 +6,7 @@ import { Order } from "../models/order";
 import { OrderProductEdit } from "../models/orderProduct";
 import { PaginatedResult } from "../models/pagination";
 import { PartnerDeliveriesProductsDto, Partner as PartnerModel } from "../models/partner";
-import { Product } from "../models/product";
+import { Product, UploadedProduct } from "../models/product";
 import { Delivery } from "../models/productsWithoutUnit";
 import { Photo, Profile } from "../models/profile";
 import Role from "../models/role";
@@ -19,7 +19,7 @@ import { WarehouseEditValues, Warehouse as WarehouseModel } from "../models/ware
 import { store } from "../stores/store";
 import { router } from "./router/Routes";
 
-axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
@@ -35,7 +35,7 @@ axios.interceptors.response.use(
   async (response) => {
     const pagination = response.headers["pagination"];
     if (pagination) {
-      response.data = new PaginatedResult(response.data, JSON.parse(pagination), "");
+      response.data = new PaginatedResult(response.data, JSON.parse(pagination));
       return response as AxiosResponse<PaginatedResult<unknown>>;
     }
     return response;
@@ -107,6 +107,7 @@ const Products = {
   create: (delivery: Delivery) => requests.post<void>("/products", delivery),
   edit: (product: Product) => requests.put<void>(`/products/${product.id}`, product),
   delete: (id: string) => requests.delete<void>(`/products/${id}`),
+  upload: (products: UploadedProduct[]) => requests.post<void>("/products/upload", products),
 };
 
 const Orders = {
@@ -135,6 +136,7 @@ const Account = {
   login: (user: UserFormValues) => requests.post<User>("/account/login", user),
   createUser: (user: NewUserFormValues) => requests.post<User>("/account/create-user", user),
   userList: () => requests.get<UserInfo[]>("/account/all-users"),
+  editUser: (user: UserFormValues) => requests.post<User>("/account/edit-user", user),
 };
 
 const Statistic = {

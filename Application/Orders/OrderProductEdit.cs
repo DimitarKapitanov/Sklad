@@ -1,6 +1,10 @@
+using System.Text.Json;
 using Application.Core;
 using Application.DTOs.OrderDTOs;
+using Application.Interfaces;
+using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Unit = MediatR.Unit;
 
@@ -14,22 +18,40 @@ namespace Application.Orders
             public OrderProductEditDto OrderProductEdit { get; set; }
         }
 
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.OrderProductEdit).SetValidator(new OrderProductEditValidator());
+            }
+        }
+
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _context = context;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                // To do add validation logic
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName());
+                if (user == null) return null;
+
+                if (!new CommandValidator().Validate(request).IsValid)
+                    return Result<MediatR.Unit>.Failure(error: JsonSerializer.Serialize(new CommandValidator().Validate(request)));
+
+                if (request.OrderProductEdit == null) return Result<Unit>.Failure(error: "Няма подадени данни за редактиране на продуктите в поръчката");
+
                 if (request.OrderProductEdit.OrderId != request.Id)
                     return Result<Unit>.Failure(error: "Един или няколко продукта не са за тази поръчка");
 
                 var orderProduct = await _context.OrderProducts.FindAsync(request.OrderProductEdit.Id);
                 if (orderProduct == null) return Result<Unit>.Failure(error: "Продуктът не е намерен");
+
                 var product = await _context.Products.FindAsync(orderProduct.ProductId);
                 if (product == null) return Result<Unit>.Failure(error: "Продуктът не е намерен");
 

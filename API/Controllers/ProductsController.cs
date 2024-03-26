@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    // [Authorize(Roles = "Admin, Manager")]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin, Manager")]
     public class ProductsController : BaseApiController
     {
         private readonly ILogger<ProductsController> _logger;
@@ -32,6 +31,13 @@ namespace API.Controllers
         {
             _logger.LogInformation("CreateProduct");
             return HandleResult(await Mediator.Send(new Create.Command { Deliver = deliver }));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadProducts(List<UploadedProductsDto> products)
+        {
+            return HandleResult(await Mediator.Send(new UploadProducts.Command { Products = products }));
         }
 
         [HttpPut("{id}")]

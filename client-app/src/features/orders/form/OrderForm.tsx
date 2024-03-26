@@ -5,12 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import ReactSelect from "react-select";
 import {
   Button,
-  ButtonGroup,
   Container,
   FormGroup,
   Header,
   Segment,
-  Table,
+  Table
 } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
 import MySelectInput from "../../../app/common/form/MySelectInput";
@@ -19,6 +18,7 @@ import { NewOrder } from "../../../app/models/newOrder";
 import { NewOrderProduct } from "../../../app/models/newOrderProduct";
 import { store, useStore } from "../../../app/stores/store";
 import ValidationErrors from "../../errors/ValidationError";
+import CustomReactSelect from "./CustomSelect";
 
 export default observer(function OrderForm() {
   const { orderStore, warehouseStore, partnerStore, commonStore } = useStore();
@@ -50,25 +50,28 @@ export default observer(function OrderForm() {
 
   const {
     loadPartners,
-    selectPartner,
     selectedPartner,
     partnerOptions,
     partnerRegistry,
+    setPrimaryPredicate,
   } = partnerStore;
 
   useEffect(() => {
-    if (wareHouseRegistry.size <= 1) loadWareHouses();
+    if (wareHouseRegistry.size < 1) loadWareHouses();
   }, [loadWareHouses, wareHouseRegistry.size]);
 
   useEffect(() => {
-    if (partnerRegistry.size <= 1) loadPartners();
-  }, [loadPartners, partnerRegistry.size]);
+    if (partnerRegistry.size < 1) {
+      setPrimaryPredicate("isClient", "true");
+      loadPartners();
+    }
+  }, [loadPartners, partnerRegistry.size, setPrimaryPredicate]);
 
   const navigate = useNavigate();
   const [errors, setErrors] = useState(null);
 
   const [orderProducts, setOrderProducts] = useState<NewOrderProduct[]>([]);
-
+  const [address, setAddress] = useState<string>("");
   const [data, setData] = useState<string>("");
 
   const newOrder: NewOrder = {
@@ -84,7 +87,7 @@ export default observer(function OrderForm() {
     phone: selectedPartner?.phone || "",
     address: selectedPartner?.address || "",
     vat: selectedPartner?.bulstat || "",
-    deliveryAddress: selectedPartner?.deliveryAddress[0].address || "",
+    deliveryAddressId: address,
     warehouseId: selectWareHouseForOrder?.id || "",
     warehouseName: selectWareHouseForOrder?.name || "",
     contactPersonId: selectWareHouseForOrder?.contactPersonId || "",
@@ -102,10 +105,13 @@ export default observer(function OrderForm() {
     createOrder(newOrder)
       .then((orderId) => {
         navigate(`/orders/${orderId}`);
-        setErrors(null); // Изчистване на грешките при успешно създаване на поръчка
+        setErrors(null);
       })
       .catch((error) => {
         setErrors(error);
+        setTimeout(() => {
+          setErrors(null); // Изчистване на грешките след 20 секунди
+        }, 20000);
       });
   }
 
@@ -151,12 +157,18 @@ export default observer(function OrderForm() {
       return prevOrderProducts.filter((product) => product.id !== productId);
     });
   };
+
   const selectOptions = productOptions.map((product) => ({
     value: product.value,
     label: product.text,
   }));
 
-  // add infinity scroll search functionality to get partners
+  function mapToSelectOptions(items: { [key: string]: string }[], valueKey: string, labelKey: string) {
+    return items.map(item => ({
+      value: item[valueKey],
+      label: item[labelKey],
+    }));
+  }
 
   return (
     <Container>
@@ -168,6 +180,7 @@ export default observer(function OrderForm() {
             newOrder,
             product: { id: "", quantity: 0, price: 0 },
             orderProducts,
+            partner: '',
           }}
           validationSchema={orderCreateValidationSchema}
         >
@@ -181,19 +194,24 @@ export default observer(function OrderForm() {
             setValues,
           }) => (
             <Form
-              className="ui form"
+              className="ui form order-form"
               onSubmit={handleSubmit}
-              style={{ overflowX: "auto" }}
             >
               <FormGroup>
-                <MySelectInput
-                  name="partner"
-                  placeholder="Компания"
-                  options={partnerOptions}
-                  onSelected={(data) =>
-                    data.value && selectPartner(data.value.toString())
-                  }
-                />
+                <FormGroup
+                  className="ui grid"
+                  style={{ flex: 1, flexFlow: "column", marginBottom: 0 }}
+                >
+                  <CustomReactSelect
+                    name="partner"
+                    placeholder="Избери партньор"
+                    options={mapToSelectOptions(partnerOptions, "value", "text")}
+                    onMenuScrollToBottom={() => {
+                      partnerStore.pagingParams.pageNumber++;
+                      partnerStore.loadPartners();
+                    }}
+                  />
+                </FormGroup>
                 {selectedPartner && (
                   <MySelectInput
                     placeholder="Адрес за доставка"
@@ -204,6 +222,8 @@ export default observer(function OrderForm() {
                       label: address.city,
                       key: address.id,
                     }))}
+                    onSelected={(data) => setAddress(data.value)}
+                    onClear={() => setAddress("")}
                   />
                 )}
                 <MySelectInput
@@ -211,14 +231,15 @@ export default observer(function OrderForm() {
                   placeholder="Склад"
                   options={wareHouseOptions}
                   onSelected={(data) =>
-                    data.value && selectWareHouse(data.value.toString())
+                    data.value && selectWareHouse(data.value)
                   }
+                  onClear={() => selectWareHouse("")}
                 />
               </FormGroup>
               {selectedPartner &&
                 selectedPartner.id &&
                 selectWareHouseForOrder &&
-                selectWareHouseForOrder.id && (
+                selectWareHouseForOrder.id && address && (
                   <>
                     <Table
                       celled
@@ -317,12 +338,12 @@ export default observer(function OrderForm() {
                           value={
                             selectedProduct
                               ? {
-                                  value: selectedProduct.id,
-                                  label: selectedProduct.name,
-                                }
+                                value: selectedProduct.id,
+                                label: selectedProduct.name,
+                              }
                               : null
                           }
-                          options={selectOptions}
+                          options={mapToSelectOptions(productOptions, "value", "text")}
                           pageSize={selectOptions.length}
                           placeholder="Въведете продукт"
                           onInputChange={(data) => {
@@ -394,7 +415,7 @@ export default observer(function OrderForm() {
                         content="Добави продукт"
                         type="button"
                         color="blue"
-                        disabled={!selectedProduct || values.product.id === ""}
+                        disabled={!selectedProduct || values.product.id === "" || !dirty || !isValid}
                         compact
                         style={{ height: 37, marginTop: 24 }}
                         onClick={() => {
@@ -411,11 +432,11 @@ export default observer(function OrderForm() {
                     </FormGroup>
                   </>
                 )}
-              <ButtonGroup
+              <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "flex-start",
+                  alignItems: "flex-end",
                   padding: "10px 0",
                 }}
               >
@@ -441,7 +462,7 @@ export default observer(function OrderForm() {
                   positive
                   content="Създай"
                 />
-              </ButtonGroup>
+              </div>
             </Form>
           )}
         </Formik>

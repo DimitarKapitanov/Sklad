@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Unit } from "../models/unit";
 import agent from "../api/Agent";
-import { v4 as uuid } from 'uuid';
+import { Unit } from "../models/unit";
 
 export default class UnitStore {
 
@@ -51,6 +50,11 @@ export default class UnitStore {
         this.unitRegistry.set(unit.id, unit);
     }
 
+    getUnitsByAcronym = (acronym: string) => {
+        const unit = Array.from(this.unitRegistry.values()).find(unit => unit.acronym === acronym);
+        return unit ? unit.id : null;
+    }
+
     loadUnit = async (id: string) => {
         let unit = this.getUnits(id);
         if (unit) {
@@ -98,7 +102,6 @@ export default class UnitStore {
     updateUnit = async (unit: Unit) => {
         this.loading = true;
         try {
-            unit.id = uuid();
             await agent.Units.edit(unit);
             runInAction(() => {
                 this.unitRegistry.set(unit.id, unit);

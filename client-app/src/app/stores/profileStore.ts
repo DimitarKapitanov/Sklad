@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/Agent";
 import { Photo, Profile } from "../models/profile";
-import { UserInfo } from "../models/user";
 import { store } from "./store";
 
 export default class ProfileStore {
@@ -27,6 +26,8 @@ export default class ProfileStore {
             const profile = await agent.Profiles.get(username);
             runInAction(() => {
                 this.profile = profile;
+                const user = store.userStore.user
+                this.profile.role = user?.role || '';
                 this.loadingProfile = false;
             });
         } catch (error) {
@@ -60,21 +61,7 @@ export default class ProfileStore {
         }
     }
 
-    updateProfile = async (profile: Partial<Profile>) => {
-        this.loading = true;
-        try {
-            await agent.Profiles.updateProfile(profile);
-            runInAction(() => {
-                store.userStore.userRegistry.set(profile.id!, profile as UserInfo);
-                this.loading = false;
-            });
-        } catch (error) {
-            console.log(error);
-            runInAction(() => {
-                this.loading = false;
-            });
-        }
-    }
+
 
     setMainPhoto = async (photo: Photo) => {
         this.loading = true;

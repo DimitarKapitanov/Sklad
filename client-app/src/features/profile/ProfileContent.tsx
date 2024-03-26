@@ -1,5 +1,4 @@
 import { observer } from "mobx-react-lite";
-// import { useStore } from "../../app/stores/store";
 import { Tab } from "semantic-ui-react";
 import { Profile } from "../../app/models/profile";
 import ProfileAbout from "./ProfileAbout";
@@ -11,11 +10,10 @@ interface Props {
 }
 
 export default observer(function ProfileContent({ profile }: Props) {
-    // const { profileStore } = useStore();
     const panes = [
         { menuItem: 'Обща информация', render: () => <ProfileAbout profile={profile} /> },
-        { menuItem: 'Снимки', render: () => <ProfilePhotos profile={profile} /> },
-        { menuItem: 'Завършени поръчки', render: () => <ProfileOrders username={profile.username} /> },
+        { menuItem: 'Снимки', render: () => <ProfilePhotos profile={profile} />, className: "profile-photos" },
+        { menuItem: 'Завършени поръчки', render: () => <ProfileOrders displayName={profile.displayName} /> },
     ];
 
     return (
@@ -24,7 +22,6 @@ export default observer(function ProfileContent({ profile }: Props) {
             menu={{ fluid: true, vertical: true }}
             menuPosition='right'
             panes={panes}
-        // onTabChange={(e, data) => profileStore.setActiveTab(data.activeIndex)}
         />
     )
 })

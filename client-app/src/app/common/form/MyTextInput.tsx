@@ -14,6 +14,7 @@ interface Props {
   readonly?: boolean;
   disabled?: boolean;
   onChange?: (data: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
 }
 
 export default function MyTextInput(props: Props) {
@@ -24,6 +25,7 @@ export default function MyTextInput(props: Props) {
       className="ui grid"
       style={{ flex: 1, flexFlow: "column" }}
       error={meta.touched && !!meta.error}
+      required={props.required}
     >
       {props.label && <label>{props.label}</label>}
       <input

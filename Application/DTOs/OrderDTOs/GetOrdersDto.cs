@@ -3,6 +3,7 @@ namespace Application.DTOs.OrderDTOs
     public class GetOrdersDto
     {
         public Guid Id { get; set; }
+        public int OrderNumber { get; set; }
         public bool IsCompleted { get; set; }
         public DateTime CompletedDate { get; set; }
         public DateTime OrderCreated { get; set; }

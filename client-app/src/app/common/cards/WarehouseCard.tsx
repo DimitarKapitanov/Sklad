@@ -1,18 +1,17 @@
-import { Card, Label } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
-import { Warehouse } from "../../models/warehouse";
-import { Link } from "react-router-dom";
-import { ButtonGroup, Button } from "semantic-ui-react";
-import { useStore } from "../../stores/store";
-import EditWarehouse from "../../../features/warehouses/EditWarehouse";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Button, ButtonGroup, Card, Label } from "semantic-ui-react";
+import EditWarehouse from "../../../features/warehouses/EditWarehouse";
+import { Warehouse } from "../../models/warehouse";
+import { useStore } from "../../stores/store";
 
 interface Props {
   warehouse: Warehouse;
 }
 
 export default observer(function WarehouseCard({ warehouse }: Props) {
-  const { modalStore, warehouseStore } = useStore();
+  const { modalStore, warehouseStore, userStore: { user } } = useStore();
 
   useEffect(() => {
     if (!warehouseStore.isEditing) {
@@ -48,20 +47,20 @@ export default observer(function WarehouseCard({ warehouse }: Props) {
             >
               Поръчки
             </Link>
-            <Button
-              color="red"
-              onClick={() =>
-                modalStore.openModal(
-                  <EditWarehouse warehouseData={warehouse} />, "mini"
-                )
-              }
-            // size="huge"
-            >
-              Редактиране
-            </Button>
+            {(user?.role.includes("Admin") || user?.role.includes("Manager")) && (
+              <Button
+                color="red"
+                onClick={() =>
+                  modalStore.openModal(
+                    <EditWarehouse warehouseData={warehouse} />, "mini"
+                  )
+                }
+                content="Редакция"
+              />
+            )}
           </ButtonGroup>
         </div>
       </Card.Content>
-    </Card>
+    </Card >
   );
 });

@@ -20,7 +20,7 @@ export class Profile implements IProfile {
         this.displayName = user.displayName;
         this.image = user.image;
         this.bio = user.bio;
-        this.role = user.roles[0];
+        this.role = user.role;
         this.phoneNumber = user.phoneNumber;
     }
 

@@ -14,26 +14,25 @@ import {
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function OrdersActions() {
-  const {
-    orderStore,
-    warehouseStore: { wareHouseOptions },
-  } = useStore();
-  const { predicate, setPredicate } = orderStore;
+  const { orderStore, warehouseStore: { wareHouseOptions }, userStore: { user } } = useStore();
+  const { predicate, setPredicate, setActiveIndex } = orderStore;
 
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Header as="h2" content="Поръчки" />
-        <MenuMenu position="right">
-          <MenuItem>
-            <Button
-              primary
-              content="Добави поръчка"
-              as={Link}
-              to={"/orders-create"}
-            />
-          </MenuItem>
-        </MenuMenu>
+        {user?.role.includes("Admin") || user?.role.includes("Manager") ? (
+          <MenuMenu position="right">
+            <MenuItem>
+              <Button
+                primary
+                content="Добави поръчка"
+                as={Link}
+                to={"/orders-create"}
+              />
+            </MenuItem>
+          </MenuMenu>
+        ) : null}
       </div>
       <Menu pointing secondary className="actions-sort">
         <MenuItem
@@ -57,9 +56,9 @@ export default observer(function OrdersActions() {
         pointing
         secondary
         style={{ borderBottom: "none" }}
-        className="actions-inputs"
+        className="actions-inputs order-filter"
       >
-        <div>
+        <div className="search-warehouse-select">
           <MenuItem style={{ paddingLeft: 0 }} className="custom-search">
             <Input
               className="icon"
@@ -71,22 +70,28 @@ export default observer(function OrdersActions() {
               }}
             />
           </MenuItem>
-          <MenuItem style={{ height: "47px" }}>
-            <Select
-              className="warehouse-select"
-              clearable
-              placeholder="Склад"
-              options={wareHouseOptions}
-              value={predicate.get("warehouseId")}
-              onChange={(_, data) => {
-                if (data.value === "") {
-                  predicate.delete("warehouseId");
-                } else setPredicate("warehouseId", data.value as string);
-              }}
-            />
-          </MenuItem>
+          {user?.role.includes("Admin") || user?.role.includes("Manager") ? (
+            <MenuItem style={{ height: "50px" }}>
+              <Select
+                className="warehouse-select"
+                clearable
+                placeholder="Склад"
+                options={wareHouseOptions}
+                value={predicate.get("warehouseId")}
+                onChange={(_, data) => {
+                  if (data.value === "") {
+                    predicate.delete("warehouseId");
+                    setActiveIndex(wareHouseOptions.find((option) => option.text === "Главен склад")?.value as string);
+                  } else {
+                    setPredicate("warehouseId", data.value as string);
+                    setActiveIndex(data.value as string)
+                  }
+                }}
+              />
+            </MenuItem>
+          ) : null}
         </div>
-        <div>
+        <div className="date-selectors">
           <MenuItem style={{ height: "45px" }}>
             <DatePicker
               selected={predicate.get("startDate")}

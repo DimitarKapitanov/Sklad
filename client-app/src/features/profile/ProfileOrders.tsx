@@ -1,39 +1,40 @@
 import { observer } from "mobx-react-lite"
 import { useEffect } from "react"
-import { Button, Header, Pagination, PaginationProps, Table } from "semantic-ui-react"
+import { Button, Header, Pagination, PaginationProps, Segment, Table } from "semantic-ui-react"
 import LoadingComponent from "../../app/layout/LoadingComponent"
 import { PagingParams } from "../../app/models/pagination"
 import { useStore } from "../../app/stores/store"
 import ProductDetails from "../orders/details/ProductDetails"
 
 interface Props {
-    username: string
+    displayName: string
 }
 
-export default observer(function ProfileOrders({ username }: Props) {
+export default observer(function ProfileOrders({ displayName }: Props) {
     const { orderStore, modalStore: { openModals }, commonStore: { dateString } } = useStore();
-    // const { loadWareHouses, wareHouseRegistry } = warehouseStore;
-    const { pagedOrderRegistry, loadOrdersByUsername, loadingDetails, getOrderByUser, setPagingParams, pagination } = orderStore;
+    const { pagedOrderRegistry, loadOrdersByUsername, setPredicate, loadingDetails, getOrderByUser, setPagingParams, pagination, setLastUsername } = orderStore;
 
-    function handlePageChange(
-        _: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-        data: PaginationProps
-    ) {
+    function handlePageChange(_: React.MouseEvent<HTMLAnchorElement, MouseEvent>, data: PaginationProps) {
         const activePage = data.activePage as number;
         setPagingParams(new PagingParams(activePage));
-        loadOrdersByUsername(username);
+        loadOrdersByUsername(displayName);
     }
+    useEffect(() => {
+        setLastUsername(displayName);
+    }, [displayName, setLastUsername]);
 
     useEffect(() => {
-        if (username) loadOrdersByUsername(username);
-    }, [loadOrdersByUsername, pagedOrderRegistry, username]);
+        if (displayName) {
+            loadOrdersByUsername(displayName);
+        }
+    }, [loadOrdersByUsername, pagedOrderRegistry, displayName, setPredicate]);
 
     if (loadingDetails) return (<LoadingComponent content="Зареждане на поръчките..." />)
 
     return (
-        <>
+        <Segment className="profile-order">
             {getOrderByUser && getOrderByUser.length > 0 ? (
-                <Table>
+                <Table celled unstackable >
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>#</Table.HeaderCell>
@@ -80,8 +81,8 @@ export default observer(function ProfileOrders({ username }: Props) {
                     )}
                 </Table>
             ) : (
-                <Header style={{ color: 'red', fontSize: '20px' }}>Потребителят {username} няма завършени поръчки!</Header>
+                <Header style={{ color: 'red', fontSize: '20px' }}>Потребителят {displayName} няма завършени поръчки!</Header>
             )}
-        </>
+        </Segment>
     )
 })

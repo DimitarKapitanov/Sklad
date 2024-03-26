@@ -7,12 +7,12 @@ import PartnerOrders from "../details/PartnerOrders";
 
 export default observer(function PartnerDashboard() {
   const { partnerStore, modalStore: { openModals } } = useStore();
-  const { sortedPartners } = partnerStore;
+  const { partners } = partnerStore;
 
   return (
     <>
       <DataTable header={tableHeaderPartner}>
-        {sortedPartners.map((partner, index) => (
+        {partners.map((partner, index) => (
           <Table.Row key={index}>
             <Table.Cell>{partner.name}</Table.Cell>
             <Table.Cell>{partner.city}</Table.Cell>

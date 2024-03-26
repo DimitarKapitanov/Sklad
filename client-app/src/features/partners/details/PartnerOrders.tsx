@@ -20,7 +20,7 @@ interface Props {
 export default observer(function ({ partner }: Props) {
     const { orderStore: { tableHeader }, modalStore: { openModals, closeModals }, partnerStore } = useStore();
     const { loadPartnerOrders, partnerOrders, partnerDelivers,
-        setPagingParams, partnerOrdersPagination, dateString, clearSelectedPartner, primaryPredicate, loadPartnerDelivers } = partnerStore;
+        setPagingParams, partnerOrdersPagination, dateString, clearSelectedPartner, primaryPredicate, secondaryPredicate, loadPartnerDelivers, setSecondaryPredicate } = partnerStore;
 
     const [loadingNext, setLoadingNext] = useState(false);
 
@@ -34,23 +34,43 @@ export default observer(function ({ partner }: Props) {
     }
 
     useEffect(() => {
-        if (partner.id && partner.isClient && (primaryPredicate.has('isClient') || primaryPredicate.has('all'))) loadPartnerOrders(partner.id);
-    }, [partner.id, loadPartnerOrders, partner.isClient, primaryPredicate]);
+        if (partner.isClient && !partner.isSupplier && (primaryPredicate.has('isClient') || primaryPredicate.has('all'))) loadPartnerOrders(partner.id);
+        else if (partner.isSupplier && !partner.isClient && (primaryPredicate.has('isSupplier') || primaryPredicate.has('all'))) loadPartnerDelivers(partner.id);
+        else {
+            if (primaryPredicate.has('isClient')) {
+                loadPartnerDelivers(partner.id);
+            } else if (primaryPredicate.has('isSupplier')) {
+                loadPartnerOrders(partner.id);
+            } else {
+                setSecondaryPredicate('allOrders', 'true')
+                loadPartnerOrders(partner.id);
+                loadPartnerDelivers(partner.id);
+            }
+        }
+    }, [partner.id, loadPartnerOrders, loadPartnerDelivers, partner.isClient, partner.isSupplier, setSecondaryPredicate, primaryPredicate]);
 
-    useEffect(() => {
-        if (partner.isSupplier && ((primaryPredicate.has('isSupplier') || primaryPredicate.has('all'))) && partner.id) loadPartnerDelivers(partner.id);
-    }, [partner.id, loadPartnerDelivers, partner.isClient, primaryPredicate, partner.isSupplier]);
 
     const totalPrice = (products: DeliveredProductDto[]) => {
         return products.reduce((acc: number, product: DeliveredProductDto) => acc + (product.quantity * product.price), 0);
     }
+    const [header, setHeader] = useState<string>('');
+
+    useEffect(() => {
+        if (partner.isClient && !partner.isSupplier) {
+            setHeader(`Поръчки на партньор ${partner.name}`);
+        } else if (partner.isSupplier && !partner.isClient) {
+            setHeader(`Доставки на партньор ${partner.name}`);
+        } else {
+            setHeader(`Информация за партньор ${partner.name}`);
+        }
+    }, [partner]);
 
     return (
         <>
             <Header as='h2' content={`Информация за партньор ${partner.name}`} style={{ marginTop: 40 }} />
             <PartnerInformation partner={partner} />
             <PartnerOrderActions />
-            <Header as='h2' content={partnerOrders.length > 0 ? `Поръчки на партньор ${partner.name}` : `Доставки на партньор ${partner.name}`} />
+            <Header as='h2' content={header} />
             {partner.isClient && (
                 <InfiniteScroll
                     className="horizontal-gradient"
@@ -84,7 +104,7 @@ export default observer(function ({ partner }: Props) {
                     </div>
                 </InfiniteScroll>
             )}
-            {partner.isSupplier && (
+            {partner.isSupplier && secondaryPredicate.has('allOrders') && (
                 <InfiniteScroll
                     pageStart={0}
                     loadMore={handleGetNext}

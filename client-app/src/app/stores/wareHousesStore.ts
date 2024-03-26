@@ -126,14 +126,16 @@ export default class WarehouseStore {
     }
   }
 
-  private clearWareHouseOptions = () => {
-    this.wareHouseOptions = [];
-  };
+  // private clearWareHouseOptions = () => {
+  //   this.wareHouseOptions = [];
+  // };
 
   selectWareHouse = (id: string) => {
     const warehouse = this.wareHouseRegistry.get(id);
     if (warehouse) {
       this.selectWareHouseForOrder = warehouse;
+    } else {
+      this.selectWareHouseForOrder = null;
     }
   };
 

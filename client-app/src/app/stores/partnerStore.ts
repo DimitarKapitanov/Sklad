@@ -4,9 +4,9 @@ import { NewPartner } from "../models/newPartner";
 import { Order } from "../models/order";
 import Pagination, { PagingParams } from "../models/pagination";
 import { Partner, PartnerDeliveriesProductsDto } from "../models/partner";
+import { store } from "./store";
 
 export default class PartnerStore {
-
     partnerRegistry = new Map<string, Partner>();
     partnerOptions: { key: string, text: string, value: string }[] = [];
     partnerOrdersRegistry = new Map<string, Order>();
@@ -17,6 +17,7 @@ export default class PartnerStore {
 
     search: string = '';
 
+    pagination: Pagination | null = null;
     pagingParams = new PagingParams();
     primaryPredicate = new Map().set('all', true);
     secondaryPredicate = new Map().set('allOrders', true);
@@ -32,6 +33,7 @@ export default class PartnerStore {
             () => {
                 this.pagingParams = new PagingParams();
                 this.partnerRegistry.clear();
+                this.loadPartners();
             }
         )
 
@@ -45,13 +47,26 @@ export default class PartnerStore {
                 const { selectedPartner } = this;
                 if (selectedPartner) {
 
-                    if (selectedPartner.isClient) {
+                    if (selectedPartner.isClient && !selectedPartner.isSupplier && (this.secondaryPredicate.has('isClient') || this.secondaryPredicate.has('all'))) {
                         this.partnerOrdersRegistry.clear();
                         this.loadPartnerOrders(selectedPartner.id);
-                    }
-                    if (selectedPartner.isSupplier) {
+                    } else if (selectedPartner.isSupplier && !selectedPartner.isClient && (this.secondaryPredicate.has('isSupplier') || this.secondaryPredicate.has('all'))) {
                         this.partnerDeliversRegistry.clear();
                         this.loadPartnerDelivers(selectedPartner.id);
+                    } else {
+                        if (this.primaryPredicate.has('isClient')) {
+                            this.partnerOrdersRegistry.clear();
+                            this.loadPartnerOrders(selectedPartner.id);
+                        }
+                        else if (this.primaryPredicate.has('isSupplier')) {
+                            this.partnerDeliversRegistry.clear();
+                            this.loadPartnerDelivers(selectedPartner.id);
+                        } else {
+                            this.partnerOrdersRegistry.clear();
+                            this.partnerDeliversRegistry.clear();
+                            this.loadPartnerOrders(selectedPartner.id);
+                            this.loadPartnerDelivers(selectedPartner.id);
+                        }
                     }
                 }
             }
@@ -94,8 +109,8 @@ export default class PartnerStore {
                 this.primaryPredicate.set('isSupplier', value);
                 break;
             case 'search':
-                this.secondaryPredicate.delete('search');
-                this.secondaryPredicate.set('search', value);
+                this.primaryPredicate.delete('search');
+                this.primaryPredicate.set('search', value);
                 break;
         }
     }
@@ -164,6 +179,10 @@ export default class PartnerStore {
         })
         return params;
     }
+
+    setPagination = (pagination: Pagination) => {
+        this.pagination = pagination;
+    };
 
     setPartnerDashboardPagination = (pagination: Pagination) => {
         this.partnerDashboardPagination = pagination;
@@ -235,6 +254,10 @@ export default class PartnerStore {
     }
 
     loadPartnerDelivers = async (id: string) => {
+        if (this.partnerOrdersPagination === null) {
+            this.axiosParams.set('pageNumber', new PagingParams().pageNumber.toString());
+        }
+
         try {
             const result = await agent.Partner.partnerDeliveries(id, this.axiosParams);
             runInAction(() => {
@@ -249,32 +272,26 @@ export default class PartnerStore {
         }
     }
 
-    createPartner = async (partner: NewPartner) => {
+    createPartner = async (newPartner: NewPartner) => {
         this.loading = true;
         try {
-            // if (partner.isDelivery) {
-            // }
-            // else {
-            await agent.Partner.create(partner);
+            await agent.Partner.create(newPartner);
             runInAction(() => {
-                const newPartner = {} as Partner;
-                newPartner.id = partner.id;
-                newPartner.name = partner.createCompanyDto.name;
-                newPartner.phone = partner.phone;
-                newPartner.email = partner.email;
-                newPartner.city = partner.createCompanyDto.city;
-                newPartner.address = partner.createCompanyDto.address;
-                newPartner.bulstat = partner.createCompanyDto.bulstat;
-                newPartner.companyOwnerName = partner.createCompanyDto.companyOwnerName;
-                this.partnerRegistry.set(newPartner.id, newPartner);
-                this.selectedPartner = newPartner;
+                const partner = this.convertNewPartnerToPartner(newPartner);
+                this.setPartners(partner);
+                this.selectedPartner = partner;
                 this.loading = false;
+                if (partner.isSupplier) {
+                    store.supplierStore.clearSupplierOptions();
+                    store.supplierStore.clearSupplier();
+                    store.supplierStore.loadSuppliers();
+                }
             })
-            // }
         } catch (error) {
             console.log(error);
             runInAction(() => {
                 this.loading = false;
+                throw error;
             })
         }
     }
@@ -318,11 +335,13 @@ export default class PartnerStore {
     private setPartners(partner: Partner | undefined) {
         if (partner) {
             this.partnerRegistry.set(partner.id, partner);
-            this.partnerOptions.push({
+            const partnerOptionsMap = new Map(this.partnerOptions.map(option => [option.key, option]));
+            partnerOptionsMap.set(partner.id, {
                 key: partner.id,
                 text: partner.name,
                 value: partner.id
             });
+            this.partnerOptions = Array.from(partnerOptionsMap.values());
         }
     }
 
@@ -334,11 +353,13 @@ export default class PartnerStore {
         const partner = this.partnerRegistry.get(id);
         if (partner) {
             this.selectedPartner = partner;
+        } else {
+            this.selectedPartner = undefined;
         }
     };
 
     clearSelectedPartner = () => {
-        this.selectedPartner = undefined;
+        this.selectPartner('');
         this.partnerOrdersRegistry.clear();
         this.partnerDeliversRegistry.clear();
         this.setSecondaryPredicate('allOrders', 'true');
@@ -346,5 +367,26 @@ export default class PartnerStore {
 
     setSearch = (search: string) => {
         this.search = search;
+    }
+    private convertNewPartnerToPartner(newPartner: NewPartner): Partner {
+        return {
+            id: newPartner.id,
+            name: newPartner.createCompanyDto.name,
+            city: newPartner.createCompanyDto.city,
+            companyOwnerName: newPartner.createCompanyDto.companyOwnerName,
+            email: newPartner.createCompanyDto.email,
+            phone: newPartner.createCompanyDto.phone,
+            address: newPartner.createCompanyDto.address,
+            bulstat: newPartner.createCompanyDto.bulstat,
+            deliveryAddress: newPartner.deliveryAddresses.map(da => ({
+                id: da.id,
+                partnerId: da.partnerId,
+                city: da.city,
+                address: da.address,
+            })),
+            ordersId: [], // Assuming no orders at creation time
+            isClient: newPartner.createCompanyDto.isClient,
+            isSupplier: newPartner.createCompanyDto.isSupplier,
+        };
     }
 }

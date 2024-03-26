@@ -29,7 +29,7 @@ export default observer(function PartnerInformation({ partner }: Props) {
                             <Card.Header content={`Допълнителна информация:`} />
                             <Card.Description content={`Телефон: ${partner.phone}`} />
                             <Card.Description content={`Адрес на доставка`} />
-                            {partner.deliveryAddress.map((address, index) => (
+                            {partner.deliveryAddress && partner.deliveryAddress.map((address, index) => (
                                 <div key={index}>
                                     <Card.Meta content={`Град: ${address.city}`} />
                                     <Card.Meta content={`Адрес: ${address.address}`} />

@@ -20,10 +20,8 @@ export default observer(function ProfilePage() {
     }, [loadProfile, username]);
 
     useEffect(() => {
-        if (wareHouseRegistry.size <= 1) loadWareHouses();
+        if (wareHouseRegistry.size < 1) loadWareHouses();
     }, [wareHouseRegistry.size, loadWareHouses]);
-
-    // const [activeTab, setActiveTab] = useState("1");
 
     if (loadingProfile) return <LoadingComponent content="Зареждане на профила..." />
 

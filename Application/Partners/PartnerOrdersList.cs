@@ -33,7 +33,6 @@ namespace Application.Partners
                     x.CreatedOn.Date >= request.Params.StartDate.Date)
                 .Where(x => request.Params.EndDate == DateTime.MinValue ||
                     x.CreatedOn.Date <= request.Params.EndDate.Date)
-                .Where(x => string.IsNullOrEmpty(request.Params.Search) || x.Warehouse.Name.Contains(request.Params.Search))
                 .Where(x => string.IsNullOrEmpty(request.Params.SearchBy) || x.Warehouse.Name.Contains(request.Params.SearchBy))
                 .OrderBy(x => x.Warehouse.Name)
                 .ProjectTo<GetOrderByIdDto>(_mapper.ConfigurationProvider);

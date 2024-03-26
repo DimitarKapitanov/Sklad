@@ -2,6 +2,7 @@ import { OrderProduct } from "./orderProduct";
 
 export interface Order {
     id: string;
+    orderNumber: number;
     isCompleted: boolean;
     completedDate: Date;
     orderCreated: Date;
@@ -13,6 +14,7 @@ export interface Order {
     phone: string;
     address: string;
     bulstat: string;
+    deliveryCity: string;
     deliveryAddress: string;
     warehouseId: string;
     warehouseName: string;

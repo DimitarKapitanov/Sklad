@@ -9,7 +9,7 @@ export default observer(function PartnerOrderActions() {
     return (
         <>
             <Menu pointing secondary className="secondaryPredicate">
-                <Menu.Item active={secondaryPredicate.has('allOrders')} onClick={() => setSecondaryPredicate('allOrders', 'true')} content={'Всички поръчки'} />
+                <Menu.Item active={secondaryPredicate.has('allOrders')} onClick={() => setSecondaryPredicate('allOrders', 'true')} content={`Всички ${selectedPartner?.isClient ? 'поръчки' : 'доставки'}`} />
                 {selectedPartner?.isClient &&
                     <>
                         <Menu.Item active={secondaryPredicate.has('isCompleted')} onClick={() => setSecondaryPredicate('isCompleted', 'true')} content={'Приключени'} />

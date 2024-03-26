@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using Application.Core;
 using Application.DTOs.ProductDTOs;
@@ -8,7 +7,6 @@ using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Persistence;
 using Unit = MediatR.Unit;
 
@@ -16,7 +14,7 @@ namespace Application.Products
 {
     public class Create
     {
-        public class Command : IRequest<Result<MediatR.Unit>>
+        public class Command : IRequest<Result<Unit>>
         {
             public DeliverDto Deliver { get; set; }
         }
@@ -25,10 +23,10 @@ namespace Application.Products
         {
             public CommandValidator()
             {
-                // RuleFor(x => x.Deliver.Products)
-                // .NotEmpty().WithMessage("Трябва да има поне едн продукт")
-                // .NotNull().WithMessage("Добавените продукти трябва да бъдат поне 1");
-                // RuleForEach(x => x.Products).SetValidator(new ProductValidator());
+                RuleFor(x => x.Deliver.Products)
+                .NotEmpty().WithMessage("Трябва да има поне едн продукт")
+                .NotNull().WithMessage("Добавените продукти трябва да бъдат поне 1");
+                RuleForEach(x => x.Deliver.Products).SetValidator(new ProductValidator());
             }
         }
 
@@ -37,10 +35,8 @@ namespace Application.Products
             private readonly DataContext _context;
             private readonly IMapper _mapper;
             private readonly IUserAccessor _userAccessor;
-            private readonly ILogger<Handler> _logger;
-            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor, ILogger<Handler> logger)
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
-                _logger = logger;
                 _userAccessor = userAccessor;
                 _mapper = mapper;
                 _context = context;

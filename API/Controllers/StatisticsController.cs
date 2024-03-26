@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    // [Authorize(Roles = "Admin, Manager")]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin, Manager")]
     public class StatisticsController : BaseApiController
     {
         [HttpGet("soldProducts")]

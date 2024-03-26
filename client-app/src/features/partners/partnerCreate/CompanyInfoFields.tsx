@@ -3,7 +3,7 @@ import { Grid } from "semantic-ui-react";
 import MyTextInput from "../../../app/common/form/MyTextInput";
 
 interface Props {
-    isDelivery: boolean;
+    isSupplier: boolean;
     isClient: boolean;
 }
 

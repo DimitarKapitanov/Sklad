@@ -3,6 +3,7 @@ using Application.DTOs.OrderDTOs;
 using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -14,6 +15,14 @@ namespace Application.Orders
         public class Query : IRequest<Result<PageList<GetOrdersDto>>>
         {
             public OrderParams Params { get; set; }
+        }
+
+        public class CommandValidator : AbstractValidator<Query>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Params.Username).NotEmpty().Matches(@"^[a-zA-Zа-яА-Я\s]*$").WithMessage("Невалидно потребителско име");
+            }
         }
 
         public class Handler : IRequestHandler<Query, Result<PageList<GetOrdersDto>>>
@@ -29,11 +38,14 @@ namespace Application.Orders
             }
             public async Task<Result<PageList<GetOrdersDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                // var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName());
-                // if (user == null) return null;
+                if (!new CommandValidator().Validate(request).IsValid)
+                    return Result<PageList<GetOrdersDto>>.Failure(error: "Невалидни данни");
+
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName());
+                if (user == null) return null;
 
                 var orders = _context.Orders
-                    .Where(x => x.IsDeleted == false && x.Warehouse.User.UserName == request.Params.Username)
+                    .Where(x => x.IsDeleted == false && x.Warehouse.User.DisplayName == request.Params.Username && x.IsCompleted == true)
                     .ProjectTo<GetOrdersDto>(_mapper.ConfigurationProvider);
 
                 return Result<PageList<GetOrdersDto>>.Success(

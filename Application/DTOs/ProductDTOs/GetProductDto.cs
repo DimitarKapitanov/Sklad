@@ -16,7 +16,7 @@ namespace Application.DTOs.ProductDTOs
 
         public Guid UnitId { get; set; }
 
-        public UnitDto Unit { get; set; }
+        public UnitDto UnitDto { get; set; }
 
         public string Description { get; set; }
 

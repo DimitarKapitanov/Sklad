@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    // [Authorize(Roles = "Admin, Manager")]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin, Manager")]
     public class PartnerController : BaseApiController
     {
         [HttpGet]
@@ -37,7 +36,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePartner(CreatePartnerDto partnerDto)
         {
-            return HandleResult(await Mediator.Send(new PartnerCreate.Command { CreatePartnerDto = partnerDto }));
+            return HandleResult(await Mediator.Send(new PartnerCreate.Command { CreatePartner = partnerDto }));
         }
 
         [HttpPut("{id}")]

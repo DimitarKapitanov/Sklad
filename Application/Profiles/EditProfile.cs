@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using System.Text.Json;
 using Application.Core;
 using Application.DTOs.ProfileDTOs;
 using Application.Interfaces;
@@ -22,6 +24,7 @@ namespace Application.Profiles
         {
             public CommandValidator()
             {
+                RuleFor(x => x.ProfileDto).SetValidator(new EditProfileDtoValidator());
             }
         }
 
@@ -40,13 +43,23 @@ namespace Application.Profiles
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.ProfileDto.Username);
+                if (!new EditProfileDtoValidator().Validate(request.ProfileDto).IsValid)
+                {
+                    return Result<Unit>.Failure(error: JsonSerializer.Serialize(new EditProfileDtoValidator().Validate(request.ProfileDto)));
+                }
+                var currentUser = await _userManager.FindByNameAsync(_userAccessor.GetUserName());
+                if (currentUser == null) return null;
 
-                if (user == null) return null;
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.ProfileDto.Username);
+                if (user == null) return Result<Unit>.Failure("Потребителят не е намерен.");
+
+                var isValidEmail = await _context.Users.AnyAsync(x => x.Email == request.ProfileDto.Email && x.UserName != request.ProfileDto.Username);
+                if (isValidEmail) return Result<Unit>.Failure("Имейл адресът е зает.");
 
                 _context.Entry(user).CurrentValues.SetValues(request.ProfileDto);
 
                 var roles = await _userManager.GetRolesAsync(user);
+                if (roles == null) return Result<Unit>.Failure("Потребителят няма роля.");
                 await _userManager.RemoveFromRoleAsync(user, roles.FirstOrDefault());
                 await _userManager.AddToRoleAsync(user, request.ProfileDto.Role);
 

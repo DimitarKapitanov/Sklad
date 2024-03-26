@@ -8,12 +8,10 @@ export default interface Pagination {
 export class PaginatedResult<T> {
     data: T;
     pagination: Pagination;
-    search: string;
 
-    constructor(data: T, pagination: Pagination, search: string) {
+    constructor(data: T, pagination: Pagination) {
         this.data = data;
         this.pagination = pagination;
-        this.search = search;
     }
 }
 
