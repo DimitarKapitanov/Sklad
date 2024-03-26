@@ -24,4 +24,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: warehouse/sklad:latest
+          tags: dimitarkapitanov/sklad:latest
+          
