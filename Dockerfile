@@ -14,7 +14,7 @@ RUN dotnet restore "Sklad.sln"
 
 # copy everything else and build app
 COPY . .
-WORKDIR /app
+# WORKDIR /app
 RUN dotnet publish -c Release -o out
 
 # build runtime image
