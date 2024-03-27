@@ -34,8 +34,8 @@ namespace Application.Orders
                 if (order.IsCompleted == true) return Result<Unit>.Failure(error: "Поръчката е вече завършена");
 
                 order.IsCompleted = true;
-                order.CompletedDate = DateTime.Now;
-                order.ModifiedOn = DateTime.Now;
+                order.CompletedDate = DateTime.UtcNow;
+                order.ModifiedOn = DateTime.UtcNow;
 
                 var result = await _context.SaveChangesAsync() > 0;
 

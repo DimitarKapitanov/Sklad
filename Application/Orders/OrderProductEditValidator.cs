@@ -46,7 +46,7 @@ namespace Application.Orders
 
         private bool BeNotInFuture(DateTime date)
         {
-            return date.Date == DateTime.Now.Date;
+            return date.Date == DateTime.UtcNow.Date;
         }
     }
 }

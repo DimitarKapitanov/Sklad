@@ -44,7 +44,7 @@ namespace Application.Orders
                 }
 
                 order.IsDeleted = true;
-                order.DeletedOn = DateTime.Now;
+                order.DeletedOn = DateTime.UtcNow;
                 _context.Orders.Update(order);
 
                 await _context.SaveChangesAsync();

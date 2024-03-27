@@ -29,7 +29,7 @@ namespace Application.Products
 
                 if (product == null) return null;
                 product.IsDeleted = true;
-                product.DeletedOn = DateTime.Now;
+                product.DeletedOn = DateTime.UtcNow;
                 _context.Products.Update(product);
                 var result = await _context.SaveChangesAsync() > 0;
 

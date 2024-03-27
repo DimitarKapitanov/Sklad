@@ -27,7 +27,7 @@ namespace Application.Warehouses
                 if (warehouse == null) return null;
 
                 warehouse.IsDeleted = true;
-                warehouse.DeletedOn = DateTime.Now;
+                warehouse.DeletedOn = DateTime.UtcNow;
 
                 _context.Warehouses.Update(warehouse);
                 var result = await _context.SaveChangesAsync(cancellationToken) > 0;

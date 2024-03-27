@@ -378,6 +378,13 @@ export default class OrderStore {
                 if (order) {
                     order.isCompleted = true;
                     this.orderRegistry.set(id, order);
+                    this.pagedOrderRegistry.forEach(orders => {
+                        orders.forEach(order => {
+                            if (order.id === id) {
+                                order.isCompleted = true;
+                            }
+                        });
+                    });
                     if (this.selectedOrder && this.selectedOrder.id === id) {
                         this.selectedOrder.isCompleted = true;
                     }

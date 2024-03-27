@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Core;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +33,7 @@ namespace Application.Orders
                 orderProduct.Product.Quantity += orderProduct.Quantity;
 
                 orderProduct.IsDeleted = true;
-                orderProduct.DeletedOn = DateTime.Now;
+                orderProduct.DeletedOn = DateTime.UtcNow;
 
                 var result = await _context.SaveChangesAsync() > 0;
 
