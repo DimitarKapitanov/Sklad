@@ -1,18 +1,18 @@
-# fly.toml app configuration file generated for warehouse-system on 2024-03-26T18:01:53+02:00
+# fly.toml app configuration file generated for warehouse-application on 2024-03-27T11:05:14+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'warehouse-system'
-primary_region = 'ams'
+app = 'warehouse-application'
+primary_region = 'otp'
 
 [build]
   image = 'dimitarkapitanov/sklad:latest'
 
 [env]
-  ASPNETCORE_URLS="http://+:8080"
-  Cloudinary__CloudName="dngn2f8dt"
-  Cloudinary__ApiKey="738916467828651"
+    ASPNETCORE_URLS="http://+:8080"
+    Cloudinary__CloudName="dngn2f8dt"
+    Cloudinary__ApiKey="738916467828651"
 
 [http_service]
   internal_port = 8080
