@@ -42,7 +42,7 @@ namespace Application.Products
                 .NotEmpty().WithMessage("Цената е задължителна")
                 .GreaterThan(0).WithMessage("Цената трябва да е по-голяма от 0")
                 .LessThan(decimal.MaxValue).WithMessage($"Цената трябва да е по-малка от {decimal.MaxValue}")
-                .PrecisionScale(18, 4, false).WithMessage("Цената трябва да е с максимум 4 цифри след десетичната запетая")
+                .PrecisionScale(18, 2, false).WithMessage("Цената трябва да е с максимум 2 цифри след десетичната запетая")
                 .GreaterThan(x => x.DeliveryPrice).WithMessage("Цената трябва да е по-голяма от цената на доставката")
                 .Must(x => x.ToString(CultureInfo.InvariantCulture) != null && x.ToString(CultureInfo.InvariantCulture).Contains('.'))
                 .WithMessage("Цената трябва да е с десетична запетая")
@@ -50,9 +50,9 @@ namespace Application.Products
                 {
                     if (!x.ToString(CultureInfo.InvariantCulture).Contains('.')) return false;
                     var parts = x.ToString(CultureInfo.InvariantCulture).Split(".");
-                    return parts.Length > 1 && parts[1].Length <= 4;
+                    return parts.Length > 1 && parts[1].Length <= 2;
 
-                }).WithMessage("Цената трябва да е с максимум 4 цифри след десетичната запетая")
+                }).WithMessage("Цената трябва да е с максимум 2 цифри след десетичната запетая")
                 .Must(x =>
                 {
                     if (!x.ToString(CultureInfo.InvariantCulture).Contains('.')) return false;
@@ -66,15 +66,15 @@ namespace Application.Products
                 .NotEmpty().WithMessage("Цената на доставката е задължителна")
                 .GreaterThan(0).WithMessage("Цената на доставката трябва да е по-голяма от 0")
                 .LessThan(decimal.MaxValue).WithMessage($"Цената на доставката трябва да е по-малка от {decimal.MaxValue}")
-                .PrecisionScale(18, 4, true).WithMessage("Цената трябва да е с максимум 4 цифри след десетичната запетая")
+                .PrecisionScale(18, 4, true).WithMessage("Цената трябва да е с максимум 2 цифри след десетичната запетая")
                 .Must(x => x.ToString(CultureInfo.InvariantCulture) != null && x.ToString(CultureInfo.InvariantCulture).Contains('.'))
                 .WithMessage("Цената на доставката трябва да е с десетична запетая")
                 .Must(x =>
                 {
                     if (!x.ToString(CultureInfo.InvariantCulture).Contains('.')) return false;
                     var parts = x.ToString(CultureInfo.InvariantCulture).Split(".");
-                    return parts.Length > 1 && parts[1].Length <= 4;
-                }).WithMessage("Цената на доставката трябва да е с максимум 4 цифри след десетичната запетая")
+                    return parts.Length > 1 && parts[1].Length <= 2;
+                }).WithMessage("Цената на доставката трябва да е с максимум 2 цифри след десетичната запетая")
                 .Must(x =>
                 {
                     if (!x.ToString(CultureInfo.InvariantCulture).Contains('.')) return false;

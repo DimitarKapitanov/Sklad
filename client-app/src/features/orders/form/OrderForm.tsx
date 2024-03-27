@@ -265,12 +265,12 @@ export default observer(function OrderForm() {
                             <Table.Cell>{orderProduct.unitAcronym}</Table.Cell>
                             <Table.Cell>{orderProduct.category}</Table.Cell>
                             <Table.Cell>{orderProduct.quantity}</Table.Cell>
-                            <Table.Cell>{orderProduct.price}</Table.Cell>
+                            <Table.Cell>{orderProduct.price.toFixed(2)}</Table.Cell>
                             <Table.Cell>
                               {parseFloat(
                                 (
                                   orderProduct.price * orderProduct.quantity
-                                ).toFixed(4)
+                                ).toFixed(2)
                               )}
                             </Table.Cell>
                             <Table.Cell>
@@ -298,7 +298,7 @@ export default observer(function OrderForm() {
                                   orderProduct.price * orderProduct.quantity,
                                 0
                               )
-                              .toFixed(4)}
+                              .toFixed(2)}
                           </Table.HeaderCell>
                           <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
@@ -314,7 +314,7 @@ export default observer(function OrderForm() {
                                   orderProduct.price * orderProduct.quantity,
                                 0
                               ) * 1.2
-                            ).toFixed(4)}
+                            ).toFixed(2)}
                           </Table.HeaderCell>
                           <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
@@ -335,6 +335,7 @@ export default observer(function OrderForm() {
                           className="ui dropdown"
                           name="product.id"
                           isClearable
+                          noOptionsMessage={() => "Няма намерени продукти"}
                           value={
                             selectedProduct
                               ? {
@@ -362,6 +363,10 @@ export default observer(function OrderForm() {
                               ).value;
                               (data as { value: string }).value = "";
                               setData("");
+                            } else {
+                              // Clear the selected product when the selection is cleared
+                              selectProduct('');
+                              values.product.id = '';
                             }
                           }}
                           onMenuScrollToBottom={() => {
@@ -376,7 +381,7 @@ export default observer(function OrderForm() {
                         name="product.price"
                         type="number"
                         step="any"
-                        value={productPrice.toString()}
+                        value={productPrice.toFixed(2).toString()}
                         min={selectedProduct?.price ? selectedProduct.price : 0}
                         onChange={(
                           data: React.ChangeEvent<HTMLInputElement>
@@ -415,14 +420,14 @@ export default observer(function OrderForm() {
                         content="Добави продукт"
                         type="button"
                         color="blue"
-                        disabled={!selectedProduct || values.product.id === "" || !dirty || !isValid}
+                        disabled={!selectedProduct || values.product.id === "" || !dirty || !isValid || values.product.quantity <= 0}
                         compact
                         style={{ height: 37, marginTop: 24 }}
                         onClick={() => {
                           addOrderProduct(selectedProduct!);
                           setValues((values) => ({
                             ...values,
-                            product: { id: "", quantity: 1, price: 0 },
+                            product: { id: "", quantity: 0, price: 0 },
                           }));
                           store.productStore.pagingParams.pageNumber = 1;
                           orderStore.clearProductOptions();

@@ -41,22 +41,24 @@ export default observer(function ProductInfoTable({ order }: Props) {
                         <Table.Row key={index} textAlign="center" verticalAlign="middle">
                             {tableHeadersProductInfo.map((header) => (
                                 <Table.Cell key={header.key}>
-                                    {(currentProduct)[header.key as keyof OrderProductsDtos].toString()}
+                                    {header.key === 'price' || header.key === 'totalPrice'
+                                        ? parseFloat((currentProduct)[header.key as keyof OrderProductsDtos].toString()).toFixed(2)
+                                        : (currentProduct)[header.key as keyof OrderProductsDtos].toString()}
                                 </Table.Cell>
                             ))}
                         </Table.Row>
                     ))}
                     <Table.Row >
                         <Table.Cell colSpan={'5'} textAlign='right' content='Всичко без ДДС' />
-                        <Table.Cell textAlign='center'>{(totalPrice()).toFixed(4)} лв.</Table.Cell>
+                        <Table.Cell textAlign='center'>{(totalPrice()).toFixed(2)} лв.</Table.Cell>
                     </Table.Row>
                     <Table.Row >
                         <Table.Cell colSpan={'5'} textAlign='right' content='ДДС 20%' />
-                        <Table.Cell textAlign='center'>{(totalPrice() * 0.2).toFixed(4)} лв.</Table.Cell>
+                        <Table.Cell textAlign='center'>{(totalPrice() * 0.2).toFixed(2)} лв.</Table.Cell>
                     </Table.Row>
                     <Table.Row>
                         <Table.Cell colSpan={'5'} textAlign='right'>Общо с ДДС</Table.Cell>
-                        <Table.Cell textAlign='center'>{(totalPrice() * 1.2).toFixed(4)} лв.</Table.Cell>
+                        <Table.Cell textAlign='center'>{(totalPrice() * 1.2).toFixed(2)} лв.</Table.Cell>
                     </Table.Row>
                 </Table.Body>
             </Table>

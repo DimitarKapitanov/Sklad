@@ -29,9 +29,9 @@ namespace Application.Orders
                     if (x % 1 == 0) return true;
                     if (!x.ToString(CultureInfo.InvariantCulture).Contains('.')) return false;
                     var parts = x.ToString(CultureInfo.InvariantCulture).Split(".");
-                    return parts.Length > 1 && parts[1].Length <= 4;
+                    return parts.Length > 1 && parts[1].Length <= 2;
                 })
-                .WithMessage("Цената трябва да е с максимум 4 цифри след десетичната запетая")
+                .WithMessage("Цената трябва да е с максимум 2 цифри след десетичната запетая")
                 .WithMessage("Цената трябва да е с десетична точка");
 
             RuleFor(x => x.TotalPrice)

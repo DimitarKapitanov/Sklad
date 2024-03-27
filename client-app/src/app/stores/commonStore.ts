@@ -15,10 +15,10 @@ export default class CommonStore {
       .required("Цената е задължителна")
       .test(
         "is-decimal",
-        "Цената трябва да има число пред ' . ' след това от 1 до 4 цифри",
+        "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри",
         function (value) {
           if (!value) return true;
-          const isValidFormat = /^(\d{1,14})[.](\d{1,4})$/.test(value || "");
+          const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
           const isNumber = !isNaN(Number(value.replace(",", ".")));
           return isValidFormat && isNumber;
         }
@@ -40,10 +40,10 @@ export default class CommonStore {
       .required("Цената за доставка е задължителна")
       .test(
         "is-decimal",
-        "Цената трябва да има число пред ' . ' след това от 1 до 4 цифри",
+        "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри",
         function (value) {
           if (!value) return true;
-          const isValidFormat = /^(\d{1,14})[.](\d{1,4})$/.test(value || "");
+          const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
           const isNumber = !isNaN(Number(value.replace(",", ".")));
           return isValidFormat && isNumber;
         }
@@ -83,10 +83,10 @@ export default class CommonStore {
           .required("Цената е задължителна")
           .test(
             "is-decimal",
-            "Цената трябва да има число пред ' . ' след това от 1 до 4 цифри.",
+            "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.",
             function (value) {
               if (!value) return true;
-              const isValidFormat = /^(\d{1,14})[.](\d{1,4})$/.test(
+              const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(
                 value || ""
               );
               const isNumber = !isNaN(Number(value.replace(",", ".")));
@@ -111,10 +111,10 @@ export default class CommonStore {
           .required("Цената за доставка е задължителна")
           .test(
             "is-decimal",
-            "Цената трябва да има число пред ' . ' след това от 1 до 4 цифри.",
+            "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.",
             function (value) {
               if (!value) return true;
-              const isValidFormat = /^(\d{1,14})[.](\d{1,4})$/.test(
+              const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(
                 value || ""
               );
               const isNumber = !isNaN(Number(value.replace(",", ".")));
@@ -158,7 +158,7 @@ export default class CommonStore {
     deliveryAddress: Yup.string().required('Изберете адрес за доставка'),
     product: Yup.object().shape({
       quantity: Yup.number()
-        .min(1, "Количеството трябва да е по голямо от 1")
+        .min(0, "Количеството трябва да е по голямо от 1")
         .required("Количеството е задължително")
         .test('is-enough', 'Няма достатъчно количество', function (value) {
           const { id } = this.parent;

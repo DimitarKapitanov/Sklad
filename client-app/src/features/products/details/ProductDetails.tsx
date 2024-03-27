@@ -31,8 +31,8 @@ export default observer(function ProductDetails({ id }: Props) {
                         <span>{product.category}</span>
                     </Card.Meta>
                     <Card.Description content={`Налично количество: ${product.quantity} ${product.unitDto.acronym}`} />
-                    <Card.Description content={`Продажна цена: ${product.price} лв`} />
-                    <Card.Description content={`Доставна цена: ${product.deliveryPrice} лв`} />
+                    <Card.Description content={`Продажна цена: ${parseFloat(product.price).toFixed(2)} лв`} />
+                    <Card.Description content={`Доставна цена: ${parseFloat(product.deliveryPrice).toFixed(2)} лв`} />
                     <Card.Description content={`Мярка: ${product.unitAcronym}`} />
                     <Card.Description content={`Категория: ${product.category}`} />
                     <Card.Description content={`Описание: ${product.description}`} />

@@ -216,8 +216,8 @@ export default class ProductStore {
     this.setLoadingInitial(true);
     try {
       const product = await agent.Products.details(id);
-      product.price = (product.price as unknown as number).toFixed(4);
-      product.deliveryPrice = (product.deliveryPrice as unknown as number).toFixed(4);
+      product.price = (product.price as unknown as number).toFixed(2);
+      product.deliveryPrice = (product.deliveryPrice as unknown as number).toFixed(2);
 
       this.setProduct(product);
       runInAction(() => (this.selectedProduct = product));

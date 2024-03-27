@@ -41,23 +41,23 @@ export default observer(function DeliveredProductDetails({ products, partnerId }
                                 <Table.Cell>{product.category}</Table.Cell>
                                 <Table.Cell>{product.unitAcronym}</Table.Cell>
                                 <Table.Cell>{product.quantity}</Table.Cell>
-                                <Table.Cell>{product.price.toFixed(4)} лв.</Table.Cell>
-                                <Table.Cell>{(product.quantity * product.price).toFixed(4)} лв.</Table.Cell>
-                                <Table.Cell textAlign='center' content={`${((product.quantity * product.price) * 0.2).toFixed(4)} лв.`} />
-                                <Table.Cell textAlign='center'>{((product.quantity * product.price) * 1.2).toFixed(4)} лв.</Table.Cell>
+                                <Table.Cell>{product.price.toFixed(2)} лв.</Table.Cell>
+                                <Table.Cell>{(product.quantity * product.price).toFixed(2)} лв.</Table.Cell>
+                                <Table.Cell textAlign='center' content={`${((product.quantity * product.price) * 0.2).toFixed(2)} лв.`} />
+                                <Table.Cell textAlign='center'>{((product.quantity * product.price) * 1.2).toFixed(2)} лв.</Table.Cell>
                             </Table.Row>
                         ))}
                         <Table.Row >
                             <Table.Cell colSpan={'7'} textAlign='right' content='Всичко без ДДС' />
-                            <Table.Cell textAlign='center'>{(totalPrice()).toFixed(4)} лв.</Table.Cell>
+                            <Table.Cell textAlign='center'>{(totalPrice()).toFixed(2)} лв.</Table.Cell>
                         </Table.Row>
                         <Table.Row >
                             <Table.Cell colSpan={'7'} textAlign='right' content='ДДС 20%' />
-                            <Table.Cell textAlign='center'>{(totalPrice() * 0.2).toFixed(4)} лв.</Table.Cell>
+                            <Table.Cell textAlign='center'>{(totalPrice() * 0.2).toFixed(2)} лв.</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan={'7'} textAlign='right'>Общо с ДДС</Table.Cell>
-                            <Table.Cell textAlign='center'>{(totalPrice() * 1.2).toFixed(4)} лв.</Table.Cell>
+                            <Table.Cell textAlign='center'>{(totalPrice() * 1.2).toFixed(2)} лв.</Table.Cell>
                         </Table.Row>
                     </DataTable>
                 </Card.Content>
