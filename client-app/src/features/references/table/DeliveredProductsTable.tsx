@@ -46,8 +46,7 @@ export default observer(function DeliveredProductsTable({ deliveries, id }: Prop
                 </DataTable>
             ) : (
                 <p style={{ color: 'red', fontSize: '20px' }}>Няма намерени доставки.</p>
-            )
-            }
+            )}
             {pagination && pagination.totalPages > 1 && (
                 <Pagination
                     defaultActivePage={1}

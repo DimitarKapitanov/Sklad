@@ -74,6 +74,7 @@ export default class SupplierStore {
     }
 
     loadSuppliers = async () => {
+        console.trace();
         try {
             const result = await agent.Suppliers.list(this.axiosParams);
             runInAction(() => {
@@ -90,11 +91,16 @@ export default class SupplierStore {
 
     setSupplierOptions = () => {
         const suppliers = this.supplierRegistry.get(this.pagination!.currentPage.toString());
-        if (suppliers) suppliers.forEach(s => this.supplierOptions.push({ key: s.id, text: s.name, value: s.id }));
+        if (suppliers) suppliers.forEach(s => {
+            if (!this.supplierOptions.some(o => o.key === s.id))
+                this.supplierOptions.push({ key: s.id, text: s.name, value: s.id })
+        });
     }
 
     private setSuppliers(supplier: Supplier[]) {
-        if (this.pagination) this.supplierRegistry.set(this.pagination?.currentPage.toString(), supplier);
+        if (this.pagination) {
+            this.supplierRegistry.set(this.pagination?.currentPage.toString(), supplier);
+        }
     }
 
     clearSupplierOptions = () => {

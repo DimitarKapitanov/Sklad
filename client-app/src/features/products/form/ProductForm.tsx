@@ -45,11 +45,11 @@ export default observer(function ProductForm() {
   const [, setLoadingNext] = useState(false);
 
   useEffect(() => {
-    if (unitRegistry.size <= 1) loadUnits();
+    if (unitRegistry.size < 1) loadUnits();
   }, [loadUnits, unitRegistry.size]);
 
   useEffect(() => {
-    if (supplierRegistry.size < 1) { loadSuppliers(); }
+    if (supplierRegistry.size < 1) loadSuppliers();
   }, [loadSuppliers, supplierRegistry.size]);
 
   function handleProductSubmit(
