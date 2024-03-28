@@ -74,7 +74,6 @@ export default class SupplierStore {
     }
 
     loadSuppliers = async () => {
-        console.trace();
         try {
             const result = await agent.Suppliers.list(this.axiosParams);
             runInAction(() => {
