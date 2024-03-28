@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
+import { redirect } from "react-router-dom";
 import agent from "../api/Agent";
 import { router } from "../api/router/Routes";
 import { NewUserFormValues, User, UserFormValues, UserInfo } from "../models/user";
@@ -30,6 +31,7 @@ export default class UserStore {
         store.commonStore.setToken(user.token);
         runInAction(() => this.user = user);
         store.modalStore.closeModal();
+        redirect('/products');
     }
 
     logout = () => {

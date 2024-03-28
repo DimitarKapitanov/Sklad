@@ -32,9 +32,24 @@ function App() {
         <>
           {!isMobile && <SidebarNav tokenValid={tokenValid} />}
           {isMobile && <NavBar />}
-          <Container className={`body-container`} fluid={true}>
-            <Outlet />
-          </Container>
+          <>
+            <Container className={`body-container`} fluid={true}>
+              <div>
+                <Outlet />
+              </div>
+              <footer className="footer">
+                <div className="footer-body">
+                  <div className="footer-text">
+                    <p>Решения в областта на информационните и комуникационни технологии и киберсигурността в малките и средните предприятия</p>
+                  </div>
+                  <div className="footer-image">
+                    <img src="/assets/pvu_image.png" alt="logo" height={40} />
+                    <img src="/assets/fes_image.png" alt="logo" height={40} />
+                  </div>
+                </div>
+              </footer>
+            </Container>
+          </>
         </>
       )}
     </>

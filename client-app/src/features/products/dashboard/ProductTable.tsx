@@ -23,7 +23,7 @@ export default observer(function ProductTable() {
     if (window.location.pathname === "/products") {
       setLocalTableHeader([
         ...tableHeader,
-        { key: "isDeleted", label: "Edit/Delete" },
+        { key: "isDeleted", label: "Info/Delete" },
       ]);
     }
   }, [tableHeader]);

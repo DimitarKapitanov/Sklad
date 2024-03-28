@@ -97,7 +97,7 @@ export default observer(function SidebarNav(props: Props) {
                   text="Профил"
                   icon="user"
                 />
-                <Dropdown.Item onClick={logout} text="Излез" icon="power" />
+                <Dropdown.Item onClick={logout} text="Изход" icon="power" />
               </Dropdown.Menu>
             </Dropdown>
           </span>
