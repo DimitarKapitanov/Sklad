@@ -42,6 +42,7 @@ export default class UserStore {
 
     getUser = async () => {
         try {
+            if (!store.commonStore.token) return null;
             const user = await agent.Account.getCurrentUser();
             runInAction(() => this.user = user);
         } catch (error) {

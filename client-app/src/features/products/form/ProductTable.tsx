@@ -128,12 +128,7 @@ export default observer(function ProductTable({
                         placeholder="Категория"
                         name={`products[${index}].category`}
                       />
-                      {/* <MyTextInput
-                        placeholder="Категория"
-                        name={`products[${index}].category`}
-                      /> */}
                     </TableCell>
-
                     <TableCell className="">
                       <MySelectInput
                         onSelected={(option) => handleUnitChange(option, index)}
@@ -142,28 +137,24 @@ export default observer(function ProductTable({
                         name={`products[${index}].unitAcronym`}
                       />
                     </TableCell>
-
                     <TableCell>
                       <MyTextInput
                         placeholder="Количество"
                         name={`products[${index}].quantity`}
                       />
                     </TableCell>
-
                     <TableCell>
                       <MyTextInput
                         placeholder="Продажна цена"
                         name={`products[${index}].price`}
                       />
                     </TableCell>
-
                     <TableCell>
                       <MyTextInput
                         placeholder="Доставна цена"
                         name={`products[${index}].deliveryPrice`}
                       />
                     </TableCell>
-
                     <TableCell>
                       <MyTextArea
                         rows={1}
@@ -171,7 +162,6 @@ export default observer(function ProductTable({
                         name={`products[${index}].description`}
                       />
                     </TableCell>
-
                     <TableCell>
                       <Button
                         floated="left"

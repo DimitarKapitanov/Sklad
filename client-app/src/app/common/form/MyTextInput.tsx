@@ -30,6 +30,7 @@ export default function MyTextInput(props: Props) {
       {props.label && <label>{props.label}</label>}
       <input
         {...field}
+        autoComplete="off"
         name={props.name}
         placeholder={props.placeholder}
         type={props.type}
