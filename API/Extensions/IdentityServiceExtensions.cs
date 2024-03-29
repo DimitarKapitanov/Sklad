@@ -36,6 +36,7 @@ namespace API.Extensions
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
 
@@ -43,6 +44,5 @@ namespace API.Extensions
 
             return services;
         }
-
     }
 }

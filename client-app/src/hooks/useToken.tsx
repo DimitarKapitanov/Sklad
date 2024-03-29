@@ -14,7 +14,7 @@ export function useToken() {
   const checkToken = useCallback(
     (checkOnly?: boolean, e?: MouseEvent, redirect?: boolean) => {
       if (!modalStore.modal.open) {
-        const token = localStorage.getItem("jwt");
+        const token = sessionStorage.getItem("jwt");
         if (token) {
           const decodedToken: DecodedToken = jwtDecode(token);
           if (decodedToken) {

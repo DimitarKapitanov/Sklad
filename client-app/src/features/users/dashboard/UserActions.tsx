@@ -1,23 +1,19 @@
 import { observer } from "mobx-react-lite";
 import {
   Button,
-  Header,
-  Input,
-  Menu,
-  MenuItem,
-  MenuMenu,
+  Divider,
+  Header
 } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import CreateUser from "../CreateUser";
 
 export default observer(function UserActions() {
-  const { modalStore, userStore } = useStore();
+  const { modalStore } = useStore();
   const { openModal } = modalStore;
-  const { setSearch, search } = userStore;
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
         <Header as="h2" content="Потребители" />
         <div>
           <Button
@@ -29,20 +25,7 @@ export default observer(function UserActions() {
           />
         </div>
       </div>
-      <Menu pointing secondary>
-        <MenuMenu style={{ marginTop: "5px" }}>
-          <MenuItem style={{ paddingRight: 0, paddingBottom: '20px' }}>
-            <Input
-              className="icon"
-              icon="search"
-              placeholder="Търси..."
-              style={{ paddingLeft: "0" }}
-              value={search}
-              onChange={(e) => { setSearch(e.target.value) }}
-            />
-          </MenuItem>
-        </MenuMenu>
-      </Menu>
+      <Divider />
     </>
   );
 });

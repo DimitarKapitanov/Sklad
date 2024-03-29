@@ -34,7 +34,6 @@ export default observer(function ProfilePage() {
                         <>
                             <ProfileInfoCard
                                 profile={profile!}
-                                location="София, България"
                                 warehouse={wareHouseByUserName(username)}
                             />
                             <ProfileContent profile={profile} />

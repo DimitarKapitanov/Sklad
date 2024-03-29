@@ -17,18 +17,14 @@ namespace API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IMapper _mapper;
         public AccountController(
             UserManager<AppUser> userManager,
             TokenService tokenService,
-            RoleManager<IdentityRole> roleManager,
-            ILogger<AccountController> logger,
-            IMapper mapper)
+            RoleManager<IdentityRole> roleManager)
         {
             _roleManager = roleManager;
             _tokenService = tokenService;
             _userManager = userManager;
-            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -46,6 +42,7 @@ namespace API.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             if (userRoles == null) return Unauthorized();
 
+            await SetRefreshToken(user);
             return CreateUserObject(user, userRoles);
         }
 
@@ -58,6 +55,7 @@ namespace API.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             if (userRoles == null) return Unauthorized();
 
+            await SetRefreshToken(user);
             return CreateUserObject(user, userRoles);
         }
 
@@ -94,11 +92,14 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (!result.Succeeded) return BadRequest(result.Errors);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, registerDto.Role.Trim());
+                await SetRefreshToken(user);
+                return BadRequest(result.Errors);
+            }
 
-            await _userManager.AddToRoleAsync(user, registerDto.Role.Trim());
-
-            return Ok();
+            return BadRequest("Неуспешно създаване на потребител");
         }
 
         [Authorize(Roles = "Admin, Manager")]
@@ -143,6 +144,7 @@ namespace API.Controllers
 
             if (!result.Succeeded) return BadRequest(result.Errors);
 
+            await SetRefreshToken(user);
             return Ok();
         }
 
@@ -150,7 +152,6 @@ namespace API.Controllers
         [HttpGet("all-users")]
         public async Task<ActionResult<List<GetUserDto>>> GetAllUsers()
         {
-
             var users = await _userManager.Users.Include(p => p.Photos).ToListAsync();
             var userDtos = new List<GetUserDto>();
             foreach (var user in users)
@@ -194,7 +195,7 @@ namespace API.Controllers
             var result = await _roleManager.CreateAsync(role);
 
             if (!result.Succeeded) return BadRequest(result.Errors);
-
+            await SetRefreshToken(user);
             return GetRolesDto(role);
         }
 
@@ -221,6 +222,28 @@ namespace API.Controllers
             return roleNames;
         }
 
+        [Authorize]
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<UserDto>> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            var user = await _userManager.Users
+            .Include(r => r.RefreshTokens)
+            .Include(p => p.Photos)
+            .FirstOrDefaultAsync(x => x.UserName == User.FindFirstValue(ClaimTypes.Name));
+
+            if (user == null) return Unauthorized();
+
+            var oldToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken);
+
+            if (oldToken != null && !oldToken.IsActive) return Unauthorized();
+
+            if (oldToken != null) oldToken.Revoked = DateTime.UtcNow;
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            return CreateUserObject(user, userRoles);
+        }
         private UserDto CreateUserObject(AppUser user, IList<string> userRoles = null)
         {
             return new UserDto
@@ -255,6 +278,21 @@ namespace API.Controllers
             if (!removePasswordResult.Succeeded) return removePasswordResult;
 
             return await _userManager.AddPasswordAsync(user, newPassword);
+        }
+
+        private async Task SetRefreshToken(AppUser user)
+        {
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            user.RefreshTokens.Add(refreshToken);
+            await _userManager.UpdateAsync(user);
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+
+            Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
         }
 
         private async Task<IdentityResult> UpdateRole(AppUser user, string newRole)

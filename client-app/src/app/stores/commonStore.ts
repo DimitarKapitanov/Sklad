@@ -286,7 +286,7 @@ export default class CommonStore {
 
   error: ServerError | null = null;
 
-  token: string | null = localStorage.getItem("jwt");
+  token: string | null = sessionStorage.getItem("jwt");
   appLoaded = false;
 
   constructor() {
@@ -295,9 +295,9 @@ export default class CommonStore {
       () => this.token,
       token => {
         if (token) {
-          localStorage.setItem("jwt", token);
+          sessionStorage.setItem("jwt", token);
         } else {
-          localStorage.removeItem("jwt");
+          sessionStorage.removeItem("jwt");
         }
       }
     );
