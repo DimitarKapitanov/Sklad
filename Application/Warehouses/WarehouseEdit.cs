@@ -58,7 +58,7 @@ namespace Application.Warehouses
 
                 var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-                if (!result) return Result<Unit>.Failure("Failed to update warehouse");
+                if (!result) return Result<Unit>.Failure("Възникна грешка при запазване на промените!");
 
                 return Result<Unit>.Success(Unit.Value);
             }

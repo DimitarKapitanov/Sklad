@@ -7,7 +7,7 @@ import { PagingParams } from "../../../app/models/pagination";
 import { useStore } from "../../../app/stores/store";
 import ProductInfoTable from "./ProductInfoTable";
 
-export default observer(function SoldProductTable() {
+export default observer(function SoldProductsTable() {
   const { statisticsStore } = useStore();
   const { soldProductSort, formatDateTime, pagination, setPagingParams, loadSoldProducts: loadSoldProducts } = statisticsStore;
   const [selectedOrderId, setSelectedOrderId] = useState<string>("");
@@ -49,7 +49,7 @@ export default observer(function SoldProductTable() {
               <Table.Cell>{soldProduct.bulstat}</Table.Cell>
               <Table.Cell>{"гр." + " " + soldProduct.deliveryCity + " " + "ул." + soldProduct.deliveryAddress}</Table.Cell>
               <Table.Cell>{soldProduct.warehouseName}</Table.Cell>
-              <Table.Cell>
+              <Table.Cell textAlign="center">
                 <Button primary size="mini" compact icon="info" onClick={() => handleClick(index)} />
               </Table.Cell>
             </Table.Row>

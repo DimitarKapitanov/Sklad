@@ -3,7 +3,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import CheckBox from "../common/checkbox/CheckBox";
 import { useStore } from "../stores/store";
-import logo from "/assets/logo.png";
+import logo from "/assets/warehouse_logo.png";
 
 const routes = [
   { path: "products", name: "Продукти" },

@@ -13,6 +13,11 @@ body {
   overflow: hidden;
 }
 
+.ui.vertical.menu.navbar {
+  background: #f0f8ff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.43);
+}
+
 .ui.container.body-container {
   display: flex;
   flex-direction: column;
@@ -30,6 +35,10 @@ body {
   }
 }
 
+.ui.teal.header.login-header {
+  font-size: 1.5em;
+}
+
 .footer {
   margin-top: 30px;
   min-height: 60px;
@@ -45,6 +54,21 @@ body {
       width: 240px;
       text-align: center;
       font-size: 8px;
+    }
+  }
+
+  .footer-body-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+
+    .footer-text-login {
+      width: 240px;
+      text-align: center;
+      font-size: 8px;
+      margin-bottom: 20px;
     }
   }
 }

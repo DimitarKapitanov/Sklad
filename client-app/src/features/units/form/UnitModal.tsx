@@ -1,10 +1,10 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Form } from "semantic-ui-react";
-import { useStore } from "../../../app/stores/store";
-import { Unit } from "../../../app/models/unit";
 import { v4 as uuid } from 'uuid';
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { Unit } from "../../../app/models/unit";
+import { useStore } from "../../../app/stores/store";
 
 export default function UnitModal() {
     const { unitStore, modalStore } = useStore()
@@ -15,7 +15,7 @@ export default function UnitModal() {
         id: '',
         acronym: ''
     });
-    
+
     useEffect(() => {
         if (id) {
             loadUnit(id).then(unit => setUnit(unit!));
@@ -40,10 +40,10 @@ export default function UnitModal() {
 
     return (
         <Form onSubmit={handleSubmit} autoComplete='off' widths="equal">
-                <Form.Input required placeholder='Акроним' label='Акроним' name='acronym' onChange={handleInputChange} />
+            <Form.Input required placeholder='Мерна единица' label='Мерна единица' name='acronym' onChange={handleInputChange} />
             <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                <Button loading={loading} type='submit' positive>Изпрати</Button>
-                <Button onClick={() => modalStore.closeModal() } color='red' type="button" content='Отказ' />
+                <Button loading={loading} type='submit' positive>Добави</Button>
+                <Button onClick={() => modalStore.closeModal()} color='red' type="button" content='Отказ' />
             </div>
         </Form>
     )

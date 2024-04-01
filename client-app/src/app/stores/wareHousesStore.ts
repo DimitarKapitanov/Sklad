@@ -1,7 +1,8 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/Agent";
 import { SelectedWarehouse } from "../models/selectedWarehouse";
-import { Warehouse } from "../models/warehouse";
+import { Warehouse, WarehouseEditValues } from "../models/warehouse";
+import { store } from "./store";
 
 export default class WarehouseStore {
   wareHouseRegistry = new Map<string, Warehouse>();
@@ -79,12 +80,18 @@ export default class WarehouseStore {
     }
   };
 
-  editWarehouse = async (id: string, data: Warehouse) => {
+  editWarehouse = async (id: string, data: WarehouseEditValues) => {
     this.isEditing = true;
     try {
       await agent.Warehouse.edit(id, data);
       runInAction(() => {
-        this.wareHouseRegistry.set(id, data);
+        const wareHouse = this.wareHouseRegistry.get(id);
+        if (wareHouse) {
+          wareHouse.name = data.name;
+          wareHouse.description = data.description;
+          wareHouse.contactPersonId = data.contactPersonId;
+          wareHouse.userName = store.userStore.usersOptions.find(x => x.key === data.contactPersonId)!.text;
+        }
       });
     } catch (error) {
       console.log(error);

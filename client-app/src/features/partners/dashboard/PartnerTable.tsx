@@ -23,9 +23,9 @@ export default observer(function PartnerDashboard() {
             <Table.Cell>{partner.companyOwnerName}</Table.Cell>
             <Table.Cell textAlign="center">
               <Button
-                color='blue'
+                primary
                 onClick={() => openModals('partnerDetailsModal', <PartnerOrders partner={partner} />, 'large')}
-                size="tiny" icon='info' />
+                size="mini" icon='info' />
             </Table.Cell>
           </Table.Row>
         ))}

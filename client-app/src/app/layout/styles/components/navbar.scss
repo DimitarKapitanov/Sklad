@@ -49,7 +49,7 @@ nav {
     }
 
     &.active,
-    #click:checked ~ ul {
+    #click:checked~ul {
       left: 0;
 
       li a {

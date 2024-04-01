@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button, Confirm, Header, Label } from "semantic-ui-react";
 import MySelectInput from "../../app/common/form/MySelectInput";
 import MyTextInput from "../../app/common/form/MyTextInput";
-import { Warehouse } from "../../app/models/warehouse";
+import { Warehouse, WarehouseEditValues } from "../../app/models/warehouse";
 import { useStore } from "../../app/stores/store";
 
 interface Props {
@@ -22,13 +22,13 @@ export default observer(function EditWarehouse({ warehouseData }: Props) {
   const { editWarehouse, deleteWarehouse } = warehouseStore;
   const [deleteConfirmShow, setDeleteConfirmShow] = useState(false);
 
-  const warehouse: Warehouse = {
-    id: warehouseData.id,
+  const warehouse: WarehouseEditValues = {
     name: warehouseData.name,
     description: warehouseData.description,
-    userName: warehouseData.userName,
     contactPersonId: warehouseData.contactPersonId,
   };
+
+  console.log(warehouse);
 
   return (
     <Formik
@@ -64,7 +64,7 @@ export default observer(function EditWarehouse({ warehouseData }: Props) {
               <MySelectInput
                 options={usersOptions}
                 placeholder="Лице за контакт"
-                name="userName"
+                name="contactPersonId"
                 label="Лице за контакт"
               />
               <ErrorMessage
@@ -120,6 +120,6 @@ export default observer(function EditWarehouse({ warehouseData }: Props) {
           </>
         );
       }}
-    </Formik>
+    </Formik >
   );
 });

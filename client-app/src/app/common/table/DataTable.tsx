@@ -12,7 +12,10 @@ interface Props {
 
 const DataTable = (props: Props) => {
   return (
-    <Table celled unstackable>
+    <Table
+      celled
+      selectable
+    >
       <TableHeader>
         <TableRow>
           {props.header.map((header) => (

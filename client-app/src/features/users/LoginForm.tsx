@@ -21,12 +21,13 @@ export default observer(function LoginForm() {
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
             <Header
               as="h2"
-              content="Вход в Склад"
+              content="Вход Димитър Чомаков ООД"
               color="teal"
               textAlign="center"
+              className="login-header"
             />
-            <MyTextInput placeholder="Email" name="email" />
-            <MyTextInput placeholder="Password" name="password" type="password" />
+            <MyTextInput placeholder="Имейл" name="email" />
+            <MyTextInput placeholder="Парола" name="password" type="password" />
             <ErrorMessage
               name="error"
               render={() => (
@@ -49,13 +50,13 @@ export default observer(function LoginForm() {
         )}
       </Formik>
       <footer className="footer">
-        <div className="footer-body">
-          <div className="footer-image">
+        <div className="footer-body-login">
+          <div className="footer-text-login">
+            <p>Решения в областта на информационните и комуникационни технологии и киберсигурността в малките и средните предприятия</p>
+          </div>
+          <div className="footer-image-login">
             <img src="/assets/pvu_image.png" alt="logo" height={40} />
             <img src="/assets/fes_image.png" alt="logo" height={40} />
-          </div>
-          <div className="footer-text">
-            <p>Решения в областта на информационните и комуникационни технологии и киберсигурността в малките и средните предприятия</p>
           </div>
         </div>
       </footer>

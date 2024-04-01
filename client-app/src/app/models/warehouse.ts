@@ -9,5 +9,5 @@ export interface Warehouse {
 export interface WarehouseEditValues {
     name: string;
     description: string
-    userName: string;
+    contactPersonId: string;
 }

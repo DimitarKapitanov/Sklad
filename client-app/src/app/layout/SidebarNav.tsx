@@ -28,7 +28,6 @@ export default observer(function SidebarNav(props: Props) {
       animation="push"
       direction="left"
       icon="labeled"
-      inverted
       vertical
       visible={true}
       className="navbar"
@@ -43,7 +42,7 @@ export default observer(function SidebarNav(props: Props) {
           alignItems: "center",
         }}
       >
-        <Image src="/assets/logo.png" alt="logo" height={60} as={Link} size="tiny" to="/" />
+        <Image src="/assets/warehouse_logo.png" alt="logo" height={60} as={Link} size="tiny" to="/" />
       </Menu.Item>
       <Container>
         {(user?.role.includes("Admin") || user?.role.includes("Manager")) ? (
@@ -56,7 +55,7 @@ export default observer(function SidebarNav(props: Props) {
               name="Статистика"
             />
             <MenuItem as={NavLink} to="partners" icon="users" name="Партньори" />
-            <MenuItem as={NavLink} to="users" icon="address book" name="Персонал" />
+            <MenuItem as={NavLink} to="users" icon="address book" name="Служители" />
           </>
         ) : null}
         <MenuItem

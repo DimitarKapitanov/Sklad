@@ -8,5 +8,5 @@ export const tableHeaderSoldProducts: { key: string, label: string }[] = [
     { key: "bulstat", label: "Булстат" },
     { key: "deliveryAddress", label: "Адрес на доставка" },
     { key: "warehouseName", label: "Име на склад" },
-    { key: "productInfo", label: "" }
+    { key: "productInfo", label: "Действия" }
 ];

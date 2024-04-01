@@ -43,7 +43,7 @@ export default observer(function DeliveriesTable() {
       <DataTable header={tableHeaderDeliveredProductsTest}>
         {getSuppliers && getSuppliers.map((delivery, index) => (
           <Fragment key={index}>
-            <Table.Row key={index} className="unstackable">
+            <Table.Row key={index}>
               <Table.Cell>{delivery.name}</Table.Cell>
               <Table.Cell>{delivery.city}</Table.Cell>
               <Table.Cell>{delivery.address}</Table.Cell>
@@ -51,7 +51,9 @@ export default observer(function DeliveriesTable() {
               <Table.Cell>{delivery.phone}</Table.Cell>
               <Table.Cell>{delivery.email}</Table.Cell>
               <Table.Cell>{delivery.companyOwnerName}</Table.Cell>
-              <Table.Cell><Button color='blue' size="tiny" icon='info' onClick={() => handleClick(delivery.partnerId)} /></Table.Cell>
+              <Table.Cell textAlign="center">
+                <Button primary compact size="mini" icon='info' onClick={() => handleClick(delivery.partnerId)} />
+              </Table.Cell>
             </Table.Row>
             {isLoadedSelectedPartner && deliveredProductSort && selectedRow === delivery.partnerId ?
               <Table.Row>

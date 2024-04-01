@@ -18,7 +18,7 @@ namespace Application.Warehouses
                 .NotEmpty().WithMessage("Контактното лице е задължително")
                 .Must(BeAValidGuid).WithMessage("Невалидно контактно лице");
             RuleFor(x => x.Description)
-                .NotEmpty().WithMessage("Описанието на склада е задължително").Matches(@"^[\w\s.,!?а-яА-Я]*$").WithMessage("Описанието на склада трябва да съдържа само букви, цифри и пунктуация");
+                .Matches(@"^[\w\s.,!?а-яА-Я]*$").WithMessage("Описанието на склада трябва да съдържа само букви, цифри и пунктуация");
         }
 
         private bool BeAValidGuid(string contactPersonId)

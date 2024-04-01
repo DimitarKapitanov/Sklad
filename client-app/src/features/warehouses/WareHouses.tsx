@@ -21,7 +21,7 @@ export default observer(function Warehouses() {
   return (
     <>
       <WarehousesActions />
-      {wareHouses.find(cpi => cpi.userName === user?.userName) ? (
+      {wareHouses.find(cpi => cpi.userName === user?.userName || user?.role === "Admin") ? (
         <Grid>
           <Grid.Column width="16">
             <Card.Group itemsPerRow={3} className="warehouse-cards">

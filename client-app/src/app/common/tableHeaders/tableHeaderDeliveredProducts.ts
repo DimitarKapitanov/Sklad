@@ -31,5 +31,5 @@ export const tableHeaderDeliveredProductsTest: { key: string, label: string }[] 
     { key: "phone", label: "Телефон" },
     { key: "email", label: "Имейл" },
     { key: "companyOwnerName", label: "Име на собственик" },
-    { key: "modifiedOn", label: "" },
+    { key: "modifiedOn", label: "Действия" },
 ]

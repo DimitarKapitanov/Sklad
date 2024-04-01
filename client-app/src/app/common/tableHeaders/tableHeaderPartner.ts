@@ -6,5 +6,5 @@ export const tableHeaderPartner: { key: string, label: string }[] = [
     { key: "phone", label: "Телефон" },
     { key: "email", label: "Имейл" },
     { key: "companyOwnerName", label: "МОЛ" },
-    { key: "Action", label: "" },
+    { key: "Action", label: "Действия" },
 ]
