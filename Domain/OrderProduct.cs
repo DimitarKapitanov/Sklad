@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Model;
 
 namespace Domain
@@ -14,9 +10,10 @@ namespace Domain
         [ForeignKey("Product.Id")]
         public Guid ProductId { get; set; }
 
-         public string Name { get; set; }
+        public string Name { get; set; }
 
-        public string Category { get; set; }
+        public Guid CategoryId { get; set; }
+        public virtual Category Category { get; set; }
 
         public double Quantity { get; set; }
 
@@ -25,7 +22,7 @@ namespace Domain
         public string UnitAcronym { get; set; }
 
         public string Description { get; set; }
-        
+
         public decimal Price { get; set; }
 
         public decimal TotalPrice { get; set; }

@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
+import { Category } from "../models/category";
 import { NewOrder } from "../models/newOrder";
 import { NewPartner } from "../models/newPartner";
 import { Order } from "../models/order";
@@ -194,6 +195,12 @@ const Roles = {
   create: (role: string) => requests.post<void>("/Account/create-role", role),
 }
 
+const Categories = {
+  list: () => requests.get<Category[]>("/category"),
+  create: (category: string) => requests.post<void>("/categories", category),
+  delete: (category: string) => requests.delete<void>(`/categories/${category}`),
+}
+
 const agent = {
   Products,
   Units,
@@ -204,7 +211,8 @@ const agent = {
   Partner,
   Suppliers,
   Profiles,
-  Roles
+  Roles,
+  Categories,
 };
 
 export default agent;

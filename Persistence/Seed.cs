@@ -332,6 +332,48 @@ namespace Persistence
             //     await context.OrderProducts.AddRangeAsync(orderProducts);
             // }
 
+            if (!context.Categories.Any())
+            {
+                var categories = new List<Category>
+                {
+                    new() {
+                        Id = Guid.NewGuid(),
+                        Name = "Камини",
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedOn = DateTime.UtcNow,
+                        IsDeleted = false,
+                    },
+                    new() {
+                        Id = Guid.NewGuid(),
+                        Name = "Готварски печки",
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedOn = DateTime.UtcNow,
+                        IsDeleted = false,
+                    },
+                    new() {
+                        Id = Guid.NewGuid(),
+                        Name = "Други/Аксесоари",
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedOn = DateTime.UtcNow,
+                        IsDeleted = false,
+                    },
+                    new() {
+                        Id = Guid.NewGuid(),
+                        Name = "C",
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedOn = DateTime.UtcNow,
+                        IsDeleted = false,
+                    },
+                    new() {
+                        Id = Guid.NewGuid(),
+                        Name = "Консумативи",
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedOn = DateTime.UtcNow,
+                        IsDeleted = false,
+                    },
+                };
+                await context.Categories.AddRangeAsync(categories);
+            }
             if (!context.Warehouses.Any())
             {
                 var userIds = context.Users.Select(user => user.Id).ToList();

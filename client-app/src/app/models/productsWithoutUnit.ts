@@ -6,7 +6,8 @@ export interface Delivery {
 
 export interface ProductWithoutUnit {
     name: string;
-    category: string;
+    categoryId: string;
+    categoryName: string;
     quantity: number;
     unitId: string;
     unitAcronym: string | undefined;

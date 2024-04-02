@@ -203,11 +203,11 @@ export default class ProductStore {
   private setProduct = (product: Product) => {
     if (product.unitDto) product.unitAcronym = product.unitDto.acronym!;
     this.productRegistry.set(product.id, product);
-    if (this.categoryOptions.findIndex((x) => x.value === product.category) === -1) {
+    if (this.categoryOptions.findIndex((x) => x.value === product.categoryId) === -1) {
       this.categoryOptions.push({
-        key: product.category,
-        text: product.category,
-        value: product.category,
+        key: product.categoryId,
+        text: product.categoryId,
+        value: product.categoryId,
       });
     }
   };

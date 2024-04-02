@@ -2,7 +2,7 @@ import { Unit } from "./unit"
 
 export interface Product {
     name: string
-    category: string
+    categoryId: string
     quantity: number
     unitId: string
     unitAcronym: string

@@ -30,12 +30,14 @@ app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
 app.UseXfo(opt => opt.Deny());
 app.UseCsp(opt => opt
     .BlockAllMixedContent()
-    .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com", "sha256-KhmMaPpQqsccf43BLHwDHtDMqYihq39cTA4Ag6B4Ia4=", "sha256-KhmMaPpQqsccf43BLHwDHtDMqYihq39cTA4Ag6B4Ia4=", "sha256-KhmMaPpQqsccf43BLHwDHtDMqYihq39cTA4Ag6B4Ia4=", "sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="))
+    .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com", "sha256-KhmMaPpQqsccf43BLHwDHtDMqYihq39cTA4Ag6B4Ia4=", "sha256-KhmMaPpQqsccf43BLHwDHtDMqYihq39cTA4Ag6B4Ia4=", "sha256-KhmMaPpQqsccf43BLHwDHtDMqYihq39cTA4Ag6B4Ia4=", "sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
+    "sha256-KhmMaPpQqsccf43BLHwDHtDMqYihq39cTA4Ag6B4Ia4=", "sha256-KhmMaPpQqsccf43BLHwDHtDMqYihq39cTA4Ag6B4Ia4=", "sha256-KhmMaPpQqsccf43BLHwDHtDMqYihq39cTA4Ag6B4Ia4=",
+    "sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=", "sha256-wkAU1AW/h8YFx0XlzvpTllAKnFEO2tw8aKErs5a26LY="))
     .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com", "data:", "https://fonts.googleapis.com"))
     .FormActions(s => s.Self())
     .FrameAncestors(s => s.Self())
     .ImageSources(s => s.Self().CustomSources("blob:", "data:", "https://res.cloudinary.com"))
-    .ScriptSources(s => s.Self())
+    .ScriptSources(s => s.Self().CustomSources("sha256-Tui7QoFlnLXkJCSl1/JvEZdIXTmBttnWNxzJpXomQjg=", "sha256-AaD233S3nLNrz8GvI5Ct4JgDe2xTKcgZbhIdfyO3wrA="))
 );
 
 if (app.Environment.IsDevelopment())

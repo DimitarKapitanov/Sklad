@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Model;
 
@@ -13,7 +12,8 @@ namespace Domain
 
         public string Name { get; set; }
 
-        public string Category { get; set; }
+        public Guid CategoryId { get; set; }
+        public virtual Category Category { get; set; }
 
         public double Quantity { get; set; }
 
@@ -23,7 +23,7 @@ namespace Domain
         public virtual Unit Unit { get; set; }
 
         public string Description { get; set; }
-        
+
         public decimal Price { get; set; }
 
         public decimal DeliveryPrice { get; set; }

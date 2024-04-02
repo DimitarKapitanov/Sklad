@@ -9,7 +9,10 @@ namespace Domain
         [ForeignKey("DeliveriesId")]
         public virtual Deliveries Deliveries { get; set; }
         public string Name { get; set; }
-        public string Category { get; set; }
+        public string CategoryName { get; set; }
+        public Guid CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public virtual Category Category { get; set; }
         public double Quantity { get; set; }
         public Guid UnitId { get; set; }
         [ForeignKey("UnitId")]

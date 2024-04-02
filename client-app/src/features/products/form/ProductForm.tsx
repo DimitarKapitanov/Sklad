@@ -17,11 +17,12 @@ interface FormValues {
 }
 
 export default observer(function ProductForm() {
-  const { productStore, commonStore, unitStore, supplierStore } = useStore();
+  const { productStore, commonStore, unitStore, supplierStore, categoryStore } = useStore();
   const { validationSchema } = commonStore;
   const { createProduct, loading, loadingInitial } = productStore;
   const { loadUnits, unitRegistry } = unitStore;
   const { loadSuppliers, supplierRegistry, supplierOptions, setPagingParams, pagination } = supplierStore;
+  const { loadCategories, categoryRegistry } = categoryStore;
   const navigate = useNavigate();
   const [products] = useState<Product[]>([
     {
@@ -30,7 +31,7 @@ export default observer(function ProductForm() {
       quantity: 0,
       deliveryPrice: '',
       price: '',
-      category: "",
+      categoryId: "",
       unitId: "",
       unitAcronym: "",
       description: "",
@@ -43,6 +44,9 @@ export default observer(function ProductForm() {
   ]);
 
   const [, setLoadingNext] = useState(false);
+  useEffect(() => {
+    if (categoryRegistry.size < 1) loadCategories();
+  }, [loadCategories, categoryRegistry.size]);
 
   useEffect(() => {
     if (unitRegistry.size < 1) loadUnits();

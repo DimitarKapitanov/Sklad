@@ -19,13 +19,13 @@ namespace Application.Products
             .Matches(@"^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$").WithMessage("Името може да съдържа само букви и цифри");
 
 
-            RuleFor(x => x.Category)
-            .NotEmpty().WithMessage("Категорията е задължителна")
-            .Must(x => x != null && x.Length > 2).WithMessage("Категорията трябва да е поне 3 символа")
-            .Must(x => x != null && x.Length < 50).WithMessage("Категорията трябва да е по-малко от 50 символа")
-            .Must(x => x != null && !x.StartsWith(" ")).WithMessage("Категорията не може да започва с празно място")
-            .Must(x => x != null && !x.EndsWith(" ")).WithMessage("Категорията не може да завършва с празно място")
-            .Matches(@"^[a-zA-Z0-9\s/]*$|^[а-яА-Я0-9\s/]*$").WithMessage("Категорията и името могат да съдържат само букви и цифри");
+            RuleFor(x => x.CategoryId)
+            .NotEmpty().WithMessage("Категорията е задължителна");
+            // .Must(x => x != null && x.Length > 2).WithMessage("Категорията трябва да е поне 3 символа")
+            // .Must(x => x != null && x.Length < 50).WithMessage("Категорията трябва да е по-малко от 50 символа")
+            // .Must(x => x != null && !x.StartsWith(" ")).WithMessage("Категорията не може да започва с празно място")
+            // .Must(x => x != null && !x.EndsWith(" ")).WithMessage("Категорията не може да завършва с празно място")
+            // .Matches(@"^[a-zA-Z0-9\s/]*$|^[а-яА-Я0-9\s/]*$").WithMessage("Категорията и името могат да съдържат само букви и цифри");
 
             RuleFor(x => x.Quantity)
                 .NotNull().WithMessage("Количество не може да бъде празно")

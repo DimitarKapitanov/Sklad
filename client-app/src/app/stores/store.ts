@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import CategoryStore from "./categoryStore";
 import CommonStore from "./commonStore";
 import ModalStore from "./modalStore";
 import NavbarStore from "./navbarStore";
@@ -27,6 +28,7 @@ interface Store {
     navbarStore: NavbarStore
     profileStore: ProfileStore
     roleStore: RoleStore
+    categoryStore: CategoryStore
 }
 
 export const store: Store = {
@@ -42,7 +44,8 @@ export const store: Store = {
     supplierStore: new SupplierStore(),
     navbarStore: new NavbarStore(),
     profileStore: new ProfileStore(),
-    roleStore: new RoleStore()
+    roleStore: new RoleStore(),
+    categoryStore: new CategoryStore()
 }
 
 export const StoreContext = createContext(store);

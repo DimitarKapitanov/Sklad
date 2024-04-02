@@ -8,6 +8,8 @@ using Application.DTOs.SuppliersDTOs;
 using Application.DTOs.WarehouseDTOs;
 using AutoMapper;
 using Domain;
+using Application.DTOs.CategoryDTOs;
+using Application.Categories;
 
 namespace Application.Core
 {
@@ -25,17 +27,21 @@ namespace Application.Core
             CreateMap<UploadedProductsDto, Product>();
             CreateMap<OrderProduct, OrderProduct>();
             CreateMap<Product, GetProductDto>()
-            .ForMember(d => d.UnitDto, o => o.MapFrom(s => s.Unit));
+            .ForMember(d => d.UnitDto, o => o.MapFrom(s => s.Unit))
+            .ForMember(d => d.Category, o => o.MapFrom(s => s.Category.Name));
             CreateMap<Warehouse, WarehouseDto>()
             .ForMember(d => d.UserName, o => o.MapFrom(s => s.User.UserName));
             CreateMap<WarehouseDto, Warehouse>();
             CreateMap<Warehouse, WarehouseOrderDto>();
 
             CreateMap<Product, ProductDto>()
-                .ForMember(d => d.UnitDto, o => o.MapFrom(s => s.Unit));
+                .ForMember(d => d.UnitDto, o => o.MapFrom(s => s.Unit))
+                .ForMember(d => d.CategoryId, o => o.MapFrom(s => s.Category.Id))
+                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.Name));
 
             CreateMap<ProductDto, Product>()
-            .ForMember(d => d.Unit, o => o.MapFrom(s => s.UnitDto));
+            .ForMember(d => d.Unit, o => o.MapFrom(s => s.UnitDto))
+            .ForMember(d => d.CategoryId, o => o.MapFrom(s => s.CategoryId));
 
             CreateMap<OrderDto, Order>()
                 .ForMember(d => d.DeliveryAddressId, o => o.MapFrom(s => s.DeliveryAddressId));
@@ -123,7 +129,8 @@ namespace Application.Core
 
             CreateMap<ProductDto, DeliveredProduct>()
                 .ForMember(d => d.Unit, o => o.MapFrom(s => s.UnitDto))
-                .ForMember(d => d.UnitId, o => o.MapFrom(s => s.UnitId));
+                .ForMember(d => d.UnitId, o => o.MapFrom(s => s.UnitId))
+                .ForMember(d => d.CategoryId, o => o.MapFrom(s => s.CategoryId));
 
             CreateMap<Order, OrderByWarehouseDto>()
                 .ForMember(d => d.WarehouseOrderProductDtos, o => o.MapFrom(s => s.OrderProducts))
@@ -188,6 +195,10 @@ namespace Application.Core
             CreateMap<Deliveries, DeliveriesDto>()
             .ForMember(d => d.PartnerName, o => o.MapFrom(s => s.Partner.Company.Name))
             .ForMember(d => d.ContactPersonName, o => o.MapFrom(s => s.User.DisplayName));
+
+            CreateMap<Category, CategoryDto>();
+            CreateMap<CreateCategoryDto, Category>();
+            CreateMap<EditCategoryDto, Category>();
         }
     }
 }

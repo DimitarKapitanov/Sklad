@@ -142,7 +142,7 @@ export default class CommonStore {
           .typeError("Количеството трябва да е число")
           .min(1, "Количеството трябва да е по голямо от 0")
           .required("Количеството е задължително"),
-        category: Yup.string().required("Категорията е задължителна"),
+        categoryId: Yup.string().required("Категорията е задължителна"),
         description: Yup.string()
           .max(500, 'Описанието трябва да е по-малко от 500 символа')
           .matches(/^[^\s].*$/, 'Описанието не може да започва с празно място')

@@ -57,9 +57,9 @@ namespace Application.Products
                     query = query.Where(x => x.Quantity > 0 && x.Quantity <= request.Params.DecreasingQuantity && !x.IsDeleted);
                 }
 
-                if (!string.IsNullOrEmpty(request.Params.Category) && !request.Params.IsDeleted)
+                if (!string.IsNullOrEmpty(request.Params.CategoryName) && !request.Params.IsDeleted)
                 {
-                    query = query.Where(x => x.Category == request.Params.Category);
+                    query = query.Where(x => x.CategoryName == request.Params.CategoryName);
                 }
 
                 var result = Result<PageList<ProductDto>>.Success(

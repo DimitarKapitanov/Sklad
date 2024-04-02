@@ -16,7 +16,7 @@ import {
 import MySelectInput from "../../../app/common/form/MySelectInput";
 import MyTextArea from "../../../app/common/form/MyTextArea";
 import MyTextInput from "../../../app/common/form/MyTextInput";
-import { categoryOptions } from "../../../app/common/options/categoryOptions";
+// import { categoryOptions } from "../../../app/common/options/categoryOptions";
 import { Product } from "../../../app/models/product";
 import { Unit } from "../../../app/models/unit";
 import { useStore } from "../../../app/stores/store";
@@ -27,7 +27,7 @@ const product: Product = {
   quantity: 0,
   deliveryPrice: '',
   price: '',
-  category: "",
+  categoryId: "",
   unitId: "",
   unitAcronym: "",
   description: "",
@@ -54,9 +54,10 @@ export default observer(function ProductTable({
     shouldValidate?: boolean
   ) => void;
 }) {
-  const { unitStore, supplierStore } = useStore();
+  const { unitStore, supplierStore, categoryStore: { categoryOptions } } = useStore();
   const { unitSort } = unitStore;
   const { supplierOptions } = supplierStore;
+
   const selectedSupplier = supplierOptions.find(
     (s) => s.key === values.deliveryCompany
   );
@@ -82,7 +83,7 @@ export default observer(function ProductTable({
   );
 
   return (
-    <div style={{ overflowX: "auto" }}>
+    <div>
       <Header textAlign="center">
         <div>
           Доставчик: {selectedSupplier?.text || "Избери доставчик"}
@@ -126,7 +127,7 @@ export default observer(function ProductTable({
                       <MySelectInput
                         options={categoryOptions}
                         placeholder="Категория"
-                        name={`products[${index}].category`}
+                        name={`products[${index}].categoryId`}
                       />
                     </TableCell>
                     <TableCell className="">

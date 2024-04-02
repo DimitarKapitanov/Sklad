@@ -7,7 +7,7 @@ namespace Application.Products
         public bool IsZeroQuantity { get; set; }
         public bool IsDeleted { get; set; }
         public int DecreasingQuantity { get; set; }
-        public string Category { get; set; }
+        public string CategoryName { get; set; }
         public string Search { get; set; }
     }
 }
