@@ -332,7 +332,7 @@ export default class ProductStore {
         Количество: product.quantity,
         "Доставна цена": product.deliveryPrice,
         "Продажна цена": product.price,
-        Категория: product.category,
+        Категория: product.categoryName,
         Мярка: product.unitAcronym,
         Описание: product.description,
       });

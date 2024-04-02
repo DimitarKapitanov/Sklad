@@ -28,6 +28,7 @@ const product: Product = {
   deliveryPrice: '',
   price: '',
   categoryId: "",
+  categoryName: "",
   unitId: "",
   unitAcronym: "",
   description: "",

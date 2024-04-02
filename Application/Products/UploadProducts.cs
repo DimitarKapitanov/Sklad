@@ -36,6 +36,7 @@ namespace Application.Products
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
+
                 var products = _mapper.Map<List<Product>>(request.Products);
 
                 await _context.Products.AddRangeAsync(products);

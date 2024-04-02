@@ -6,6 +6,7 @@ namespace Application.DTOs.OrderDTOs
         public Guid OrderId { get; set; }
         public Guid ProductId { get; set; }
         public string Name { get; set; }
+        public Guid CategoryId { get; set; }
         public string Category { get; set; }
         public double Quantity { get; set; }
         public Guid UnitId { get; set; }

@@ -13,14 +13,13 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { v4 as uuid } from "uuid";
 import * as XLSX from 'xlsx';
-import { categoryOptions } from "../../../app/common/options/categoryOptions";
 import { UploadedProduct } from "../../../app/models/product";
 import { useStore } from "../../../app/stores/store";
 import UnitModal from "../../units/form/UnitModal";
 
 export default observer(function ProductActions() {
   const navigate = useNavigate();
-  const { modalStore, productStore, unitStore: { unitRegistry, loadUnits, getUnitsByAcronym } } = useStore();
+  const { modalStore, productStore, unitStore: { unitRegistry, loadUnits, getUnitsByAcronym }, categoryStore: { loadCategories, categoryOptions } } = useStore();
   const { openModal } = modalStore;
 
   const { predicate, setPredicate } = productStore;
@@ -30,6 +29,10 @@ export default observer(function ProductActions() {
     }
   }, [loadUnits, unitRegistry.size]);
 
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       if (!event.target.files) {
@@ -38,37 +41,47 @@ export default observer(function ProductActions() {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = (evt) => {
-        if (evt.target === null) {
-          throw new Error('Не е намерен файл.');
-        }
-        const bstr = evt.target.result;
-        const wb = XLSX.read(bstr, { type: 'binary' });
-        const wsname = wb.SheetNames[0];
-        const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-        const uploadedProducts: UploadedProduct[] = (data as [string, string, number, string, string, number, string, string][]).map((row) => {
-          const unitId = getUnitsByAcronym(row[3]);
-          if (!unitId) {
-            throw new Error(`Не е намерена мярка '${row[3]}' в системата.`);
+        try {
+          if (evt.target === null) {
+            throw new Error('Не е намерен файл.');
           }
-          return {
-            id: uuid(),
-            name: row[0],
-            category: row[1],
-            quantity: row[2],
-            unitId: unitId,
-            description: row[4],
-            deliveryPrice: row[6],
-            price: row[7],
-          };
-        });
-        productStore.uploadProducts(uploadedProducts);
+          const bstr = evt.target.result;
+          const wb = XLSX.read(bstr, { type: 'binary' });
+          const wsname = wb.SheetNames[0];
+          const ws = wb.Sheets[wsname];
+          const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          const uploadedProducts: UploadedProduct[] = (data as [string, string, number, string, string, number, string, string][]).map((row) => {
+            const unitId = getUnitsByAcronym(row[3]);
+            if (!unitId) {
+              throw new Error(`Не е намерена мярка '${row[3]}' в системата.`);
+            }
+
+            const categoryValue = categoryOptions.find((category) => category.text === row[1])?.value;
+            if (!categoryValue) {
+              throw new Error(`Не е намерена категория "${row[1]}" в системата. Евентуална грешка в името на категорията или езика на категорията или категорията не е добавена в системата.`);
+            }
+
+            return {
+              id: uuid(),
+              name: row[0],
+              categoryId: categoryValue,
+              quantity: row[2],
+              unitId: unitId,
+              description: row[4],
+              deliveryPrice: row[6],
+              price: row[7],
+            };
+          });
+          productStore.uploadProducts(uploadedProducts);
+        } catch (error) {
+          toast.error(String(error));
+        }
       };
       reader.readAsBinaryString(file);
     } catch (error) {
       toast.error(String(error));
     }
-  }
+  };
 
   return (
     <>

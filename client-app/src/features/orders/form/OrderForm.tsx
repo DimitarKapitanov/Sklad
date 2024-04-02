@@ -12,6 +12,7 @@ import {
   Table
 } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
+import MyCustomInput from "../../../app/common/form/MyCustomInput";
 import MySelectInput from "../../../app/common/form/MySelectInput";
 import MyTextInput from "../../../app/common/form/MyTextInput";
 import { NewOrder } from "../../../app/models/newOrder";
@@ -129,7 +130,7 @@ export default observer(function OrderForm() {
           selectedProduct.quantity;
         updatedProducts[existingProductIndex].price = selectedProduct.price;
         updatedProducts[existingProductIndex].totalPrice =
-          selectedProduct.price * selectedProduct.quantity;
+          (parseFloat(selectedProduct.price) * selectedProduct.quantity).toString();
         if (Number.isInteger(updatedProducts[existingProductIndex].quantity)) {
           updatedProducts[existingProductIndex].quantity = parseFloat(
             `${updatedProducts[existingProductIndex].quantity}.0000`
@@ -139,7 +140,7 @@ export default observer(function OrderForm() {
       } else {
         const newProduct = { ...selectedProduct };
         newProduct.totalPrice =
-          selectedProduct.price * selectedProduct.quantity;
+          (parseFloat(selectedProduct.price) * selectedProduct.quantity).toString();
         if (Number.isInteger(newProduct.quantity)) {
           newProduct.quantity = parseFloat(`${newProduct.quantity}.0000`);
         }
@@ -178,7 +179,7 @@ export default observer(function OrderForm() {
           onSubmit={handleOrderSubmit}
           initialValues={{
             newOrder,
-            product: { id: "", quantity: 0, price: 0 },
+            product: { id: "", quantity: 0, price: '' },
             orderProducts,
             partner: '',
           }}
@@ -265,11 +266,11 @@ export default observer(function OrderForm() {
                             <Table.Cell>{orderProduct.unitAcronym}</Table.Cell>
                             <Table.Cell>{orderProduct.category}</Table.Cell>
                             <Table.Cell>{orderProduct.quantity}</Table.Cell>
-                            <Table.Cell>{orderProduct.price.toFixed(2)}</Table.Cell>
+                            <Table.Cell>{parseFloat(orderProduct.price).toFixed(2)}</Table.Cell>
                             <Table.Cell>
                               {parseFloat(
                                 (
-                                  orderProduct.price * orderProduct.quantity
+                                  parseFloat(orderProduct.price) * orderProduct.quantity
                                 ).toFixed(2)
                               )}
                             </Table.Cell>
@@ -295,7 +296,7 @@ export default observer(function OrderForm() {
                               .reduce(
                                 (sum, orderProduct) =>
                                   sum +
-                                  orderProduct.price * orderProduct.quantity,
+                                  parseFloat(orderProduct.price) * orderProduct.quantity,
                                 0
                               )
                               .toFixed(2)}
@@ -311,7 +312,7 @@ export default observer(function OrderForm() {
                               Array.from(orderProducts.values()).reduce(
                                 (sum, orderProduct) =>
                                   sum +
-                                  orderProduct.price * orderProduct.quantity,
+                                  parseFloat(orderProduct.price) * orderProduct.quantity,
                                 0
                               ) * 1.2
                             ).toFixed(2)}
@@ -375,25 +376,30 @@ export default observer(function OrderForm() {
                           }}
                         />
                       </FormGroup>
-                      <MyTextInput
+                      <MyCustomInput
+                        placeholder="Цена"
+                        name="product.price"
+                        label="Цена"
+                      />
+                      {/* <MyTextInput
                         placeholder="Цена"
                         label="Цена"
                         name="product.price"
-                        type="number"
+                        type="text"
                         step="any"
                         value={productPrice.toFixed(2).toString()}
-                        min={selectedProduct?.price ? selectedProduct.price : 0}
+                        min={selectedProduct?.price ? parseFloat(selectedProduct.price) : 0}
                         onChange={(
                           data: React.ChangeEvent<HTMLInputElement>
                         ) => {
                           if (selectedProduct) {
-                            const price = parseFloat(data.target.value);
-                            setProductPrice(price);
+                            const price = parseFloat(data.target.value).toFixed(2);
+                            setProductPrice(parseFloat(price));
                             setFieldValue("product.price", price);
                             values.product.price = price;
                           }
                         }}
-                      />
+                      /> */}
                       <MyTextInput
                         placeholder="Количество"
                         label="Количество"
@@ -427,7 +433,7 @@ export default observer(function OrderForm() {
                           addOrderProduct(selectedProduct!);
                           setValues((values) => ({
                             ...values,
-                            product: { id: "", quantity: 0, price: 0 },
+                            product: { id: "", quantity: 0, price: '' },
                           }));
                           store.productStore.pagingParams.pageNumber = 1;
                           orderStore.clearProductOptions();

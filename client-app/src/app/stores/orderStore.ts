@@ -184,21 +184,21 @@ export default class OrderStore {
     }
 
     loadOrdersByUsername = async (username: string) => {
-        const pageNumberKey = this.pagingParams.pageNumber.toString();
-        const hasPageInOrderPagingRegistry = this.pagedOrderRegistry.has(pageNumberKey);
-        const hasDifferentUser = Array.from(this.pagedOrderRegistry.values()).flat().some(order => order && order.contactPersonName && order.contactPersonName !== username);
+        // const pageNumberKey = this.pagingParams.pageNumber.toString();
+        // const hasPageInOrderPagingRegistry = this.pagedOrderRegistry.has(pageNumberKey);
+        // const hasDifferentUser = Array.from(this.pagedOrderRegistry.values()).flat().some(order => order && order.contactPersonName && order.contactPersonName !== username);
 
-        // if the username is different from the last one, clear the pagedOrderRegistry and the pagingParams
-        if (this.lastUsername !== username || hasDifferentUser) {
-            this.pagedOrderRegistry.clear();
-            this.pagingParams = new PagingParams();
-        }
+        // // if the username is different from the last one, clear the pagedOrderRegistry and the pagingParams
+        // if (this.lastUsername !== username || hasDifferentUser) {
+        //     this.pagedOrderRegistry.clear();
+        //     this.pagingParams = new PagingParams();
+        // }
 
-        //if the page is already in the registry and the username is the same as the last one, set the pagination to the current page
-        if (hasPageInOrderPagingRegistry && this.lastUsername === username && !hasDifferentUser) {
-            this.setPaginationToCurrentPage();
-            return this.pagedOrderRegistry;
-        }
+        // //if the page is already in the registry and the username is the same as the last one, set the pagination to the current page
+        // if (hasPageInOrderPagingRegistry && this.lastUsername === username && !hasDifferentUser) {
+        //     this.setPaginationToCurrentPage();
+        //     return this.pagedOrderRegistry;
+        // }
 
         this.setLoadingOrders(true);
         try {
@@ -258,7 +258,6 @@ export default class OrderStore {
         if (this.pagination) {
             return this.pagedOrderRegistry.get(this.pagination.currentPage.toString());
         }
-        return [];
     }
 
     private setPaginationToCurrentPage = () => {
@@ -545,13 +544,14 @@ export default class OrderStore {
                 orderId: '',
                 productId: product.id,
                 name: product.name,
-                category: product.category,
+                category: product.categoryName,
+                categoryId: product.categoryId,
                 quantity: product.quantity,
                 unitId: product.unitId,
                 unitAcronym: product.unitAcronym,
                 description: product.description,
-                price: Number(product.price),
-                totalPrice: Number(product.price) * this.productAmount,
+                price: product.price,
+                totalPrice: (parseFloat(product.price) * this.productAmount).toString(),
             } as NewOrderProduct;
         } else {
             this.selectedProduct = undefined;
@@ -614,7 +614,7 @@ export default class OrderStore {
 
     addProduct = (selectedProduct: NewOrderProduct): boolean => {
         selectedProduct.quantity = this.productAmount;
-        selectedProduct.price = this.productPrice;
+        selectedProduct.price = this.productPrice.toString();
         const product = this.productRegistry.get(selectedProduct.productId);
         if (product) {
             if (product.quantity - selectedProduct.quantity < 0) {

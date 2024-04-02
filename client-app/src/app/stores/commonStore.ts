@@ -173,7 +173,20 @@ export default class CommonStore {
           }
           return true;
         }),
-      price: Yup.number().required("Цената е задължителна"),
+      price: Yup.string()
+        .required("Цената е задължителна")
+        .test(
+          "is-decimal",
+          "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.",
+          function (value) {
+            if (!value) return true;
+            const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(
+              value || ""
+            );
+            const isNumber = !isNaN(Number(value.replace(",", ".")));
+            return isValidFormat && isNumber;
+          }
+        ),
     }),
   });
 

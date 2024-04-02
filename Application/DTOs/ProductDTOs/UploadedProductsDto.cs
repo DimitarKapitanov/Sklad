@@ -4,7 +4,7 @@ namespace Application.DTOs.ProductDTOs
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Category { get; set; }
+        public Guid CategoryId { get; set; }
         public double Quantity { get; set; }
         public Guid UnitId { get; set; }
         public string Description { get; set; }

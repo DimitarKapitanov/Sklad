@@ -28,7 +28,7 @@ export default observer(function ProductTableList({ product }: Props) {
                 <Table.Cell collapsing>{product.quantity}</Table.Cell>
                 <Table.Cell collapsing>{parseFloat(product.deliveryPrice).toFixed(2)}</Table.Cell>
                 <Table.Cell collapsing>{parseFloat(product.price).toFixed(2)}</Table.Cell>
-                <Table.Cell collapsing>{product.category}</Table.Cell>
+                <Table.Cell collapsing>{product.categoryName}</Table.Cell>
                 <Table.Cell collapsing>{product.unitAcronym}</Table.Cell>
                 <Table.Cell>{product.description}</Table.Cell>
                 <Table.Cell collapsing>

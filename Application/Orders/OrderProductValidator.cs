@@ -50,9 +50,8 @@ namespace Application.Orders
                 .Matches(@"^(?!.*<.*>).*$")
                 .WithMessage("Описанието не трябва да съдържа символите '<' и '>'");
 
-            RuleFor(x => x.Category)
-                .NotEmpty().NotNull().WithMessage("Категорията е задължителна")
-                .Matches(@"^(?!.*<.*>).*$").WithMessage("Описанието не трябва да съдържа символите '<' и '>'");
+            RuleFor(x => x.CategoryId)
+                .NotEmpty().NotNull().WithMessage("Категорията е задължителна");
 
             RuleFor(x => x.Description)
                 .Must(x => x.Length < 200).WithMessage("Описанието трябва да е по-малко от 200 символа")

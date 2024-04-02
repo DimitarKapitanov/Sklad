@@ -4,10 +4,11 @@ export interface NewOrderProduct {
     productId: string
     name: string
     category: string
+    categoryId: string
     quantity: number
     unitId: string
     unitAcronym: string
     description: string
-    price: number
-    totalPrice: number
+    price: string
+    totalPrice: string
 }

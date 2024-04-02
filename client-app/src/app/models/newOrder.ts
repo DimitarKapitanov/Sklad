@@ -29,6 +29,6 @@ interface NewOrderProduct {
     unitId: string
     unitAcronym: string
     description: string
-    price: number
-    totalPrice: number
+    price: string
+    totalPrice: string
 }

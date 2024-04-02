@@ -105,85 +105,85 @@ namespace Persistence
 
             }
 
-            // if (!context.Companies.Any() && !context.Partners.Any())
-            // {
+            if (!context.Companies.Any() && !context.Partners.Any())
+            {
 
-            //     var companies = new List<Company>();
+                var companies = new List<Company>();
 
-            //     var partners = new List<Partner>();
+                var partners = new List<Partner>();
 
-            //     var deliveryAddresses = new List<DeliveryAddress>();
+                var deliveryAddresses = new List<DeliveryAddress>();
 
-            //     for (int i = 1; i <= 100; i++)
-            //     {
-            //         string bulstatBase = i.ToString();
-            //         if (bulstatBase.Length < 9)
-            //         {
-            //             bulstatBase = bulstatBase.PadRight(9, '0');
-            //         }
-            //         else if (bulstatBase.Length < 10)
-            //         {
-            //             bulstatBase = bulstatBase.PadRight(10, '0');
-            //         }
-            //         else if (bulstatBase.Length < 13)
-            //         {
-            //             bulstatBase = bulstatBase.PadRight(13, '0');
-            //         }
+                for (int i = 1; i <= 100; i++)
+                {
+                    string bulstatBase = i.ToString();
+                    if (bulstatBase.Length < 9)
+                    {
+                        bulstatBase = bulstatBase.PadRight(9, '0');
+                    }
+                    else if (bulstatBase.Length < 10)
+                    {
+                        bulstatBase = bulstatBase.PadRight(10, '0');
+                    }
+                    else if (bulstatBase.Length < 13)
+                    {
+                        bulstatBase = bulstatBase.PadRight(13, '0');
+                    }
 
-            //         var companyId = Guid.NewGuid();
+                    var companyId = Guid.NewGuid();
 
-            //         var company = new Company
-            //         {
-            //             Id = companyId,
-            //             Name = $"Company {i}",
-            //             City = $"City {i}",
-            //             Address = $"Address {i}",
-            //             Bulstat = bulstatBase,
-            //             Phone = $"088888888{i.ToString().PadLeft(2, '0')}",
-            //             Email = $"email{i}@email{i}.bg",
-            //             CompanyOwnerName = $"Owner {i}",
-            //             CreatedOn = DateTime.UtcNow,
-            //             ModifiedOn = DateTime.UtcNow,
-            //             IsDeleted = false,
-            //             IsClient = i % 2 == 0,
-            //             IsSupplier = i % 2 != 0,
-            //         };
+                    var company = new Company
+                    {
+                        Id = companyId,
+                        Name = $"Company {i}",
+                        City = $"City {i}",
+                        Address = $"Address {i}",
+                        Bulstat = bulstatBase,
+                        Phone = $"088888888{i.ToString().PadLeft(2, '0')}",
+                        Email = $"email{i}@email{i}.bg",
+                        CompanyOwnerName = $"Owner {i}",
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedOn = DateTime.UtcNow,
+                        IsDeleted = false,
+                        IsClient = i % 2 == 0,
+                        IsSupplier = i % 2 != 0,
+                    };
 
-            //         var partner = new Partner
-            //         {
-            //             Id = Guid.NewGuid(),
-            //             Phone = $"088888888{i.ToString().PadLeft(2, '0')}",
-            //             Email = $"partner{i}@abv.bg",
-            //             CompanyId = companyId,
-            //             CreatedOn = DateTime.UtcNow,
-            //             ModifiedOn = DateTime.UtcNow,
-            //             IsDeleted = false,
-            //         };
+                    var partner = new Partner
+                    {
+                        Id = Guid.NewGuid(),
+                        Phone = $"088888888{i.ToString().PadLeft(2, '0')}",
+                        Email = $"partner{i}@abv.bg",
+                        CompanyId = companyId,
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedOn = DateTime.UtcNow,
+                        IsDeleted = false,
+                    };
 
-            //         for (int j = 1; j <= 5; j++)
-            //         {
-            //             var deliveryAddress = new DeliveryAddress
-            //             {
-            //                 Id = Guid.NewGuid(),
-            //                 PartnerId = partner.Id,
-            //                 Address = $"Address {j} for partner {partner.Id}",
-            //                 City = $"City {j}",
-            //                 CreatedOn = DateTime.UtcNow,
-            //                 ModifiedOn = DateTime.UtcNow,
-            //                 IsDeleted = false,
-            //             };
+                    for (int j = 1; j <= 5; j++)
+                    {
+                        var deliveryAddress = new DeliveryAddress
+                        {
+                            Id = Guid.NewGuid(),
+                            PartnerId = partner.Id,
+                            Address = $"Address {j} for partner {partner.Id}",
+                            City = $"City {j}",
+                            CreatedOn = DateTime.UtcNow,
+                            ModifiedOn = DateTime.UtcNow,
+                            IsDeleted = false,
+                        };
 
-            //             deliveryAddresses.Add(deliveryAddress);
-            //         }
+                        deliveryAddresses.Add(deliveryAddress);
+                    }
 
-            //         companies.Add(company);
-            //         partners.Add(partner);
-            //     }
+                    companies.Add(company);
+                    partners.Add(partner);
+                }
 
-            //     await context.Companies.AddRangeAsync(companies);
-            //     await context.Partners.AddRangeAsync(partners);
-            //     await context.DeliveryAddress.AddRangeAsync(deliveryAddresses);
-            // }
+                await context.Companies.AddRangeAsync(companies);
+                await context.Partners.AddRangeAsync(partners);
+                await context.DeliveryAddress.AddRangeAsync(deliveryAddresses);
+            }
 
             // if (!context.Deliveries.Any())
             // {
@@ -374,6 +374,7 @@ namespace Persistence
                 };
                 await context.Categories.AddRangeAsync(categories);
             }
+
             if (!context.Warehouses.Any())
             {
                 var userIds = context.Users.Select(user => user.Id).ToList();

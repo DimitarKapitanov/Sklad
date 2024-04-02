@@ -32,6 +32,7 @@ export default observer(function ProductForm() {
       deliveryPrice: '',
       price: '',
       categoryId: "",
+      categoryName: "",
       unitId: "",
       unitAcronym: "",
       description: "",

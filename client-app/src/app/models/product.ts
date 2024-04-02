@@ -3,6 +3,7 @@ import { Unit } from "./unit"
 export interface Product {
     name: string
     categoryId: string
+    categoryName: string
     quantity: number
     unitId: string
     unitAcronym: string
@@ -25,7 +26,7 @@ export interface FormattedProduct extends Product {
 export interface UploadedProduct {
     id: string
     name: string
-    category: string
+    categoryId: string
     quantity: number
     unitId: string
     description: string
