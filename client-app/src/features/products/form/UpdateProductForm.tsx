@@ -1,6 +1,7 @@
 import { Form, Formik } from "formik";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { Button, ButtonGroup, Container, Header, Segment } from "semantic-ui-react";
 import MyCustomInput from "../../../app/common/form/MyCustomInput";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
@@ -37,7 +38,7 @@ export default observer(function ProductForm({ id }: Props) {
     }, [id, loadProduct]);
 
     function handleProductEditSubmit(product: Product) {
-        updateProduct(product).then(() => modalStore.closeModal());
+        updateProduct(product).then(() => modalStore.closeModal()).catch(error => toast.error(error.data));
     }
 
     if (loadingInitial) return <LoadingComponent content='Зареждане...' />

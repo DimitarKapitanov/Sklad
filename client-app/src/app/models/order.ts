@@ -25,3 +25,12 @@ export interface Order {
     completedBy: string;
     createdBy: string;
 }
+
+export interface OrderFormValues {
+    id: string;
+    partnerId: string;
+    deliveryAddressId: string;
+    warehouseId: string;
+    createdBy: string;
+    orderProducts: Array<OrderProduct>;
+}

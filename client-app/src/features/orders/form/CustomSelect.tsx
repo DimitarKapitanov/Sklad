@@ -9,7 +9,7 @@ interface Props {
     placeholder: string;
     options: { value: string; label: string }[];
     isMulti?: boolean;
-    onMenuScrollToBottom: () => void;
+    onMenuScrollToBottom?: () => void;
 }
 
 export default observer(function CustomReactSelect({ name, options, isMulti = false, onMenuScrollToBottom, placeholder }: Props) {

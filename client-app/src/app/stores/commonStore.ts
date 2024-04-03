@@ -333,4 +333,11 @@ export default class CommonStore {
     const dateToString = new Date(date);
     return dateToString.toLocaleString('bg-BG', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(',', '');
   }
+
+  mapToSelectOptions(items: { [key: string]: string }[], valueKey: string, labelKey: string) {
+    return items.map(item => ({
+      value: item[valueKey],
+      label: item[labelKey],
+    }));
+  }
 }

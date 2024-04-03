@@ -290,7 +290,6 @@ namespace API.Controllers
             {
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(7),
-                SameSite = SameSiteMode.None,
             };
 
             Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);

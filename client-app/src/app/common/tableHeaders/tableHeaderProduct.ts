@@ -18,3 +18,20 @@ export const productTableHeader: { key: string, label: string }[] = [
     { key: "vat", label: "ДДС" },
     { key: "totalPrice", label: "Крайна цена" },
 ];
+
+export const orderProductTableHeader: { key: string, label: string }[] = [
+    { key: "name", label: "Продукт" },
+    { key: "unit", label: "Мерна единица" },
+    { key: "category", label: "Категория" },
+    { key: "quantity", label: "Количество" },
+    { key: "price", label: "Ед.цена" },
+    { key: "total", label: "Общо" },
+    { key: "actions", label: "Действия" },
+];
+// <Table.HeaderCell>Продукт < /Table.HeaderCell>
+// < Table.HeaderCell > Мерна единица < /Table.HeaderCell>
+// < Table.HeaderCell > Категория < /Table.HeaderCell>
+// < Table.HeaderCell > Количество < /Table.HeaderCell>
+// < Table.HeaderCell > Ед.цена < /Table.HeaderCell>
+// < Table.HeaderCell > Общо < /Table.HeaderCell>
+// < Table.HeaderCell > Действия < /Table.HeaderCell>

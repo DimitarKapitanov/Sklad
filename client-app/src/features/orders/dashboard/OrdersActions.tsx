@@ -21,6 +21,16 @@ export default observer(function OrdersActions() {
     <>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Header as="h2" content="Поръчки" />
+        <Menu.Menu >
+          <MenuItem>
+            <Button
+              primary
+              content="Добави поръчка"
+              as={Link}
+              to={"/test-order-form"}
+            />
+          </MenuItem>
+        </Menu.Menu>
         {user?.role.includes("Admin") || user?.role.includes("Manager") ? (
           <MenuMenu position="right">
             <MenuItem>

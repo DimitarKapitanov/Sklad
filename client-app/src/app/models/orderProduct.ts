@@ -1,9 +1,10 @@
-export interface OrderProduct  {
+export interface OrderProduct {
     id: string;
     orderId: string;
     productId: string;
     name: string;
-    category: string;
+    categoryId: string;
+    categoryName: string;
     quantity: number;
     unitId: string;
     unitAcronym: string;

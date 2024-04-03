@@ -1,8 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import agent from "../api/Agent";
-import { NewOrder } from "../models/newOrder";
 import { NewOrderProduct } from "../models/newOrderProduct";
-import { Order } from "../models/order";
+import { Order, OrderFormValues } from "../models/order";
 import { OrderProduct, OrderProductEdit } from "../models/orderProduct";
 import Pagination, { PagingParams } from "../models/pagination";
 import { Product } from "../models/product";
@@ -38,7 +37,7 @@ export default class OrderStore {
     lastWarehouseId: string | undefined = undefined;
     lastUsername: string = '';
 
-    sortCategoryDetails: keyof OrderProduct = 'category';
+    sortCategoryDetails: keyof OrderProduct = 'categoryId';
     sortDirectionDetails: 'asc' | 'desc' = 'asc';
     selectedOrder: Order | undefined = undefined;
 
@@ -398,31 +397,33 @@ export default class OrderStore {
         this.setLoadingComplete(false);
     }
 
-    createOrder = async (order: NewOrder) => {
-        this.loading = true;
-        return await new Promise((resolve, reject) => {
-            agent.Orders.CreateOrder(order)
-                .then(() => {
-                    runInAction(() => {
-                        this.orderRegistry.set(order.id, (order as unknown) as Order);
-                        this.clearOrderProducts();
-                        this.pagedOrderRegistry.clear();
-                        this.setLastWarehouseId(order.warehouseId);
-                        this.loading = false;
-                    });
-                    store.warehouseStore.clearSelectedWareHouse();
-                    store.partnerStore.clearSelectedPartner();
-                    this.clearOrderProducts();
-                    resolve(order.id);
-                })
-                .catch((error) => {
-                    console.log(error);
-                    runInAction(() => {
-                        this.loading = false;
-                    });
-                    reject(error);
-                });
-        });
+    createOrder = async (order: OrderFormValues) => {
+        console.log(order);
+
+        // this.loading = true;
+        // return await new Promise((resolve, reject) => {
+        //     agent.Orders.CreateOrder(order)
+        //         .then(() => {
+        //             runInAction(() => {
+        //                 this.orderRegistry.set(order.id, (order as unknown) as Order);
+        //                 this.clearOrderProducts();
+        //                 this.pagedOrderRegistry.clear();
+        //                 this.setLastWarehouseId(order.warehouseId);
+        //                 this.loading = false;
+        //             });
+        //             store.warehouseStore.clearSelectedWareHouse();
+        //             store.partnerStore.clearSelectedPartner();
+        //             this.clearOrderProducts();
+        //             resolve(order.id);
+        //         })
+        //         .catch((error) => {
+        //             console.log(error);
+        //             runInAction(() => {
+        //                 this.loading = false;
+        //             });
+        //             reject(error);
+        //         });
+        // });
     }
 
     updateOrderProduct = async (orderProduct: OrderProductEdit) => {

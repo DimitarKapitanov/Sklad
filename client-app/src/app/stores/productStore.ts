@@ -2,6 +2,7 @@ import { makeAutoObservable, reaction, runInAction } from "mobx";
 import * as XLSX from "xlsx";
 import agent from "../api/Agent";
 import { tableHeaderProduct } from "../common/tableHeaders/tableHeaderProduct";
+import { OrderProduct } from "../models/orderProduct";
 import Pagination, { PaginatedResult, PagingParams } from "../models/pagination";
 import { Product, UploadedProduct } from "../models/product";
 import { Delivery } from "../models/productsWithoutUnit";
@@ -9,10 +10,13 @@ import { Delivery } from "../models/productsWithoutUnit";
 export default class ProductStore {
   productRegistry = new Map<string, Product>();
   productPagingRegistry = new Map<string, Product[]>();
+  productOptions: { key: string; text: string; value: string }[] = [];
+
   searchRegister = new Map<string, Product[]>();
   category: string = "";
   categoryOptions: { key: string; text: string; value: string }[] = [];
   selectedProduct: Product | undefined = undefined;
+  orderSelectedProduct: OrderProduct | undefined = undefined;
   tableHeader = tableHeaderProduct;
 
   editMode = false;
@@ -210,6 +214,13 @@ export default class ProductStore {
         value: product.categoryId,
       });
     }
+    if (this.productOptions.findIndex((x) => x.value === product.id) === -1) {
+      this.productOptions.push({
+        key: product.id,
+        text: product.name,
+        value: product.id,
+      });
+    }
   };
 
   loadProduct = async (id: string) => {
@@ -323,6 +334,41 @@ export default class ProductStore {
       });
     }
   };
+
+  loadProductFromOrder = async (id: string) => {
+    this.setLoadingInitial(true);
+    try {
+      const product = await agent.Products.details(id);
+      runInAction(() => {
+        this.setProductForOrder(product);
+        this.setLoadingInitial(false);
+      });
+      return this.orderSelectedProduct;
+    } catch (error) {
+      console.log(error);
+      this.setLoadingInitial(false);
+    }
+  }
+
+  setProductForOrder = (product: Product) => {
+    console.log(product);
+
+    this.orderSelectedProduct = {
+      id: "",
+      orderId: "",
+      productId: product.id,
+      name: product.name,
+      categoryId: product.categoryId,
+      categoryName: product.categoryName,
+      quantity: 0,
+      unitId: product.unitId,
+      unitAcronym: product.unitDto.acronym!,
+      description: product.description,
+      price: Number(product.price),
+      totalPrice: 0,
+      modifiedOn: new Date(),
+    };
+  }
 
   downloadProducts = () => {
     const data: unknown[] = [];

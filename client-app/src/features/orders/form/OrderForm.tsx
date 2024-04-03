@@ -1,7 +1,7 @@
 import { Form, Formik } from "formik";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ReactSelect from "react-select";
 import {
   Button,
@@ -18,7 +18,6 @@ import MyTextInput from "../../../app/common/form/MyTextInput";
 import { NewOrder } from "../../../app/models/newOrder";
 import { NewOrderProduct } from "../../../app/models/newOrderProduct";
 import { store, useStore } from "../../../app/stores/store";
-import ValidationErrors from "../../errors/ValidationError";
 import CustomReactSelect from "./CustomSelect";
 
 export default observer(function OrderForm() {
@@ -32,12 +31,9 @@ export default observer(function OrderForm() {
     selectedProduct,
     setProductAmount,
     cancelOrder,
-    productPrice,
     productAmount,
-    setProductPrice,
     addProduct,
     removeProduct,
-    createOrder,
     clearSelectedProduct,
   } = orderStore;
 
@@ -68,8 +64,8 @@ export default observer(function OrderForm() {
     }
   }, [loadPartners, partnerRegistry.size, setPrimaryPredicate]);
 
-  const navigate = useNavigate();
-  const [errors, setErrors] = useState(null);
+  // const navigate = useNavigate();
+  // const [errors, setErrors] = useState(null);
 
   const [orderProducts, setOrderProducts] = useState<NewOrderProduct[]>([]);
   const [address, setAddress] = useState<string>("");
@@ -103,17 +99,17 @@ export default observer(function OrderForm() {
       orderProduct.orderId = newOrder.id;
     });
 
-    createOrder(newOrder)
-      .then((orderId) => {
-        navigate(`/orders/${orderId}`);
-        setErrors(null);
-      })
-      .catch((error) => {
-        setErrors(error);
-        setTimeout(() => {
-          setErrors(null); // Изчистване на грешките след 20 секунди
-        }, 20000);
-      });
+    // createOrder(newOrder)
+    //   .then((orderId) => {
+    //     navigate(`/orders/${orderId}`);
+    //     setErrors(null);
+    //   })
+    //   .catch((error) => {
+    //     setErrors(error);
+    //     setTimeout(() => {
+    //       setErrors(null); // Изчистване на грешките след 20 секунди
+    //     }, 20000);
+    //   });
   }
 
   const addOrderProduct = (selectedProduct: NewOrderProduct) => {
@@ -158,11 +154,6 @@ export default observer(function OrderForm() {
       return prevOrderProducts.filter((product) => product.id !== productId);
     });
   };
-
-  const selectOptions = productOptions.map((product) => ({
-    value: product.value,
-    label: product.text,
-  }));
 
   function mapToSelectOptions(items: { [key: string]: string }[], valueKey: string, labelKey: string) {
     return items.map(item => ({
@@ -346,7 +337,7 @@ export default observer(function OrderForm() {
                               : null
                           }
                           options={mapToSelectOptions(productOptions, "value", "text")}
-                          pageSize={selectOptions.length}
+                          pageSize={productOptions.length}
                           placeholder="Въведете продукт"
                           onInputChange={(data) => {
                             if (data) {
@@ -478,7 +469,7 @@ export default observer(function OrderForm() {
           )}
         </Formik>
       </Segment>
-      {errors && <ValidationErrors errors={errors} />}
+      {/* {errors && <ValidationErrors errors={errors} />} */}
     </Container>
   );
 });

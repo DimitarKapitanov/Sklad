@@ -11,8 +11,6 @@ export default class CategoryStore {
 
     get categories() {
         const categories = Array.from(this.categoryRegistry.values());
-        console.log(categories);
-
         return categories;
     }
 
