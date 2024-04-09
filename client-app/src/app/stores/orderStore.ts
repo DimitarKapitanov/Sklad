@@ -335,6 +335,18 @@ export default class OrderStore {
             await agent.Orders.delete(id);
             runInAction(() => {
                 this.orderRegistry.delete(id);
+
+                // Delete the order from pagedOrderRegistry
+                this.pagedOrderRegistry.forEach((orders, key) => {
+                    const updatedOrders = orders.filter(order => order.id !== id);
+                    if (updatedOrders.length !== orders.length) {
+                        if (updatedOrders.length > 0) {
+                            this.pagedOrderRegistry.set(key, updatedOrders);
+                        } else {
+                            this.pagedOrderRegistry.delete(key);
+                        }
+                    }
+                });
             });
         }
         catch (error) {
