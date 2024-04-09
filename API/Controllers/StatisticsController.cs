@@ -1,4 +1,3 @@
-using Application.DTOs.PartnerDTOs;
 using Application.DTOs.StatisticsDTOs;
 using Application.Statistics;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +19,5 @@ namespace API.Controllers
         {
             return HandlePageResult(await Mediator.Send(new DeliveredProduct.Query { Params = pagingParams }));
         }
-
     }
 }

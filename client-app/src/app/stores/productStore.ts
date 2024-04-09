@@ -22,6 +22,7 @@ export default class ProductStore {
   orderSelectedProduct: OrderProduct | undefined = undefined;
   tableHeader = tableHeaderProduct;
 
+  isFileUploaded = false;
   editMode = false;
   loading = false;
   loadingInitial = false;
@@ -276,14 +277,21 @@ export default class ProductStore {
   };
 
   uploadProducts = async (products: UploadedProduct[]) => {
+
+
     this.loading = true;
     try {
-      await agent.Products.upload(products);
-      runInAction(() => {
-        this.loading = false;
-        this.productPagingRegistry.clear();
-        this.searchRegister.clear();
-      });
+      if (!this.isFileUploaded) {
+        await agent.Products.upload(products);
+        runInAction(() => {
+          this.loading = false;
+          this.productPagingRegistry.clear();
+          this.searchRegister.clear();
+        });
+        this.isFileUploaded = true;
+      } else {
+        throw new Error('Не в възможно повторно качване на файл!');
+      }
     } catch (error) {
       console.log(error);
       runInAction(() => {
@@ -425,7 +433,7 @@ export default class ProductStore {
               throw new Error(`Не е намерена мярка '${row[3]}' в системата.`);
             }
 
-            const categoryValue = store.categoryStore.categoryOptions.find((category) => category.text === row[1])?.value;
+            const categoryValue = store.categoryStore.categoryOptions.find((category) => category.text === row[1])?.key;
             if (!categoryValue) {
               throw new Error(`Не е намерена категория "${row[1]}" в системата. Евентуална грешка в името на категорията или езика на категорията или категорията не е добавена в системата.`);
             }

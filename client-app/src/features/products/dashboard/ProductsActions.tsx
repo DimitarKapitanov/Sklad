@@ -11,7 +11,7 @@ export default observer(function ProductActions() {
   const { modalStore, productStore, unitStore: { unitRegistry, loadUnits }, categoryStore: { loadCategories, categoryOptions } } = useStore();
   const { openModal } = modalStore;
 
-  const { predicate, setPredicate, pagedGroupedProducts, uploadProductsFile } = productStore;
+  const { predicate, setPredicate, uploadProductsFile, isFileUploaded } = productStore;
 
   useEffect(() => {
     if (unitRegistry.size < 1) {
@@ -50,7 +50,7 @@ export default observer(function ProductActions() {
               <Button
                 fluid
                 basic
-                color={'green'}
+                color={'blue'}
                 onClick={() => navigate("/create-product")}
               >
                 Kъм формата <Icon name='arrow right' />
@@ -69,7 +69,7 @@ export default observer(function ProductActions() {
               <Button
                 fluid
                 basic
-                color={'green'}
+                color={'blue'}
                 onClick={() => openModal(<CategoriesForm />, "mini")}
               >
                 Добави <Icon name='arrow right' />
@@ -88,14 +88,15 @@ export default observer(function ProductActions() {
               <Button
                 fluid
                 basic
-                color={'green'}
+                color={'blue'}
                 onClick={() => openModal(<UnitModal />, "mini")}
+
               >
                 Добави <Icon name='arrow right' />
               </Button>
             </Reveal.Content>
           </Reveal>
-          {pagedGroupedProducts.length <= 0 && (
+          {!isFileUploaded && (
             <>
               <Reveal animated='move down' style={{ margin: '0 5px' }}>
                 <Reveal.Content visible style={{ width: '100%' }}>
@@ -109,7 +110,7 @@ export default observer(function ProductActions() {
                   <Button
                     fluid
                     basic
-                    color={'green'}
+                    color={'blue'}
                     content={'Качи Excel файл'}
                     as='label'
                     htmlFor="file-upload"
