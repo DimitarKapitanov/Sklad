@@ -31,6 +31,5 @@ export interface OrderFormValues {
     partnerId: string;
     deliveryAddressId: string;
     warehouseId: string;
-    createdBy: string;
     orderProducts: Array<OrderProduct>;
 }

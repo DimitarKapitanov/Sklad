@@ -1,9 +1,10 @@
 import { makeAutoObservable, runInAction } from "mobx";
+import { v4 as uuid } from 'uuid';
 import agent from "../api/Agent";
 import { Category } from "../models/category";
-
 export default class CategoryStore {
     categoryRegistry = new Map<string, Category>();
+    loading = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -18,7 +19,7 @@ export default class CategoryStore {
         return this.categories.map(category => ({
             key: category.id,
             text: category.name,
-            value: category.id
+            value: category.name
         }));
     }
 
@@ -35,4 +36,20 @@ export default class CategoryStore {
         }
     }
 
+    createCategory = async (category: Category) => {
+        this.loading = true;
+        try {
+            category.id = uuid();
+            await agent.Categories.create(category);
+            runInAction(() => {
+                this.categoryRegistry.set(category.id, category);
+                this.loading = false;
+            });
+        } catch (error) {
+            console.log(error);
+            runInAction(() => {
+                this.loading = false;
+            });
+        }
+    }
 }

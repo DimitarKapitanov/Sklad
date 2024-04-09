@@ -36,14 +36,15 @@ namespace Application.Orders
                 if (user == null) return null;
 
                 var query = _context.Orders
-                .Where(x => x.WarehouseId == request.Id || x.WarehouseId == request.Params.WarehouseId)
-                .Where(x => string.IsNullOrEmpty(request.Params.Search) || x.Partner.Company.Name.Contains(request.Params.Search))
-                .Where(x => request.Params.StartDate == DateTime.MinValue ||
-                    x.CreatedOn.Date >= request.Params.StartDate.Date)
-                .Where(x => request.Params.EndDate == DateTime.MinValue ||
+                    .Where(x => x.WarehouseId == request.Id || x.WarehouseId == request.Params.WarehouseId)
+                    .Where(x => string.IsNullOrEmpty(request.Params.Search) || x.Partner.Company.Name.Contains(request.Params.Search))
+                    .Where(x => request.Params.StartDate == DateTime.MinValue ||
+                        x.CreatedOn.Date >= request.Params.StartDate.Date)
+                    .Where(x => request.Params.EndDate == DateTime.MinValue ||
                     x.CreatedOn.Date <= request.Params.EndDate.Date)
-                .OrderByDescending(x => x.ModifiedOn)
-                .ProjectTo<OrderDto>(_mapper.ConfigurationProvider);
+                    .Where(o => o.IsDeleted != true)
+                    .OrderByDescending(x => x.ModifiedOn)
+                    .ProjectTo<OrderDto>(_mapper.ConfigurationProvider);
 
                 if (request.Params.IsCompleted && !request.Params.IsActive)
                 {

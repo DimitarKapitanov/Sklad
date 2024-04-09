@@ -2,15 +2,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import DatePicker from "react-datepicker";
 import { Link } from "react-router-dom";
-import {
-  Button,
-  Header,
-  Input,
-  Menu,
-  MenuItem,
-  MenuMenu,
-  Select,
-} from "semantic-ui-react";
+import { Button, Header, Input, Menu, MenuItem, MenuMenu, Select } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function OrdersActions() {
@@ -21,16 +13,6 @@ export default observer(function OrdersActions() {
     <>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Header as="h2" content="Поръчки" />
-        <Menu.Menu >
-          <MenuItem>
-            <Button
-              primary
-              content="Добави поръчка"
-              as={Link}
-              to={"/test-order-form"}
-            />
-          </MenuItem>
-        </Menu.Menu>
         {user?.role.includes("Admin") || user?.role.includes("Manager") ? (
           <MenuMenu position="right">
             <MenuItem>

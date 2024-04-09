@@ -28,8 +28,6 @@ export default observer(function EditWarehouse({ warehouseData }: Props) {
     contactPersonId: warehouseData.contactPersonId,
   };
 
-  console.log(warehouse);
-
   return (
     <Formik
       initialValues={warehouse}

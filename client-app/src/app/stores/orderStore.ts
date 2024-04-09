@@ -1,4 +1,5 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
+import { toast } from "react-toastify";
 import agent from "../api/Agent";
 import { NewOrderProduct } from "../models/newOrderProduct";
 import { Order, OrderFormValues } from "../models/order";
@@ -400,30 +401,31 @@ export default class OrderStore {
     createOrder = async (order: OrderFormValues) => {
         console.log(order);
 
-        // this.loading = true;
-        // return await new Promise((resolve, reject) => {
-        //     agent.Orders.CreateOrder(order)
-        //         .then(() => {
-        //             runInAction(() => {
-        //                 this.orderRegistry.set(order.id, (order as unknown) as Order);
-        //                 this.clearOrderProducts();
-        //                 this.pagedOrderRegistry.clear();
-        //                 this.setLastWarehouseId(order.warehouseId);
-        //                 this.loading = false;
-        //             });
-        //             store.warehouseStore.clearSelectedWareHouse();
-        //             store.partnerStore.clearSelectedPartner();
-        //             this.clearOrderProducts();
-        //             resolve(order.id);
-        //         })
-        //         .catch((error) => {
-        //             console.log(error);
-        //             runInAction(() => {
-        //                 this.loading = false;
-        //             });
-        //             reject(error);
-        //         });
-        // });
+        this.loading = true;
+        return await new Promise((resolve) => {
+            agent.Orders.CreateOrder(order)
+                .then(() => {
+                    runInAction(() => {
+                        this.orderRegistry.set(order.id, (order as unknown) as Order);
+                        this.clearOrderProducts();
+                        this.pagedOrderRegistry.clear();
+                        this.setLastWarehouseId(order.warehouseId);
+                        this.loading = false;
+                    });
+                    store.warehouseStore.clearSelectedWareHouse();
+                    store.partnerStore.clearSelectedPartner();
+                    this.clearOrderProducts();
+                    resolve(order.id);
+                })
+                .catch((error) => {
+                    toast.error("Възникна грешка при създаването на поръчката!");
+                    console.log(error);
+                    runInAction(() => {
+                        this.loading = false;
+                    });
+                    throw new Error(error);
+                });
+        });
     }
 
     updateOrderProduct = async (orderProduct: OrderProductEdit) => {

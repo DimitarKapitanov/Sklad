@@ -13,10 +13,9 @@ namespace Application.Orders
 {
     public class OrderCreate
     {
-
         public class Command : IRequest<Result<MediatR.Unit>>
         {
-            public OrderDto CreateOrder { get; set; }
+            public CreateOrderDto CreateOrder { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -24,7 +23,7 @@ namespace Application.Orders
             public CommandValidator()
             {
                 RuleFor(x => x.CreateOrder).SetValidator(new OrderCreateValidator());
-                RuleForEach(x => x.CreateOrder.OrderProductDto).SetValidator(new OrderProductValidator());
+                RuleForEach(x => x.CreateOrder.OrderProducts).SetValidator(new OrderProductValidator());
             }
         }
 
@@ -52,12 +51,12 @@ namespace Application.Orders
                 order.CreatedBy = user.Id;
                 _context.Orders.Add(order);
 
-                var productIds = request.CreateOrder.OrderProductDto.Select(p => p.ProductId).ToList();
+                var productIds = request.CreateOrder.OrderProducts.Select(p => p.ProductId).ToList();
                 var products = await _context.Products.Where(p => productIds.Contains(p.Id)).ToListAsync();
 
                 if (products.Count == 0) return Result<MediatR.Unit>.Failure("Продуктите не са намерени");
 
-                if (request.CreateOrder.OrderProductDto.Any(productDto =>
+                if (request.CreateOrder.OrderProducts.Any(productDto =>
                     products.Find(p => p.Id == productDto.Id)?.Quantity < productDto.Quantity))
                 {
                     return Result<MediatR.Unit>.Failure("Няма достатъчно количество от продукта");
@@ -67,14 +66,10 @@ namespace Application.Orders
 
                 if (warehouse == null) return Result<MediatR.Unit>.Failure("Не е намерен склад");
 
-                foreach (var product in request.CreateOrder.OrderProductDto)
+                foreach (var product in request.CreateOrder.OrderProducts)
                 {
                     products.FirstOrDefault(p => p.Id == product.ProductId).Quantity -= product.Quantity;
                 }
-
-                var orderProducts = _mapper.Map<List<OrderProduct>>(request.CreateOrder.OrderProductDto);
-
-                await _context.OrderProducts.AddRangeAsync(orderProducts);
 
                 var result = await _context.SaveChangesAsync() > 0;
 

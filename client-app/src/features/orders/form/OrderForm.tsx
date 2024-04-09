@@ -1,475 +1,155 @@
 import { Form, Formik } from "formik";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import ReactSelect from "react-select";
-import {
-  Button,
-  Container,
-  FormGroup,
-  Header,
-  Segment,
-  Table
-} from "semantic-ui-react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Button, Container, FormGroup, Header, Segment } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
-import MyCustomInput from "../../../app/common/form/MyCustomInput";
 import MySelectInput from "../../../app/common/form/MySelectInput";
-import MyTextInput from "../../../app/common/form/MyTextInput";
-import { NewOrder } from "../../../app/models/newOrder";
-import { NewOrderProduct } from "../../../app/models/newOrderProduct";
-import { store, useStore } from "../../../app/stores/store";
+import { OrderFormValues } from "../../../app/models/order";
+import { OrderProduct } from "../../../app/models/orderProduct";
+import { useStore } from "../../../app/stores/store";
+import ValidationError from "../../errors/ValidationError";
 import CustomReactSelect from "./CustomSelect";
+import OrderProductTable from "./OrderProductTable";
 
-export default observer(function OrderForm() {
-  const { orderStore, warehouseStore, partnerStore, commonStore } = useStore();
-  const { orderCreateValidationSchema } = commonStore;
+export default observer(function TestOrderForm() {
+    const { orderStore, partnerStore, warehouseStore, commonStore: { mapToSelectOptions, orderCreateValidationSchema } } = useStore();
 
-  const {
-    loading,
-    productOptions,
-    selectProduct,
-    selectedProduct,
-    setProductAmount,
-    cancelOrder,
-    productAmount,
-    addProduct,
-    removeProduct,
-    clearSelectedProduct,
-  } = orderStore;
+    const { createOrder, cancelOrder, loading } = orderStore;
+    const { loadPartners, selectedPartner, partnerOptions, setPrimaryPredicate } = partnerStore;
+    const { wareHouseOptions, loadWareHouses } = warehouseStore;
 
-  const {
-    loadWareHouses,
-    wareHouseOptions,
-    selectWareHouse,
-    selectWareHouseForOrder,
-    wareHouseRegistry,
-  } = warehouseStore;
+    const navigate = useNavigate();
 
-  const {
-    loadPartners,
-    selectedPartner,
-    partnerOptions,
-    partnerRegistry,
-    setPrimaryPredicate,
-  } = partnerStore;
+    const [errors, setErrors] = useState(null);
 
-  useEffect(() => {
-    if (wareHouseRegistry.size < 1) loadWareHouses();
-  }, [loadWareHouses, wareHouseRegistry.size]);
+    useEffect(() => {
+        setPrimaryPredicate("isClient", "true");
+        loadPartners();
+    }, [loadPartners, setPrimaryPredicate]);
 
-  useEffect(() => {
-    if (partnerRegistry.size < 1) {
-      setPrimaryPredicate("isClient", "true");
-      loadPartners();
+    useEffect(() => {
+        loadWareHouses();
+    }, [loadWareHouses]);
+
+    const [newOrder] = useState<OrderFormValues>({
+        id: "",
+        partnerId: "",
+        deliveryAddressId: '',
+        warehouseId: "",
+        orderProducts: [],
+    });
+
+    const [product] = useState<OrderProduct>({
+        id: '',
+        orderId: '',
+        productId: '',
+        name: '',
+        categoryId: '',
+        categoryName: '',
+        quantity: 0,
+        unitId: '',
+        unitAcronym: '',
+        description: '',
+        price: 0,
+        totalPrice: 0,
+    });
+
+    function handleOrderSubmit(values: OrderFormValues) {
+        values.id = uuid();
+        values.orderProducts = values.orderProducts.map((product) => {
+            product.id = uuid();
+            product.orderId = values.id;
+            return product;
+        });
+        createOrder(values)
+            .then((orderId) => {
+                navigate(`/orders/${orderId}`);
+                setErrors(null);
+            })
+            .catch((error) => {
+                setErrors(error);
+                setTimeout(() => {
+                    setErrors(null); // Изчистване на грешките след 20 секунди
+                }, 20000);
+                toast.error("Възникна грешка при създаването на поръчката!");
+            });
     }
-  }, [loadPartners, partnerRegistry.size, setPrimaryPredicate]);
 
-  // const navigate = useNavigate();
-  // const [errors, setErrors] = useState(null);
-
-  const [orderProducts, setOrderProducts] = useState<NewOrderProduct[]>([]);
-  const [address, setAddress] = useState<string>("");
-  const [data, setData] = useState<string>("");
-
-  const newOrder: NewOrder = {
-    id: "",
-    isCompleted: false,
-    completedDate: null,
-    orderCreated: new Date(),
-    partnerId: selectedPartner?.id || "",
-    partnerName: selectedPartner?.name || "",
-    city: selectedPartner?.city || "",
-    companyOwnerName: selectedPartner?.companyOwnerName || "",
-    email: selectedPartner?.email || "",
-    phone: selectedPartner?.phone || "",
-    address: selectedPartner?.address || "",
-    vat: selectedPartner?.bulstat || "",
-    deliveryAddressId: address,
-    warehouseId: selectWareHouseForOrder?.id || "",
-    warehouseName: selectWareHouseForOrder?.name || "",
-    contactPersonId: selectWareHouseForOrder?.contactPersonId || "",
-    orderProductDto: [],
-  };
-
-  function handleOrderSubmit() {
-    newOrder.id = uuid();
-    newOrder.orderProductDto = orderProducts;
-    newOrder.orderProductDto.forEach((orderProduct) => {
-      orderProduct.id = uuid();
-      orderProduct.orderId = newOrder.id;
-    });
-
-    // createOrder(newOrder)
-    //   .then((orderId) => {
-    //     navigate(`/orders/${orderId}`);
-    //     setErrors(null);
-    //   })
-    //   .catch((error) => {
-    //     setErrors(error);
-    //     setTimeout(() => {
-    //       setErrors(null); // Изчистване на грешките след 20 секунди
-    //     }, 20000);
-    //   });
-  }
-
-  const addOrderProduct = (selectedProduct: NewOrderProduct) => {
-    const isAdded = addProduct(selectedProduct);
-    if (!isAdded) return;
-    setOrderProducts((prevOrderProducts) => {
-      const existingProductIndex = prevOrderProducts.findIndex(
-        (product) => product.id === selectedProduct.id
-      );
-
-      if (existingProductIndex !== -1) {
-        const updatedProducts = [...prevOrderProducts];
-        updatedProducts[existingProductIndex].quantity +=
-          selectedProduct.quantity;
-        updatedProducts[existingProductIndex].price = selectedProduct.price;
-        updatedProducts[existingProductIndex].totalPrice =
-          (parseFloat(selectedProduct.price) * selectedProduct.quantity).toString();
-        if (Number.isInteger(updatedProducts[existingProductIndex].quantity)) {
-          updatedProducts[existingProductIndex].quantity = parseFloat(
-            `${updatedProducts[existingProductIndex].quantity}.0000`
-          );
-        }
-        return updatedProducts;
-      } else {
-        const newProduct = { ...selectedProduct };
-        newProduct.totalPrice =
-          (parseFloat(selectedProduct.price) * selectedProduct.quantity).toString();
-        if (Number.isInteger(newProduct.quantity)) {
-          newProduct.quantity = parseFloat(`${newProduct.quantity}.0000`);
-        }
-        return [...prevOrderProducts, newProduct];
-      }
-    });
-  };
-
-  const removeOrderProduct = (productId: string) => {
-    const productToRemove = orderProducts.find(
-      (product) => product.id === productId
-    );
-    removeProduct(productId, productToRemove!);
-    setOrderProducts((prevOrderProducts) => {
-      return prevOrderProducts.filter((product) => product.id !== productId);
-    });
-  };
-
-  function mapToSelectOptions(items: { [key: string]: string }[], valueKey: string, labelKey: string) {
-    return items.map(item => ({
-      value: item[valueKey],
-      label: item[labelKey],
-    }));
-  }
-
-  return (
-    <Container>
-      <Header as="h2" content="Създаване на поръчка" />
-      <Segment>
-        <Formik
-          onSubmit={handleOrderSubmit}
-          initialValues={{
-            newOrder,
-            product: { id: "", quantity: 0, price: '' },
-            orderProducts,
-            partner: '',
-          }}
-          validationSchema={orderCreateValidationSchema}
-        >
-          {({
-            values,
-            setFieldValue,
-            handleSubmit,
-            isSubmitting,
-            dirty,
-            isValid,
-            setValues,
-          }) => (
-            <Form
-              className="ui form order-form"
-              onSubmit={handleSubmit}
-            >
-              <FormGroup>
-                <FormGroup
-                  className="ui grid"
-                  style={{ flex: 1, flexFlow: "column", marginBottom: 0 }}
+    return (
+        <Container>
+            <Header as='h2' content='Test Order Form' color='teal' textAlign='center' />
+            <Segment clearing size='large'>
+                <Formik
+                    initialValues={{ newOrder, product }}
+                    enableReinitialize
+                    onSubmit={(values) => handleOrderSubmit(values.newOrder)}
+                    validationSchema={orderCreateValidationSchema}
                 >
-                  <CustomReactSelect
-                    name="partner"
-                    placeholder="Избери партньор"
-                    options={mapToSelectOptions(partnerOptions, "value", "text")}
-                    onMenuScrollToBottom={() => {
-                      partnerStore.pagingParams.pageNumber++;
-                      partnerStore.loadPartners();
-                    }}
-                  />
-                </FormGroup>
-                {selectedPartner && (
-                  <MySelectInput
-                    placeholder="Адрес за доставка"
-                    name="deliveryAddress"
-                    options={selectedPartner.deliveryAddress.map((address) => ({
-                      text: address.address,
-                      value: address.id,
-                      label: address.city,
-                      key: address.id,
-                    }))}
-                    onSelected={(data) => setAddress(data.value)}
-                    onClear={() => setAddress("")}
-                  />
-                )}
-                <MySelectInput
-                  name="warehouse"
-                  placeholder="Склад"
-                  options={wareHouseOptions}
-                  onSelected={(data) =>
-                    data.value && selectWareHouse(data.value)
-                  }
-                  onClear={() => selectWareHouse("")}
-                />
-              </FormGroup>
-              {selectedPartner &&
-                selectedPartner.id &&
-                selectWareHouseForOrder &&
-                selectWareHouseForOrder.id && address && (
-                  <>
-                    <Table
-                      celled
-                      striped
-                      unstackable
-                      style={{ overflowX: "auto" }}
-                    >
-                      <Table.Header>
-                        <Table.Row>
-                          <Table.HeaderCell>Продукт</Table.HeaderCell>
-                          <Table.HeaderCell>Мерна единица</Table.HeaderCell>
-                          <Table.HeaderCell>Категория</Table.HeaderCell>
-                          <Table.HeaderCell>Количество</Table.HeaderCell>
-                          <Table.HeaderCell>Ед. цена</Table.HeaderCell>
-                          <Table.HeaderCell>Общо</Table.HeaderCell>
-                          <Table.HeaderCell>Действия</Table.HeaderCell>
-                        </Table.Row>
-                      </Table.Header>
-                      <Table.Body>
-                        {orderProducts.map((orderProduct, index) => (
-                          <Table.Row key={index}>
-                            <Table.Cell>{orderProduct.name}</Table.Cell>
-                            <Table.Cell>{orderProduct.unitAcronym}</Table.Cell>
-                            <Table.Cell>{orderProduct.category}</Table.Cell>
-                            <Table.Cell>{orderProduct.quantity}</Table.Cell>
-                            <Table.Cell>{parseFloat(orderProduct.price).toFixed(2)}</Table.Cell>
-                            <Table.Cell>
-                              {parseFloat(
-                                (
-                                  parseFloat(orderProduct.price) * orderProduct.quantity
-                                ).toFixed(2)
-                              )}
-                            </Table.Cell>
-                            <Table.Cell>
-                              <Button
-                                type="button"
-                                color="red"
-                                icon="trash"
-                                compact
-                                onClick={() =>
-                                  removeOrderProduct(orderProduct.id)
-                                }
-                              />
-                            </Table.Cell>
-                          </Table.Row>
-                        ))}
-                      </Table.Body>
-                      <Table.Footer>
-                        <Table.Row>
-                          <Table.HeaderCell colSpan="5">Общо</Table.HeaderCell>
-                          <Table.HeaderCell>
-                            {Array.from(orderProducts.values())
-                              .reduce(
-                                (sum, orderProduct) =>
-                                  sum +
-                                  parseFloat(orderProduct.price) * orderProduct.quantity,
-                                0
-                              )
-                              .toFixed(2)}
-                          </Table.HeaderCell>
-                          <Table.HeaderCell></Table.HeaderCell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.HeaderCell colSpan="5">
-                            Общо с ДДС
-                          </Table.HeaderCell>
-                          <Table.HeaderCell>
-                            {(
-                              Array.from(orderProducts.values()).reduce(
-                                (sum, orderProduct) =>
-                                  sum +
-                                  parseFloat(orderProduct.price) * orderProduct.quantity,
-                                0
-                              ) * 1.2
-                            ).toFixed(2)}
-                          </Table.HeaderCell>
-                          <Table.HeaderCell></Table.HeaderCell>
-                        </Table.Row>
-                      </Table.Footer>
-                    </Table>
-                    <FormGroup style={{ paddingBottom: "1vh" }}>
-                      <FormGroup
-                        className="ui grid"
-                        style={{ flex: 1, flexFlow: "column" }}
-                      >
-                        <label
-                          className="custom-label"
-                          style={{ margin: "0 0 .28571429rem 0" }}
-                        >
-                          Добави продукт
-                        </label>
-                        <ReactSelect
-                          className="ui dropdown"
-                          name="product.id"
-                          isClearable
-                          noOptionsMessage={() => "Няма намерени продукти"}
-                          value={
-                            selectedProduct
-                              ? {
-                                value: selectedProduct.id,
-                                label: selectedProduct.name,
-                              }
-                              : null
-                          }
-                          options={mapToSelectOptions(productOptions, "value", "text")}
-                          pageSize={productOptions.length}
-                          placeholder="Въведете продукт"
-                          onInputChange={(data) => {
-                            if (data) {
-                              orderStore.clearProductOptions();
-                              store.productStore.pagingParams.pageNumber = 1;
-                              orderStore.loadProducts(data);
-                              setData(data);
-                            }
-                          }}
-                          onChange={(data) => {
-                            if (data) {
-                              selectProduct((data as { value: string }).value);
-                              values.product.id = (
-                                data as { value: string }
-                              ).value;
-                              (data as { value: string }).value = "";
-                              setData("");
-                            } else {
-                              // Clear the selected product when the selection is cleared
-                              selectProduct('');
-                              values.product.id = '';
-                            }
-                          }}
-                          onMenuScrollToBottom={() => {
-                            store.productStore.pagingParams.pageNumber++;
-                            orderStore.loadProducts(data);
-                          }}
-                        />
-                      </FormGroup>
-                      <MyCustomInput
-                        placeholder="Цена"
-                        name="product.price"
-                        label="Цена"
-                      />
-                      {/* <MyTextInput
-                        placeholder="Цена"
-                        label="Цена"
-                        name="product.price"
-                        type="text"
-                        step="any"
-                        value={productPrice.toFixed(2).toString()}
-                        min={selectedProduct?.price ? parseFloat(selectedProduct.price) : 0}
-                        onChange={(
-                          data: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                          if (selectedProduct) {
-                            const price = parseFloat(data.target.value).toFixed(2);
-                            setProductPrice(parseFloat(price));
-                            setFieldValue("product.price", price);
-                            values.product.price = price;
-                          }
-                        }}
-                      /> */}
-                      <MyTextInput
-                        placeholder="Количество"
-                        label="Количество"
-                        name="product.quantity"
-                        type="number"
-                        step="any"
-                        value={
-                          Number.isInteger(productAmount)
-                            ? `${productAmount}`
-                            : productAmount.toString()
-                        }
-                        disabled={!selectedProduct}
-                        max={selectedProduct?.quantity}
-                        onChange={(data) => {
-                          if (selectedProduct) {
-                            const amount = parseFloat(data.target.value);
-                            setProductAmount(amount);
-                            setFieldValue("product.quantity", amount);
-                            values.product.quantity = amount;
-                          }
-                        }}
-                      />
-                      <Button
-                        content="Добави продукт"
-                        type="button"
-                        color="blue"
-                        disabled={!selectedProduct || values.product.id === "" || !dirty || !isValid || values.product.quantity <= 0}
-                        compact
-                        style={{ height: 37, marginTop: 24 }}
-                        onClick={() => {
-                          addOrderProduct(selectedProduct!);
-                          setValues((values) => ({
-                            ...values,
-                            product: { id: "", quantity: 0, price: '' },
-                          }));
-                          store.productStore.pagingParams.pageNumber = 1;
-                          orderStore.clearProductOptions();
-                          clearSelectedProduct();
-                        }}
-                      />
-                    </FormGroup>
-                  </>
-                )}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-end",
-                  padding: "10px 0",
-                }}
-              >
-                <Button
-                  type="button"
-                  content="Отказ"
-                  color="red"
-                  onClick={() => {
-                    cancelOrder();
-                  }}
-                  as={Link}
-                  to="/orders"
-                />
-                <Button
-                  disabled={
-                    isSubmitting ||
-                    !dirty ||
-                    !isValid ||
-                    orderProducts.length === 0
-                  }
-                  loading={loading}
-                  type="submit"
-                  positive
-                  content="Създай"
-                />
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </Segment>
-      {/* {errors && <ValidationErrors errors={errors} />} */}
-    </Container>
-  );
+                    {(props) => (
+                        <Form className='ui form' onSubmit={props.handleSubmit}>
+                            <FormGroup>
+                                <CustomReactSelect
+                                    name="newOrder.partnerId"
+                                    placeholder="Избери партньор"
+                                    options={mapToSelectOptions(partnerOptions, "value", "text")}
+                                    onMenuScrollToBottom={() => {
+                                        partnerStore.pagingParams.pageNumber++;
+                                        partnerStore.loadPartners();
+                                    }}
+                                />
+                                {props.values.newOrder.partnerId && selectedPartner && (
+                                    <MySelectInput
+                                        placeholder="Адрес за доставка"
+                                        name="newOrder.deliveryAddressId"
+                                        options={selectedPartner.deliveryAddress.map((address) => ({
+                                            text: address.address,
+                                            value: address.id,
+                                            label: address.city,
+                                            key: address.id,
+                                        }))}
+                                    />
+                                )}
+                                <MySelectInput
+                                    name="newOrder.warehouseId"
+                                    placeholder="Склад"
+                                    options={wareHouseOptions}
+                                    onChange={(data) => props.setFieldValue('props.values.newOrder.warehouseId', data)}
+                                />
+                            </FormGroup>
+                            {props.values.newOrder.partnerId && props.values.newOrder.deliveryAddressId && props.values.newOrder.warehouseId && (
+                                <OrderProductTable formikProps={props} />
+                            )}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "flex-end",
+                                    padding: "10px 0",
+                                }}
+                            >
+                                <Button
+                                    type="button"
+                                    content="Отказ"
+                                    color="red"
+                                    onClick={() => cancelOrder()}
+                                    as={Link}
+                                    to="/orders"
+                                />
+                                <Button
+                                    disabled={props.isSubmitting || !props.dirty || !props.isValid || props.values.newOrder.orderProducts.length === 0}
+                                    loading={loading}
+                                    type="submit"
+                                    positive
+                                    content="Създай"
+                                />
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
+            </Segment>
+            {errors && <ValidationError errors={errors} />}
+        </Container>
+    );
 });

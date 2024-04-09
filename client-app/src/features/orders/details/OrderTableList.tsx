@@ -48,7 +48,7 @@ export default observer(function OrderTableList({ order, isEditClicked }: Props)
                 {sortedOrderProducts.map((product) => (
                     <Table.Row key={product.id}>
                         <Table.Cell>{product.name}</Table.Cell>
-                        <Table.Cell>{product.category}</Table.Cell>
+                        <Table.Cell>{product.categoryName}</Table.Cell>
                         <Table.Cell>{product.unitAcronym}</Table.Cell>
                         <Table.Cell>{product.quantity}</Table.Cell>
                         <Table.Cell>{product.price.toFixed(2)} лв.</Table.Cell>

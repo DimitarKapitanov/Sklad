@@ -33,7 +33,7 @@ namespace Application.Products
                 if (user == null) return null;
 
                 var query = _context.Products
-                    .Where(p => string.IsNullOrEmpty(request.Params.Search) || p.Name.Contains(request.Params.Search))
+                    .Where(p => string.IsNullOrEmpty(request.Params.Search) || p.Name.ToLower().Contains(request.Params.Search))
                     .Where(d => d.IsDeleted == request.Params.IsDeleted)
                     .OrderBy(x => x.Name)
                     .ProjectTo<ProductDto>(_mapper.ConfigurationProvider);

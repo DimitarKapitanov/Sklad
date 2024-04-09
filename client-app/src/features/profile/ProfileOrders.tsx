@@ -19,7 +19,6 @@ export default observer(function ProfileOrders({ displayName }: Props) {
         setPagingParams(new PagingParams(activePage));
         loadOrdersByUsername(displayName);
     }
-    console.log(displayName);
 
     useEffect(() => {
         setLastUsername(displayName);

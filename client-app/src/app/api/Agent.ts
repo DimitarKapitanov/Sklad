@@ -1,9 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { Category } from "../models/category";
-import { NewOrder } from "../models/newOrder";
 import { NewPartner } from "../models/newPartner";
-import { Order } from "../models/order";
+import { Order, OrderFormValues } from "../models/order";
 import { OrderProductEdit } from "../models/orderProduct";
 import { PaginatedResult } from "../models/pagination";
 import { PartnerDeliveriesProductsDto, Partner as PartnerModel } from "../models/partner";
@@ -121,7 +120,7 @@ const Orders = {
   complete: (id: string) => requests.put<void>(`/orders/complete/${id}`, id),
   delete: (id: string) => requests.delete<void>(`/orders/${id}`),
   deleteProduct: (orderId: string, productId: string) => requests.delete<void>(`/orders/removeProduct/${orderId}/${productId}`),
-  CreateOrder: (order: NewOrder) => requests.post<void>("/orders", order),
+  CreateOrder: (order: OrderFormValues) => requests.post<void>("/orders", order),
   edit: (orderProduct: OrderProductEdit) => requests.put<void>(`/orders/${orderProduct.orderId}`, orderProduct),
   listByWarehouse: (id: string, params: URLSearchParams) => axios.get<PaginatedResult<Order[]>>(`/orders/order-product/${id}`, { params })
     .then(responseBody),
@@ -197,7 +196,7 @@ const Roles = {
 
 const Categories = {
   list: () => requests.get<Category[]>("/category"),
-  create: (category: string) => requests.post<void>("/categories", category),
+  create: (category: Category) => requests.post<void>("/category", category),
   delete: (category: string) => requests.delete<void>(`/categories/${category}`),
 }
 

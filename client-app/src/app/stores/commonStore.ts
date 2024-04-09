@@ -1,5 +1,6 @@
 import { makeAutoObservable, reaction } from "mobx";
 import * as Yup from "yup";
+import { OrderProduct } from "../models/orderProduct";
 import { ServerError } from "../models/serverError";
 import { store } from "./store";
 
@@ -153,26 +154,14 @@ export default class CommonStore {
   });
 
   orderCreateValidationSchema = Yup.object().shape({
-    partner: Yup.string().required('Моля изберете партньор'),
-    warehouse: Yup.string().required('Изберете склад'),
-    deliveryAddress: Yup.string().required('Изберете адрес за доставка'),
+    newOrder: Yup.object().shape({
+      partnerId: Yup.string().required('Моля изберете партньор'),
+      warehouseId: Yup.string().required('Изберете склад'),
+      deliveryAddressId: Yup.string().required('Изберете адрес за доставка'),
+      orderProducts: Yup.array().notRequired(),
+    }),
     product: Yup.object().shape({
-      quantity: Yup.number()
-        .min(0, "Количеството трябва да е по голямо от 1")
-        .required("Количеството е задължително")
-        .test('is-enough', 'Няма достатъчно количество', function (value) {
-          const { id } = this.parent;
-          if (id) {
-            const product = store.orderStore.productRegistry.get(id);
-            if (!product) {
-              return true;
-            }
-            if (product.quantity < value) {
-              return false;
-            }
-          }
-          return true;
-        }),
+      productId: Yup.string().notRequired(),
       price: Yup.string()
         .required("Цената е задължителна")
         .test(
@@ -187,6 +176,37 @@ export default class CommonStore {
             return isValidFormat && isNumber;
           }
         ),
+      quantity: Yup.number()
+        .min(0, "Количеството трябва да е по голямо от 1")
+        .required("Количеството е задължително")
+        .test('is-enough', `Няма достатъчно количество!`, function (value) {
+          const { productId } = this.parent;
+          const context = this.options.context as { newOrder?: { orderProducts: OrderProduct[] } };
+          // Check if newOrder exists
+          const newOrder = context?.newOrder;
+
+          if (productId) {
+            const product = store.productStore.selectedProduct;
+            if (!product) {
+              return true;
+            }
+            // Get the total quantity of this product in orderProducts
+            const totalQuantityInOrder = newOrder?.orderProducts
+              .filter(p => p.productId === productId)
+              .reduce((total, p) => total + p.quantity, 0);
+            // Check if the total quantity in order plus the current value exceeds the product quantity
+            const sum = Number(totalQuantityInOrder) + value;
+
+            if (product.quantity < sum) {
+              if (product.quantity <= 0) {
+                return this.createError({ message: `Няма достатъчно количество!` });
+              } else {
+                return this.createError({ message: `Максимално количество ${product.quantity}` });
+              }
+            }
+          }
+          return true;
+        }),
     }),
   });
 

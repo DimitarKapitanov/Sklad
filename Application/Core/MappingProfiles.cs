@@ -24,16 +24,13 @@ namespace Application.Core
             CreateMap<DeliveryAddressDto, DeliveryAddress>();
 
             CreateMap<DeliveryAddress, DeliveryAddressDto>();
-
-            CreateMap<OrderProduct, OrderProductDto>()
-            .ForMember(d => d.Category, o => o.MapFrom(s => s.Product.Category.Name));
+            CreateMap<CreateOrderDto, Order>();
+            CreateMap<OrderProduct, OrderProductDto>();
 
             CreateMap<OrderProductDto, OrderProduct>()
-            .ForMember(d => d.Category, o => o.Ignore());
+                .ForMember(d => d.Category, o => o.Ignore());
 
             CreateMap<UploadedProductsDto, Product>();
-
-            CreateMap<OrderProduct, OrderProduct>();
 
             CreateMap<Product, GetProductDto>()
             .ForMember(d => d.UnitDto, o => o.MapFrom(s => s.Unit));
@@ -213,7 +210,8 @@ namespace Application.Core
             .ForMember(d => d.ContactPersonName, o => o.MapFrom(s => s.User.DisplayName));
 
             CreateMap<Category, CategoryDto>();
-            CreateMap<CreateCategoryDto, Category>();
+            CreateMap<CreateCategoryDto, Category>()
+                .ForMember(d => d.Name, o => o.MapFrom(s => s.Name));
             CreateMap<EditCategoryDto, Category>();
         }
     }

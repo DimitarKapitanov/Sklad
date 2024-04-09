@@ -34,6 +34,7 @@ namespace Application.OrderList
                 if (user == null) return null;
 
                 var query = _context.Orders
+                    .Where(o => o.IsDeleted != true)
                     .OrderByDescending(x => x.CreatedOn)
                     .ThenByDescending(x => x.CreatedByUser.UserName)
                     .ProjectTo<GetOrdersDto>(_mapper.ConfigurationProvider);

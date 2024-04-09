@@ -44,7 +44,7 @@ export default observer(function OrderProductEdit({ orderProduct, style }: Props
             {({ values, handleSubmit }) => (
                 <Form className="ui form" style={style} onSubmit={handleSubmit} autoComplete='off'>
                     <Form.Input name='name' label='Име на продукта' placeholder='Име на продукта' value={orderProduct.name} disabled />
-                    <Form.Input name='category' label='Категория' placeholder='Категория' value={orderProduct.category} disabled />
+                    <Form.Input name='category' label='Категория' placeholder='Категория' value={orderProduct.categoryName} disabled />
                     <Form.Input name='unitAcronym' label='Мярка' placeholder='Мярка' value={orderProduct.unitAcronym} disabled />
                     <MyTextInput
                         name='quantity'

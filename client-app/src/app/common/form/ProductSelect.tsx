@@ -1,54 +1,43 @@
-import { FormikProps } from 'formik';
+import { useField } from 'formik';
 import { observer } from 'mobx-react-lite';
 import ReactSelect from 'react-select';
-import { OrderFormValues } from '../../models/order';
-import { OrderProduct } from '../../models/orderProduct';
-import { store } from '../../stores/store';
+import { Form, Label } from 'semantic-ui-react';
 
 interface Props {
-    formikProps: FormikProps<{ newOrder: OrderFormValues; product: OrderProduct; }>
-    productOptions: { key: string; text: string; value: string; }[];
-    loadProducts: () => void;
-    mapToSelectOptions: (items: { [key: string]: string; }[], valueKey: string, labelKey: string) => { value: string; label: string; }[]
-    loadProductFromOrder: (productId: string) => Promise<OrderProduct | undefined>
+    name: string;
+    placeholder: string;
+    options: { value: string; label: string }[];
+    label?: string;
+    onMenuScrollToBottom?: () => void;
+    value?: { value: string; label: string } | null;
 }
 
-const ProductSelect = observer(({ formikProps, productOptions, loadProducts, mapToSelectOptions, loadProductFromOrder }: Props) => {
+export default observer(function ProductSelect(prop: Props) {
+    const [field, meta, helpers,] = useField(prop.name);
+
     return (
-        <ReactSelect
-            className="ui dropdown"
-            name="product.productId"
-            isClearable
-            noOptionsMessage={() => "Няма намерени продукти"}
-            options={mapToSelectOptions(productOptions, "value", "text")}
-            pageSize={productOptions.length}
-            placeholder="Въведете продукт"
-            value={formikProps.values.product.productId ? {
-                value: formikProps.values.product.productId,
-                label: formikProps.values.product.name
-            } : null}
-            onInputChange={(data) => {
-                if (data) {
-                    store.productStore.pagingParams.pageNumber = 1;
-                    loadProducts();
-                }
-            }}
-            onMenuScrollToBottom={() => {
-                store.productStore.pagingParams.pageNumber++;
-                loadProducts();
-            }}
-            onChange={async (option) => {
-                if (option) {
-                    const product = await loadProductFromOrder(option.value);
-                    if (product) {
-                        formikProps.setFieldValue('product', product);
-                    }
-                } else {
-                    formikProps.setFieldValue('product', { productId: '', price: '', quantity: '' });
-                }
-            }}
-        />
+        <Form.Field className="ui grid"
+            style={{ flex: 1, flexFlow: "column" }}
+            error={meta.touched && !!meta.error}>
+            <label
+                className="custom-label"
+                style={{ margin: "0 0 .28571429rem 0" }}
+            >{prop.label}</label>
+            <ReactSelect
+                isClearable
+                placeholder={prop.placeholder}
+                options={prop.options}
+                name={field.name}
+                value={prop.value}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onChange={(option: any) =>
+                    helpers.setValue(option ? option.value : null)}
+                onBlur={() => helpers.setTouched(true)}
+                onMenuScrollToBottom={prop.onMenuScrollToBottom}
+            />
+            {meta.touched && meta.error ? (
+                <Label basic color="red" style={{ marginTop: 5, marginLeft: "1rem", marginRight: "1rem" }}>{meta.error}</Label>
+            ) : null}
+        </Form.Field>
     );
 });
-
-export default ProductSelect;

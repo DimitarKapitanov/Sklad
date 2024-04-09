@@ -1,4 +1,6 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
+import { toast } from "react-toastify";
+import { v4 as uuid } from "uuid";
 import * as XLSX from "xlsx";
 import agent from "../api/Agent";
 import { tableHeaderProduct } from "../common/tableHeaders/tableHeaderProduct";
@@ -6,6 +8,7 @@ import { OrderProduct } from "../models/orderProduct";
 import Pagination, { PaginatedResult, PagingParams } from "../models/pagination";
 import { Product, UploadedProduct } from "../models/product";
 import { Delivery } from "../models/productsWithoutUnit";
+import { store } from "./store";
 
 export default class ProductStore {
   productRegistry = new Map<string, Product>();
@@ -56,7 +59,7 @@ export default class ProductStore {
   setPredicate = (predicate: string, value: string | number) => {
     const resetPredicate = () => {
       this.predicate.forEach((_, key) => {
-        if (key !== 'search' && key !== "category") this.predicate.delete(key);
+        if (key !== 'search' && key !== "categoryName") this.predicate.delete(key);
       })
     }
 
@@ -81,9 +84,9 @@ export default class ProductStore {
         this.predicate.delete('search');
         this.predicate.set('search', value);
         break;
-      case 'category':
-        this.predicate.delete('category');
-        this.predicate.set('category', value);
+      case 'categoryName':
+        this.predicate.delete('categoryName');
+        this.predicate.set('categoryName', value);
         break;
     }
   }
@@ -335,7 +338,18 @@ export default class ProductStore {
     }
   };
 
-  loadProductFromOrder = async (id: string) => {
+  getProductById = (id: string) => {
+    this.selectedProduct = this.productRegistry.get(id);
+    this.setProductForOrder(this.selectedProduct!);
+    return this.orderSelectedProduct;
+  }
+
+  clearSelectedProduct = () => {
+    this.selectedProduct = undefined;
+    this.orderSelectedProduct = undefined;
+  }
+
+  loadProductForOrder = async (id: string) => {
     this.setLoadingInitial(true);
     try {
       const product = await agent.Products.details(id);
@@ -351,8 +365,6 @@ export default class ProductStore {
   }
 
   setProductForOrder = (product: Product) => {
-    console.log(product);
-
     this.orderSelectedProduct = {
       id: "",
       orderId: "",
@@ -364,8 +376,8 @@ export default class ProductStore {
       unitId: product.unitId,
       unitAcronym: product.unitDto.acronym!,
       description: product.description,
-      price: Number(product.price),
-      totalPrice: 0,
+      price: Number(product.price).toFixed(2) as unknown as number,
+      totalPrice: 0.00,
       modifiedOn: new Date(),
     };
   }
@@ -389,5 +401,55 @@ export default class ProductStore {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "Продукти.xlsx");
   };
+
+  uploadProductsFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!event.target.files) {
+        throw new Error('Не е намерен файл.');
+      }
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          if (evt.target === null) {
+            throw new Error('Не е намерен файл.');
+          }
+          const bstr = evt.target.result;
+          const wb = XLSX.read(bstr, { type: 'binary' });
+          const wsname = wb.SheetNames[0];
+          const ws = wb.Sheets[wsname];
+          const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          const uploadedProducts: UploadedProduct[] = (data as [string, string, number, string, string, number, string, string][]).map((row) => {
+            const unitId = store.unitStore.getUnitsByAcronym(row[3]);
+            if (!unitId) {
+              throw new Error(`Не е намерена мярка '${row[3]}' в системата.`);
+            }
+
+            const categoryValue = store.categoryStore.categoryOptions.find((category) => category.text === row[1])?.value;
+            if (!categoryValue) {
+              throw new Error(`Не е намерена категория "${row[1]}" в системата. Евентуална грешка в името на категорията или езика на категорията или категорията не е добавена в системата.`);
+            }
+
+            return {
+              id: uuid(),
+              name: row[0],
+              categoryId: categoryValue,
+              quantity: row[2],
+              unitId: unitId,
+              description: row[4],
+              deliveryPrice: row[6],
+              price: row[7],
+            };
+          });
+          this.uploadProducts(uploadedProducts);
+        } catch (error) {
+          toast.error(String(error));
+        }
+      };
+      reader.readAsBinaryString(file);
+    } catch (error) {
+      toast.error(String(error));
+    }
+  }
 }
 

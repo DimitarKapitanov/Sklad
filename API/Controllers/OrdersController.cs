@@ -33,7 +33,7 @@ namespace API.Controllers
 
         [Authorize(Roles = "Admin, Manager")]
         [HttpPost]
-        public async Task<IActionResult> CreateOrder(OrderDto orderDto)
+        public async Task<IActionResult> CreateOrder(CreateOrderDto orderDto)
         {
             return HandleResult(await Mediator.Send(new OrderCreate.Command { CreateOrder = orderDto }));
         }

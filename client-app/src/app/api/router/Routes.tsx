@@ -3,8 +3,7 @@ import NotFound from "../../../features/errors/NotFound";
 import ServerError from "../../../features/errors/ServerError";
 import OrdersDashboard from "../../../features/orders/dashboard/OrdersDashboard";
 import OrderDetails from "../../../features/orders/details/ProductDetails";
-import OrderForm from "../../../features/orders/form/OrderForm";
-import TestOrderForm from "../../../features/orders/form/TestOrderForm";
+import { default as OrderForm } from "../../../features/orders/form/OrderForm";
 import PartnerDashboard from "../../../features/partners/dashboard/PartnerDashboard";
 import PartnerCreate from "../../../features/partners/partnerCreate/PartnerCreate";
 import ProductDashboard from "../../../features/products/dashboard/ProductDashboard";
@@ -25,7 +24,6 @@ export const routes: RouteObject[] = [
       {
         element: <RequireAuth />, children: [
           { path: "warehouses", element: <Warehouses /> },
-          { path: "test-order-form", element: <TestOrderForm /> },
           { path: "orders", element: <OrdersDashboard /> },
           { path: "orders/:id", element: <OrderDetails /> },
           { path: "orders/:id/:back?", element: <OrderDetails /> },

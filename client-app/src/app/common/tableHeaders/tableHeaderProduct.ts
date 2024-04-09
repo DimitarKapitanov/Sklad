@@ -21,12 +21,11 @@ export const productTableHeader: { key: string, label: string }[] = [
 
 export const orderProductTableHeader: { key: string, label: string }[] = [
     { key: "name", label: "Продукт" },
-    { key: "unit", label: "Мерна единица" },
     { key: "category", label: "Категория" },
+    { key: "unit", label: "Мярка" },
     { key: "quantity", label: "Количество" },
     { key: "price", label: "Ед.цена" },
     { key: "total", label: "Общо" },
-    { key: "actions", label: "Действия" },
 ];
 // <Table.HeaderCell>Продукт < /Table.HeaderCell>
 // < Table.HeaderCell > Мерна единица < /Table.HeaderCell>
