@@ -6,31 +6,31 @@ namespace Application.Categories
 {
     public class CategoryDelete
     {
-        // public class Command : IRequest<Result<Unit>>
-        // {
-        //     public Guid Id { get; set; }
-        // }
+        public class Command : IRequest<Result<Unit>>
+        {
+            public Guid Id { get; set; }
+        }
 
-        // public class Handler : IRequestHandler<Command, Result<Unit>>
-        // {
-        //     private readonly DataContext _context;
-        //     public Handler(DataContext context)
-        //     {
-        //         _context = context;
-        //     }
-        //     public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
-        //     {
-        //         var category = await _context.Categories.FindAsync(request.Id);
-        //         if (category == null) return null;
+        public class Handler : IRequestHandler<Command, Result<Unit>>
+        {
+            private readonly DataContext _context;
+            public Handler(DataContext context)
+            {
+                _context = context;
+            }
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            {
+                var category = await _context.Categories.FindAsync(request.Id);
+                if (category == null) return null;
 
-        //         category.IsDeleted = true;
-        //         category.DeletedOn = DateTime.UtcNow;
+                category.IsDeleted = true;
+                category.DeletedOn = DateTime.UtcNow;
 
-        //         _context.Categories.Update(category);
-        //         var result = await _context.SaveChangesAsync() > 0;
-        //         if (!result) return Result<Unit>.Failure("Грешка при изтриване на категорията!");
-        //         return Result<Unit>.Success(Unit.Value);
-        //     }
-        // }
+                _context.Categories.Update(category);
+                var result = await _context.SaveChangesAsync() > 0;
+                if (!result) return Result<Unit>.Failure("Грешка при изтриване на категорията!");
+                return Result<Unit>.Success(Unit.Value);
+            }
+        }
     }
 }

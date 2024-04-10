@@ -66,7 +66,7 @@ namespace Application.Products
                     var existingProduct = await _context.Products
                         .FirstOrDefaultAsync(p => p.Name == product.Name && p.UnitId == product.UnitId);
 
-                    // var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
+                    var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
 
                     if (existingProduct != null)
                     {
@@ -77,7 +77,7 @@ namespace Application.Products
                     }
                     else
                     {
-                        product.CategoryName = "category.Name";
+                        product.CategoryName = category.Name;
                         var newProduct = _mapper.Map<Product>(product);
                         await _context.Products.AddAsync(newProduct);
                     }

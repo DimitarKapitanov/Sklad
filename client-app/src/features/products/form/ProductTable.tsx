@@ -55,7 +55,7 @@ export default observer(function ProductTable({
     shouldValidate?: boolean
   ) => void;
 }) {
-  const { unitStore, supplierStore, categoryStore: { categoryOptions } } = useStore();
+  const { unitStore, supplierStore, categoryStore: { categoryProductOptions } } = useStore();
   const { unitSort } = unitStore;
   const { supplierOptions } = supplierStore;
 
@@ -126,7 +126,7 @@ export default observer(function ProductTable({
                     </TableCell>
                     <TableCell className="category">
                       <MySelectInput
-                        options={categoryOptions}
+                        options={categoryProductOptions}
                         placeholder="Категория"
                         name={`products[${index}].categoryId`}
                       />

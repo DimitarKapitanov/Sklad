@@ -22,6 +22,13 @@ export default class CategoryStore {
             value: category.name
         }));
     }
+    get categoryProductOptions() {
+        return this.categories.map(category => ({
+            key: category.id,
+            text: category.name,
+            value: category.id
+        }));
+    }
 
     loadCategories = async () => {
         try {
