@@ -22,7 +22,7 @@ namespace Application.DataSeeded
             public async Task<Result<bool>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var dataSeeded = await _context.DataSeeds.FirstOrDefaultAsync();
-
+                if (dataSeeded == null) return Result<bool>.Success(false);
                 return Result<bool>.Success(dataSeeded.IsSeeded);
             }
         }
