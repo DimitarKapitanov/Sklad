@@ -35,6 +35,8 @@ namespace Persistence
 
         public DbSet<Category> Categories { get; set; }
 
+        public DbSet<TestTable> TestTables { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
