@@ -33,7 +33,7 @@ namespace Persistence
 
         public DbSet<Photo> Photos { get; set; }
 
-        public DbSet<Category> Categories { get; set; }
+        // public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
