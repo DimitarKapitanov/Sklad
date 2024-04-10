@@ -277,8 +277,6 @@ export default class ProductStore {
   };
 
   uploadProducts = async (products: UploadedProduct[]) => {
-
-
     this.loading = true;
     try {
       if (!this.isFileUploaded) {
@@ -287,8 +285,8 @@ export default class ProductStore {
           this.loading = false;
           this.productPagingRegistry.clear();
           this.searchRegister.clear();
+          this.isFileUploaded = true;
         });
-        this.isFileUploaded = true;
       } else {
         throw new Error('Не в възможно повторно качване на файл!');
       }
@@ -305,7 +303,7 @@ export default class ProductStore {
     try {
       product.modifiedOn = new Date();
       await agent.Products.edit(product);
-      runInAction(() => {
+      runInAction(async () => {
         this.productRegistry.set(product.id, product);
 
         // Update product in productPagingRegistry
@@ -317,7 +315,7 @@ export default class ProductStore {
 
         this.selectedProduct = product;
         this.editMode = false;
-        this.loading = false;
+        this.loading = await agent.Products.getSeededInfo();
       });
     } catch (error) {
       console.log(error);
@@ -390,6 +388,21 @@ export default class ProductStore {
     };
   }
 
+  loadingDataSeedInfo = async () => {
+    this.loading = true;
+    try {
+      runInAction(async () => {
+        this.isFileUploaded = await agent.Products.getSeededInfo();
+        this.loading = false;
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
   downloadProducts = () => {
     const data: unknown[] = [];
     this.products.map((product) => {
@@ -433,7 +446,11 @@ export default class ProductStore {
               throw new Error(`Не е намерена мярка '${row[3]}' в системата.`);
             }
 
-            const categoryValue = store.categoryStore.categoryOptions.find((category) => category.text === row[1])?.key;
+            const categoryValue = store.categoryStore.categoryOptions.find((category) => category.value === row[1])?.key;
+            console.log(store.categoryStore.categoryOptions);
+
+            console.log(categoryValue);
+
             if (!categoryValue) {
               throw new Error(`Не е намерена категория "${row[1]}" в системата. Евентуална грешка в името на категорията или езика на категорията или категорията не е добавена в системата.`);
             }

@@ -35,7 +35,7 @@ namespace Persistence
 
         public DbSet<Category> Categories { get; set; }
 
-        public DbSet<TestTable> TestTables { get; set; }
+        public DbSet<DataSeed> DataSeeds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -50,7 +50,7 @@ namespace Persistence
                 .Property(p => p.Price).HasPrecision(18, 4);
 
             builder.Entity<Product>()
-                .HasIndex(u => new { u.Name, u.UnitId }).IsUnique();
+                .HasIndex(u => new { u.Name, u.UnitId, u.CategoryId }).IsUnique();
 
             builder.Entity<Product>()
                 .Property(p => p.DeliveryPrice).HasPrecision(18, 4);

@@ -11,7 +11,7 @@ export default observer(function ProductActions() {
   const { modalStore, productStore, unitStore: { unitRegistry, loadUnits }, categoryStore: { loadCategories, categoryOptions } } = useStore();
   const { openModal } = modalStore;
 
-  const { predicate, setPredicate, uploadProductsFile, isFileUploaded } = productStore;
+  const { predicate, setPredicate, uploadProductsFile, isFileUploaded, loadingDataSeedInfo } = productStore;
 
   useEffect(() => {
     if (unitRegistry.size < 1) {
@@ -22,6 +22,10 @@ export default observer(function ProductActions() {
   useEffect(() => {
     loadCategories();
   }, [loadCategories]);
+
+  useEffect(() => {
+    if (!isFileUploaded) loadingDataSeedInfo();
+  }, [isFileUploaded, loadingDataSeedInfo]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     uploadProductsFile(event)

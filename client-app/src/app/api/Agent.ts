@@ -112,6 +112,7 @@ const Products = {
   edit: (product: Product) => requests.put<void>(`/products/${product.id}`, product),
   delete: (id: string) => requests.delete<void>(`/products/${id}`),
   upload: (products: UploadedProduct[]) => requests.post<void>("/products/upload", products),
+  getSeededInfo: () => requests.get<boolean>("/dataSeed"),
 };
 
 const Orders = {

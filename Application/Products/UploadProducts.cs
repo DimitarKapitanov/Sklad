@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Unit = MediatR.Unit;
 
@@ -36,13 +37,26 @@ namespace Application.Products
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-
+                var dataSeeded = await _context.DataSeeds.FirstOrDefaultAsync();
+                if (dataSeeded != null) return Result<Unit>.Failure("Първоначалните данни вече са качени!");
                 var products = _mapper.Map<List<Product>>(request.Products);
-
+                dataSeeded = new DataSeed()
+                {
+                    IsSeeded = true
+                };
+                await _context.DataSeeds.AddAsync(dataSeeded);
                 await _context.Products.AddRangeAsync(products);
-                var success = await _context.SaveChangesAsync() > 0;
+                try
+                {
+                    var success = await _context.SaveChangesAsync() > 0;
+                    if (!success) return Result<Unit>.Failure("Грешка при качване на продуктите!");
+                }
+                catch (DbUpdateException ex)
+                {
+                    Console.WriteLine(ex.InnerException.Message);
+                    throw;
+                }
 
-                if (!success) return Result<Unit>.Failure("Грешка при качване на продуктите!");
 
                 return Result<Unit>.Success(Unit.Value);
             }
