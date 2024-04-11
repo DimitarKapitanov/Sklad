@@ -37,6 +37,7 @@ export default observer(function ProductActions() {
         style={{
           display: "flex",
           justifyContent: "space-between",
+          marginTop: "40px",
         }}
         className="product-actions"
       >

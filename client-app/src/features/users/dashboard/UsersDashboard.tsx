@@ -15,7 +15,7 @@ export default observer(function UsersDashboard() {
   }, [loadUsers, userRegistry.size]);
 
   if (loadingUsers)
-    return <LoadingComponent content="Зареждане на потребители..." />;
+    return <LoadingComponent content="Зареждане на служители..." />;
 
   return (
     <>

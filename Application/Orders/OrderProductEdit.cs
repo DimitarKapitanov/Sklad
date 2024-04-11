@@ -43,7 +43,9 @@ namespace Application.Orders
 
                 if (!new CommandValidator().Validate(request).IsValid)
                     return Result<MediatR.Unit>.Failure(error: JsonSerializer.Serialize(new CommandValidator().Validate(request)));
-
+                var order = await _context.Orders.FindAsync(request.Id);
+                if (order == null) return Result<Unit>.Failure(error: "Поръчката не е намерена");
+                if (order.IsCompleted == true) return Result<Unit>.Failure(error: "Поръчката е вече завършена");
                 if (request.OrderProductEdit == null) return Result<Unit>.Failure(error: "Няма подадени данни за редактиране на продуктите в поръчката");
 
                 if (request.OrderProductEdit.OrderId != request.Id)

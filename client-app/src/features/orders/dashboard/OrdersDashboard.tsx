@@ -75,7 +75,7 @@ export default observer(function OrderDashboard() {
                       onClick={handleClick}
                       icon="dropdown"
                       content={wareHouse.name}
-                    ></Accordion.Title>
+                    />
                     <Accordion.Content
                       active={activeIndex === wareHouse.id}
                       style={{ overflowX: "auto" }}
@@ -97,7 +97,7 @@ export default observer(function OrderDashboard() {
                     onClick={handleClick}
                     icon="dropdown"
                     content={wareHouse.name}
-                  ></Accordion.Title>
+                  />
                   <Accordion.Content
                     active={activeIndex === wareHouse.id}
                     style={{ overflowX: "auto" }}

@@ -72,7 +72,7 @@ export default observer(function PartnerCreate() {
   });
 
   return (
-    <Container>
+    <Container style={{ marginTop: "40px" }}>
       <Segment clearing>
         <Formik
           initialValues={{

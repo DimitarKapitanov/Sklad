@@ -140,7 +140,8 @@ export default observer(function TestOrderProductTable({ formikProps }: Props) {
                         !formikProps.values.product.productId ||
                         !formikProps.values.product.price ||
                         !formikProps.values.product.quantity ||
-                        !!formikProps.errors.product
+                        !!formikProps.errors.product ||
+                        formikProps.values.product.quantity <= 0
                     }
                     compact
                     style={{ height: 37, marginTop: 24 }}

@@ -13,13 +13,13 @@ export default observer(function UserActions() {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
-        <Header as="h2" content="Потребители" />
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 40 }}>
+        <Header as="h2" content="Служители" />
         <div>
           <Button
             primary
             onClick={() => openModal(<CreateUser />, "tiny")}
-            content="Добави потребител"
+            content="Добави служител"
             icon="user plus"
             size="tiny"
           />

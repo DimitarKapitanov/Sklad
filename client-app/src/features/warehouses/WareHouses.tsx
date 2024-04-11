@@ -22,21 +22,21 @@ export default observer(function Warehouses() {
     <>
       <WarehousesActions />
       {wareHouses.find(cpi => cpi.userName === user?.userName || user?.role === "Admin") ? (
-        <Grid>
-          <Grid.Column width="16">
+        <Grid style={{ marginTop: "20px" }}>
+          <Grid.Column width="16" >
             <Card.Group itemsPerRow={3} className="warehouse-cards">
               {wareHouses
-                .filter(warehouse => user?.role.includes('Admin') || user?.role.includes('Manager') || warehouse.userName === user?.userName)
+                .filter(warehouse => (user?.role.includes('Admin') || user?.role.includes('Manager')) || warehouse.userName === user?.userName)
                 .map((warehouse) => (
                   <WarehouseCard key={warehouse.id} warehouse={warehouse} />
                 ))}
             </Card.Group>
-          </Grid.Column>
-        </Grid>
+          </Grid.Column >
+        </Grid >
       ) : <div style={{
         display: 'block', width: 700, padding: 30
       }}>
-        <Header as="h2" content="Все още не се прикрепен към никой склад!" />
+        <Header as="h2" content="Все още не сте прикрепен към никой склад!" />
         <Header as="h3" content="За повече информация моля обърнете се към вашия администратор!" />
       </div>}
     </>

@@ -19,6 +19,7 @@ export default observer(function StatisticActions() {
                 style={{
                     display: "flex",
                     justifyContent: "space-between",
+                    marginTop: "40px"
                 }}
             >
                 <Header as="h2" content="Статистики" />

@@ -222,20 +222,25 @@ export default class OrderStore {
 
     loadOrdersByWarehouse = async (id: string) => {
         //check if pagedOrderRegistry has the warehouseId
-        const allWarehouseIdsMatch = Array.from(this.pagedOrderRegistry.values())
-            .every(orders => orders.every(order => order.warehouseId === id));
-        if (this.lastWarehouseId !== id || !allWarehouseIdsMatch) {
-            this.pagedOrderRegistry.clear();
-            this.pagingParams = new PagingParams();
-        }
+        // const allWarehouseIdsMatch = Array.from(this.pagedOrderRegistry.values())
+        //     .every(orders => orders.every(order => order.warehouseId === id));
+        // console.log(this.pagedOrderRegistry.size);
 
-        //if the page is already in the registry and the warehouseId is the same as the last one, set the pagination to the current page
-        const pageNumberKey = this.pagingParams.pageNumber.toString();
-        const hasPageInOrderPagingRegistry = this.pagedOrderRegistry.has(pageNumberKey);
-        if (hasPageInOrderPagingRegistry && this.lastWarehouseId === id) {
-            this.setPaginationToCurrentPage();
-            return this.pagedOrderRegistry;
-        }
+        // if (this.lastWarehouseId !== id || !allWarehouseIdsMatch) {
+        //     console.log('clearing');
+
+        //     this.pagedOrderRegistry.clear();
+        //     this.pagingParams = new PagingParams();
+        // }
+
+        // //if the page is already in the registry and the warehouseId is the same as the last one, set the pagination to the current page
+        // const pageNumberKey = this.pagingParams.pageNumber.toString();
+        // const hasPageInOrderPagingRegistry = this.pagedOrderRegistry.has(pageNumberKey);
+
+        // if (hasPageInOrderPagingRegistry && this.lastWarehouseId === id) {
+        //     this.setPaginationToCurrentPage();
+        //     return this.ordersByWarehouse;
+        // }
 
         this.setLoadingOrders(true);
         try {
@@ -260,9 +265,9 @@ export default class OrderStore {
         }
     }
 
-    private setPaginationToCurrentPage = () => {
-        this.pagination!.currentPage = this.pagingParams.pageNumber;
-    };
+    // private setPaginationToCurrentPage = () => {
+    //     this.pagination!.currentPage = this.pagingParams.pageNumber;
+    // };
 
     version = 0;
 

@@ -11,7 +11,7 @@ export default observer(function OrdersActions() {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "40px" }}>
         <Header as="h2" content="Поръчки" />
         {user?.role.includes("Admin") || user?.role.includes("Manager") ? (
           <MenuMenu position="right">

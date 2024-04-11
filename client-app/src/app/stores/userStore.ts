@@ -88,11 +88,12 @@ export default class UserStore {
         } catch (error) {
             console.log(error);
             runInAction(() => this.loadingUsers = false);
+            throw error;
         }
     }
 
     get getUsers() {
-        return Array.from(this.userRegistry.values());
+        return Array.from(this.userRegistry.values()).filter(user => user.email !== 'admin@admin.com');
     }
 
     updateUser = async (user: UserFormValues) => {

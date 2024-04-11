@@ -37,7 +37,7 @@ export default observer(function ProductDetails({ orderId, modalName }: Props) {
                 <Card.Content style={{ overflowX: 'auto' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }} className="order-table-header">
                         <Card.Header as="h2">Продукти</Card.Header>
-                        {!order.isCompleted && !orderId && user?.role.includes("Admin") || user?.role.includes("Manager") ? (
+                        {!order.isCompleted && !orderId && (user?.role.includes("Admin") || user?.role.includes("Manager")) ? (
                             <Card.Header>
                                 <Button
                                     icon='pencil'

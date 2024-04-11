@@ -78,8 +78,8 @@ export default observer(function TestOrderForm() {
     }
 
     return (
-        <Container>
-            <Header as='h2' content='Test Order Form' color='teal' textAlign='center' />
+        <Container style={{ marginTop: "40px" }}>
+            <Header as='h2' content='Създай поръчка' color='black' textAlign='left' />
             <Segment clearing size='large'>
                 <Formik
                     initialValues={{ newOrder, product }}

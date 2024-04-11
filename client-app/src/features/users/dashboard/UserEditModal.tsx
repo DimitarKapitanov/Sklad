@@ -37,7 +37,7 @@ export default observer(function UserEditModal(props: Props) {
                 {({ values, handleSubmit, isSubmitting, isValid, dirty }) => (
                     <Form className="ui form user-edit-form" onSubmit={handleSubmit}>
                         <div className="user-edit-form-header">
-                            <h1>Редактиране на потребител</h1>
+                            <h1>Редактиране на служител</h1>
                         </div>
                         <div className="user-edit-form-body" style={{ padding: '30px 0' }}>
                             <MyTextInput label="Име" name="displayName" placeholder="Име" value={values.displayName} />

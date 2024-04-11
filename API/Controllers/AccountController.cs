@@ -61,7 +61,7 @@ namespace API.Controllers
 
         [Authorize(Roles = "Admin, Manager")]
         [HttpPost("create-user")]
-        public async Task<ActionResult> CreateUser(CreateUserDto registerDto)
+        public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto registerDto)
         {
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.UserName))
             {
@@ -96,7 +96,7 @@ namespace API.Controllers
             {
                 await _userManager.AddToRoleAsync(user, registerDto.Role.Trim());
                 await SetRefreshToken(user);
-                return BadRequest(result.Errors);
+                return CreateUserObject(user, new List<string> { registerDto.Role });
             }
 
             return BadRequest("Неуспешно създаване на потребител");
