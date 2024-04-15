@@ -447,9 +447,6 @@ export default class ProductStore {
             }
 
             const categoryValue = store.categoryStore.categoryOptions.find((category) => category.value === row[1])?.key;
-            console.log(store.categoryStore.categoryOptions);
-
-            console.log(categoryValue);
 
             if (!categoryValue) {
               throw new Error(`Не е намерена категория "${row[1]}" в системата. Евентуална грешка в името на категорията или езика на категорията или категорията не е добавена в системата.`);

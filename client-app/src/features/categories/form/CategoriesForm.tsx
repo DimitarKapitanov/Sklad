@@ -9,7 +9,7 @@ export default observer(function CategoriesForm() {
     const { categoryStore: { loading, createCategory }, modalStore } = useStore();
 
     function handleCategorySubmit(values: Category) {
-        createCategory(values).then(() => { console.log(values); modalStore.closeModal(); });
+        createCategory(values).then(() => { modalStore.closeModal(); });
     }
     return (
         <Segment clearing>
