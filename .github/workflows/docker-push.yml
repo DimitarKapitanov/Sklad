@@ -47,7 +47,8 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
-            docker pull dimitarkapitanov/sklad:latest
             docker stop $(docker ps -q --filter ancestor=dimitarkapitanov/sklad:latest)
+            docker rm $(docker ps -a -q --filter ancestor=dimitarkapitanov/sklad:latest)
+            docker pull dimitarkapitanov/sklad:latest
             docker run --env-file .env -p 8080:80 dimitarkapitanov/sklad:latest
         
