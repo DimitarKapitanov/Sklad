@@ -49,5 +49,5 @@ jobs:
             docker stop $(docker ps -a -q)
             docker container prune -f
             docker pull dimitarkapitanov/sklad:latest
-            docker run --env-file .env -p 8080:80 dimitarkapitanov/sklad:latest
+            docker run -d --env-file .env -p 8080:80 dimitarkapitanov/sklad:latest
         
