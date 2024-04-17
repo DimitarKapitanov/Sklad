@@ -1,14 +1,15 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 import DatePicker from "react-datepicker";
-import { Link } from "react-router-dom";
-import { Button, Header, Input, Menu, MenuItem, MenuMenu, Select } from "semantic-ui-react";
+import { useNavigate } from "react-router-dom";
+import { Header, Input, Menu, MenuItem, MenuMenu, Select } from "semantic-ui-react";
+import RevealButton from "../../../app/common/buttons/RevealButton";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function OrdersActions() {
   const { orderStore, warehouseStore: { wareHouseOptions }, userStore: { user } } = useStore();
   const { predicate, setPredicate, setActiveIndex } = orderStore;
-
+  const navigation = useNavigate();
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "40px" }}>
@@ -16,12 +17,7 @@ export default observer(function OrdersActions() {
         {user?.role.includes("Admin") || user?.role.includes("Manager") ? (
           <MenuMenu position="right">
             <MenuItem>
-              <Button
-                primary
-                content="Добави поръчка"
-                as={Link}
-                to={"/orders-create"}
-              />
+              <RevealButton visibleContent="Добави поръчка" hiddenContent="Към форма" onClick={() => navigation("/orders-create")} />
             </MenuItem>
           </MenuMenu>
         ) : null}

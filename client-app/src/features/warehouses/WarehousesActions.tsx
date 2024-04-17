@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Button, Divider, Header } from "semantic-ui-react";
+import { Divider, Header } from "semantic-ui-react";
 
 import { observer } from "mobx-react-lite";
+import RevealButton from "../../app/common/buttons/RevealButton";
 import { useStore } from "../../app/stores/store";
 
 export default observer(function WarehousesActions() {
@@ -14,14 +15,7 @@ export default observer(function WarehousesActions() {
         <Header as="h2" content="Складове" />
         <div>
           {user?.role.includes("Admin") || user?.role.includes("Manager") ? (
-            <Button
-              primary
-              onClick={() => {
-                navigate("/warehouses/create");
-              }}
-            >
-              Създай склад
-            </Button>
+            <RevealButton visibleContent="Добави нов склад" hiddenContent="Към формата" onClick={() => navigate("/warehouses/create")} />
           ) : null}
         </div>
       </div>

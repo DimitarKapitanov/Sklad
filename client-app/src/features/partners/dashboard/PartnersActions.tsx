@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import {
-  Button,
   Header,
   Input,
   Menu,
   MenuItem,
-  MenuMenu,
+  MenuMenu
 } from "semantic-ui-react";
 
 import { observer } from "mobx-react-lite";
+import RevealButton from "../../../app/common/buttons/RevealButton";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function PartnersActions() {
@@ -28,13 +28,7 @@ export default observer(function PartnersActions() {
         <Header as="h2" content="Партньори" />
         <MenuMenu position="right">
           <MenuItem>
-            <Button
-              primary
-              onClick={() => {
-                navigate("/partners/create");
-              }}
-              content={"Нов партньор"}
-            />
+            <RevealButton visibleContent="Добави партньор" hiddenContent="Към формата" onClick={() => navigate("/partners/create")} />
           </MenuItem>
         </MenuMenu>
       </div>

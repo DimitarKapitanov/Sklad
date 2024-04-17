@@ -253,6 +253,12 @@ input:focus {
   animation: fadeIn 0.5s;
 }
 
+.ui.hidden.content {
+  .ui.basic.blue.button {
+    border-radius: .38971429rem;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -1,16 +1,17 @@
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Header, Icon, Input, Menu, MenuItem, Reveal, Select, } from "semantic-ui-react";
+import { Button, Header, Input, Menu, MenuItem, Reveal, Select } from "semantic-ui-react";
+import RevealButton from "../../../app/common/buttons/RevealButton";
 import { useStore } from "../../../app/stores/store";
 import CategoriesForm from "../../categories/form/CategoriesForm";
-import UnitModal from "../../units/form/UnitModal";
+import UnitForm from "../../units/form/UnitForm";
 
 export default observer(function ProductActions() {
-  const navigate = useNavigate();
   const { modalStore, productStore, unitStore: { unitRegistry, loadUnits }, categoryStore: { loadCategories, categoryOptions } } = useStore();
   const { openModal } = modalStore;
 
+  const navigate = useNavigate();
   const { predicate, setPredicate, uploadProductsFile, isFileUploaded, loadingDataSeedInfo } = productStore;
 
   useEffect(() => {
@@ -43,64 +44,10 @@ export default observer(function ProductActions() {
       >
         <Header as="h2" content="Продукти" />
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Reveal animated='move down' style={{ margin: '0 5px' }}>
-            <Reveal.Content visible style={{ width: '100%' }}>
-              <Button
-                style={{ backgroundColor: '#f0f8ff' }}
-                fluid
-                content={'Добави продукт'}
-              />
-            </Reveal.Content>
-            <Reveal.Content hidden>
-              <Button
-                fluid
-                basic
-                color={'blue'}
-                onClick={() => navigate("/create-product")}
-              >
-                Kъм формата <Icon name='arrow right' />
-              </Button>
-            </Reveal.Content>
-          </Reveal>
-          <Reveal animated='move up' style={{ margin: '0 5px' }}>
-            <Reveal.Content visible style={{ width: '100%' }}>
-              <Button
-                fluid
-                style={{ backgroundColor: '#f0f8ff' }}
-                content={'Добави категория'}
-              />
-            </Reveal.Content>
-            <Reveal.Content hidden>
-              <Button
-                fluid
-                basic
-                color={'blue'}
-                onClick={() => openModal(<CategoriesForm />, "mini")}
-              >
-                Добави <Icon name='arrow right' />
-              </Button>
-            </Reveal.Content>
-          </Reveal>
-          <Reveal animated='move down' style={{ margin: '0 5px' }}>
-            <Reveal.Content visible style={{ width: '100%' }}>
-              <Button
-                fluid
-                style={{ backgroundColor: '#f0f8ff' }}
-                content={'Добави мярка'}
-              />
-            </Reveal.Content>
-            <Reveal.Content hidden>
-              <Button
-                fluid
-                basic
-                color={'blue'}
-                onClick={() => openModal(<UnitModal />, "mini")}
+          <RevealButton visibleContent="Добави продукт" hiddenContent="Към формата" onClick={() => navigate("/create-product")} />
+          <RevealButton visibleContent="Добави категория" hiddenContent="Kъм формата" onClick={() => openModal(<CategoriesForm />, "mini")} />
+          <RevealButton visibleContent="Добави мярка" hiddenContent="Добави" onClick={() => openModal(<UnitForm />, "mini")} />
 
-              >
-                Добави <Icon name='arrow right' />
-              </Button>
-            </Reveal.Content>
-          </Reveal>
           {!isFileUploaded && (
             <>
               <Reveal animated='move down' style={{ margin: '0 5px' }}>

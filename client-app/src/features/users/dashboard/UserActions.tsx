@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 import {
-  Button,
   Divider,
   Header
 } from "semantic-ui-react";
+import RevealButton from "../../../app/common/buttons/RevealButton";
 import { useStore } from "../../../app/stores/store";
 import CreateUser from "../CreateUser";
 
@@ -16,13 +16,7 @@ export default observer(function UserActions() {
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 40 }}>
         <Header as="h2" content="Служители" />
         <div>
-          <Button
-            primary
-            onClick={() => openModal(<CreateUser />, "tiny")}
-            content="Добави служител"
-            icon="user plus"
-            size="tiny"
-          />
+          <RevealButton visibleContent="Добави служител" hiddenContent="Към формата" onClick={() => openModal(<CreateUser />, "tiny")} icon="user plus" />
         </div>
       </div>
       <Divider />
