@@ -74,7 +74,7 @@ export default observer(function ProductActions() {
               <Button
                 fluid
                 basic
-                color={'blue'}
+                color={'red'}
                 onClick={() => openModal(<CategoriesForm />, "mini")}
               >
                 Добави <Icon name='arrow right' />
