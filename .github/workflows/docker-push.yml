@@ -46,9 +46,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd ${{ secrets.PROJECT_PATH }}
-            docker stop $(docker ps -q --filter ancestor=dimitarkapitanov/sklad:latest)
-            docker rm $(docker ps -a -q --filter ancestor=dimitarkapitanov/sklad:latest)
+            docker stop $(docker ps -a -q)
+            docker container prune -f
             docker pull dimitarkapitanov/sklad:latest
             docker run --env-file .env -p 8080:80 dimitarkapitanov/sklad:latest
         
