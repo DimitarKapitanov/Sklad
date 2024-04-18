@@ -42,7 +42,7 @@ export default function UnitForm() {
     return (
         <>
             <Segment clearing >
-                <Form onSubmit={handleSubmit} autoComplete='off' widths="equal" style={{ width: '30%', margin: '0 auto' }}>
+                <Form onSubmit={handleSubmit} autoComplete='off' widths="equal" style={{ margin: '0 auto' }}>
                     <Form.Input required placeholder='Мерна единица' label='Мерна единица' name='acronym' onChange={handleInputChange} />
                     <ButtonGroup floated="right" >
                         <Button loading={loading} type='submit' positive>Изпрати</Button>
