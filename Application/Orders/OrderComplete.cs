@@ -36,6 +36,7 @@ namespace Application.Orders
                 order.IsCompleted = true;
                 order.CompletedDate = DateTime.UtcNow;
                 order.ModifiedOn = DateTime.UtcNow;
+                order.CompletedBy = user.Id;
 
                 var result = await _context.SaveChangesAsync() > 0;
 

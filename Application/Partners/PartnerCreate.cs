@@ -46,7 +46,10 @@ namespace Application.Partners
                 if (user == null) return null;
 
                 var isExist = await _context.Companies.AnyAsync(
-                    c => c.Bulstat == request.CreatePartner.CreateCompanyDto.Bulstat || c.Name == request.CreatePartner.CreateCompanyDto.Name);
+                    c =>
+                        c.Bulstat == request.CreatePartner.CreateCompanyDto.Bulstat
+                        || c.Name == request.CreatePartner.CreateCompanyDto.Name
+                );
 
                 if (isExist) return Result<Unit>.Failure(error: "Фирмата вече съществува!");
 
@@ -56,7 +59,7 @@ namespace Application.Partners
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                if (!result) return Result<Unit>.Failure(error: "Failed to create partner");
+                if (!result) return Result<Unit>.Failure(error: "Възникна грешка при създаването на партньора!");
 
                 return Result<Unit>.Success(Unit.Value);
             }

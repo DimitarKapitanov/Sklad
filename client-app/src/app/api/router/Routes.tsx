@@ -5,6 +5,7 @@ import OrdersDashboard from "../../../features/orders/dashboard/OrdersDashboard"
 import OrderDetails from "../../../features/orders/details/ProductDetails";
 import { default as OrderForm } from "../../../features/orders/form/OrderForm";
 import PartnerDashboard from "../../../features/partners/dashboard/PartnerDashboard";
+import PartnerOrders from "../../../features/partners/details/PartnerOrders";
 import PartnerCreate from "../../../features/partners/partnerCreate/PartnerCreate";
 import ProductDashboard from "../../../features/products/dashboard/ProductDashboard";
 import ProductForm from "../../../features/products/form/ProductForm";
@@ -42,8 +43,8 @@ export const routes: RouteObject[] = [
           { path: "create-product", element: <ProductForm key={"create"} /> },
           { path: "/orders-create", element: <OrderForm /> },
           { path: "partners", element: <PartnerDashboard /> },
+          { path: "partners/:id", element: <PartnerOrders /> },
           { path: "partners/create", element: <PartnerCreate /> },
-          // user-routes
           { path: "statistics", element: <StatisticsDashboard /> },
           { path: "users", element: <UsersDashboard /> },
         ]

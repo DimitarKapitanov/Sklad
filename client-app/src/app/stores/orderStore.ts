@@ -224,11 +224,8 @@ export default class OrderStore {
         //check if pagedOrderRegistry has the warehouseId
         // const allWarehouseIdsMatch = Array.from(this.pagedOrderRegistry.values())
         //     .every(orders => orders.every(order => order.warehouseId === id));
-        // console.log(this.pagedOrderRegistry.size);
 
         // if (this.lastWarehouseId !== id || !allWarehouseIdsMatch) {
-        //     console.log('clearing');
-
         //     this.pagedOrderRegistry.clear();
         //     this.pagingParams = new PagingParams();
         // }
@@ -416,23 +413,21 @@ export default class OrderStore {
     }
 
     createOrder = async (order: OrderFormValues) => {
-        console.log(order);
-
         this.loading = true;
         return await new Promise((resolve) => {
             agent.Orders.CreateOrder(order)
                 .then(() => {
                     runInAction(() => {
-                        this.orderRegistry.set(order.id, (order as unknown) as Order);
                         this.clearOrderProducts();
                         this.pagedOrderRegistry.clear();
                         this.setLastWarehouseId(order.warehouseId);
                         this.loading = false;
+                        store.warehouseStore.clearSelectedWareHouse();
+                        store.partnerStore.clearSelectedPartner();
+                        this.clearOrderProducts();
+                        store.productStore.productPagingRegistry.clear();
+                        resolve(order.id);
                     });
-                    store.warehouseStore.clearSelectedWareHouse();
-                    store.partnerStore.clearSelectedPartner();
-                    this.clearOrderProducts();
-                    resolve(order.id);
                 })
                 .catch((error) => {
                     toast.error("Възникна грешка при създаването на поръчката!");
@@ -450,9 +445,9 @@ export default class OrderStore {
         try {
             await agent.Orders.edit(orderProduct);
             runInAction(() => {
-                const order = this.orderRegistry.get(orderProduct.orderId);
+                const order: Order | undefined = this.orderRegistry.get(orderProduct.orderId);
+
                 if (order) {
-                    // const product = order.orderProductDtos.find(product => product.id === orderProduct.id);
                     const product = order.orderProductDtos.find(product => product.id === orderProduct.id);
                     if (product) {
                         product.quantity = orderProduct.quantity;
@@ -463,6 +458,7 @@ export default class OrderStore {
                         this.loading = false;
                     }
                 }
+                store.productStore.productPagingRegistry.clear();
             });
         }
         catch (error) {

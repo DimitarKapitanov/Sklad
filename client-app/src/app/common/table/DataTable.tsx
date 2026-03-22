@@ -15,6 +15,8 @@ const DataTable = (props: Props) => {
     <Table
       celled
       selectable
+      className="product-table"
+      unstackable
     >
       <TableHeader>
         <TableRow>

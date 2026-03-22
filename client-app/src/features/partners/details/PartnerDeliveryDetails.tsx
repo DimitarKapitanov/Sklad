@@ -11,7 +11,7 @@ interface Props {
   partner: Partner;
 }
 
-export default observer(function PartnerDeliveryDetails({ delivery, partner }: Props) {
+export default observer(function PartnerDeliveryDetails({ delivery }: Props) {
   const { modalStore: { closeModals } } = useStore();
 
   const totalPrice = () => {
@@ -24,7 +24,7 @@ export default observer(function PartnerDeliveryDetails({ delivery, partner }: P
   return (
     <Container style={{ marginTop: '40px', paddingBottom: '2em' }}>
       <Header as="h2" content={`Доставка`} />
-      <PartnerInformation partner={partner} />
+      <PartnerInformation />
       <Card fluid>
         <Card.Content style={{ overflowX: 'auto' }}>
           <Header as="h2" content={`Доставени продукти`} />

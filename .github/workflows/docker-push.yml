@@ -4,28 +4,30 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'main'
-# env:
-#           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - 'production'
+      - 'dev'
+
 jobs:
   docker:
     runs-on: ubuntu-latest
+    outputs:
+      branch_name: ${{ steps.extract_branch.outputs.branch_name }}
     steps:
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      -
-        name: Login to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push
+      - name: Extract branch name
+        id: extract_branch
+        run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')"
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: dimitarkapitanov/sklad:latest
+          tags: dimitarkapitanov/sklad:${{ steps.extract_branch.outputs.branch_name }}
   deploy:
     needs: docker
     name: Deploy app
@@ -33,8 +35,7 @@ jobs:
     concurrency: deploy-group 
     steps:
       - uses: actions/checkout@v4
-      -
-        name: Login to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -46,8 +47,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            docker stop $(docker ps -a -q)
-            docker container prune -f
-            docker pull dimitarkapitanov/sklad:latest
-            docker run -d --env-file .env -p 8080:80 dimitarkapitanov/sklad:latest
-        
+            docker stop warehouse_${{ needs.docker.outputs.branch_name }} && docker rm warehouse_${{ needs.docker.outputs.branch_name }}
+            docker pull dimitarkapitanov/sklad:${{ needs.docker.outputs.branch_name }}
+            docker run -d --name warehouse_${{ needs.docker.outputs.branch_name }} --env-file .env.${{ needs.docker.outputs.branch_name }} -p ${{ needs.docker.outputs.branch_name == 'production' && '8080' || '8081' }}:80 dimitarkapitanov/sklad:${{ needs.docker.outputs.branch_name }}
+            
+            

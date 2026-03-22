@@ -1,7 +1,7 @@
-import { Formik } from 'formik'
+import { Form, Formik } from 'formik'
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from 'react'
-import { Button, Form } from 'semantic-ui-react'
+import { Button } from 'semantic-ui-react'
 import MyTextInput from '../../../app/common/form/MyTextInput'
 import { OrderProduct, OrderProductEdit } from '../../../app/models/orderProduct'
 import { useStore } from '../../../app/stores/store'
@@ -43,9 +43,9 @@ export default observer(function OrderProductEdit({ orderProduct, style }: Props
         >
             {({ values, handleSubmit }) => (
                 <Form className="ui form" style={style} onSubmit={handleSubmit} autoComplete='off'>
-                    <Form.Input name='name' label='Име на продукта' placeholder='Име на продукта' value={orderProduct.name} disabled />
-                    <Form.Input name='category' label='Категория' placeholder='Категория' value={orderProduct.categoryName} disabled />
-                    <Form.Input name='unitAcronym' label='Мярка' placeholder='Мярка' value={orderProduct.unitAcronym} disabled />
+                    <MyTextInput name='name' label='Име на продукта' placeholder='Име на продукта' value={orderProduct.name} disabled />
+                    <MyTextInput name='category' label='Категория' placeholder='Категория' value={orderProduct.categoryName} disabled />
+                    <MyTextInput name='unitAcronym' label='Мярка' placeholder='Мярка' value={orderProduct.unitAcronym} disabled />
                     <MyTextInput
                         name='quantity'
                         label='Количество'
@@ -55,12 +55,12 @@ export default observer(function OrderProductEdit({ orderProduct, style }: Props
                         value={values.quantity}
                     />
                     <MyTextInput name='price' label='Цена' placeholder='Цена' type='number' min={0} step=".0000" value={values.price} />
-                    <Form.Input
+                    <MyTextInput
                         name='totalPrice'
                         label='Обща цена'
                         placeholder='Обща цена'
                         value={(values.quantity * values.price).toFixed(4)} disabled />
-                    <Form.Input
+                    <MyTextInput
                         name='totalPriceWithVat'
                         label='Обща цена с ДДС'
                         placeholder='Обща цена с ДДС'

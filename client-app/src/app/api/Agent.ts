@@ -154,9 +154,10 @@ const Statistic = {
 };
 
 const Partner = {
-  list: (params: URLSearchParams) => axios.get<PaginatedResult<PartnerModel[]>>("/partner", { params }).then(responseBody),
+  list: (params: URLSearchParams) => axios.get<PaginatedResult<PartnerModel[]>>("/partner/", { params }).then(responseBody),
   details: (id: string) => requests.get<PartnerModel>(`/partner/${id}`),
   create: (partner: NewPartner) => requests.post<void>("/partner", partner),
+  updatePartner: (id: string, partner: PartnerModel) => requests.put<void>(`/partner/${id}`, partner),
   partnerOrders: (id: string, params: URLSearchParams) => axios.get<PaginatedResult<Order[]>>(`/partner/orders/${id}`, { params })
     .then(responseBody),
   partnerDeliveries: (id: string, params: URLSearchParams) => axios.get<PaginatedResult<PartnerDeliveriesProductsDto[]>>(`/partner/deliveries/${id}`, { params })

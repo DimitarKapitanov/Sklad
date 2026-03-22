@@ -35,6 +35,11 @@ body {
   }
 }
 
+.ui.page.modals.dimmer.transition.visible.active {
+  display: flex !important;
+  justify-content: center;
+}
+
 .ui.teal.header.login-header {
   font-size: 1.5em;
 }
@@ -213,6 +218,7 @@ td {
 }
 
 .close-button {
+  margin-top: 20px;
   padding-bottom: 20px;
 }
 
@@ -262,10 +268,6 @@ input:focus {
 @keyframes fadeIn {
   from {
     opacity: 0;
-  }
-
-  to {
-    // opacity: 1;
   }
 }
 
@@ -375,9 +377,40 @@ input:focus {
   .profile-order {
     overflow-x: auto;
   }
+
+  .search-inputs {
+    flex-direction: column !important;
+
+    .item {
+      align-self: auto !important;
+      padding-left: 0 !important;
+
+      .ui.selection.dropdown {
+        width: 100%;
+      }
+    }
+  }
 }
 
-@media only screen and (min-width: 321px) and (max-width: 599px) {
+@media only screen and (min-width: 310px) and (max-width: 690px) {
+  .product-actions {
+    flex-direction: column !important;
+  }
+
+  .reveal-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    flex-direction: column;
+
+    // align-items: center;
+    div {
+      margin-bottom: 5px !important;
+    }
+  }
+}
+
+@media only screen and (min-width: 310px) and (max-width: 599px) {
   .ui.container.body-container {
     padding-right: 0 !important;
     padding-left: 0 !important;
@@ -467,6 +500,11 @@ input:focus {
 
     .item {
       align-self: auto !important;
+      padding-left: 0 !important;
+
+      .ui.selection.dropdown {
+        width: 100%;
+      }
     }
   }
 

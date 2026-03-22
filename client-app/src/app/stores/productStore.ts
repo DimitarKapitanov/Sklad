@@ -1,7 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { toast } from "react-toastify";
 import { v4 as uuid } from "uuid";
-import * as XLSX from "xlsx";
+import * as ExcelJS from "exceljs";
 import agent from "../api/Agent";
 import { tableHeaderProduct } from "../common/tableHeaders/tableHeaderProduct";
 import { OrderProduct } from "../models/orderProduct";
@@ -285,7 +285,7 @@ export default class ProductStore {
           this.loading = false;
           this.productPagingRegistry.clear();
           this.searchRegister.clear();
-          this.isFileUploaded = true;
+          this.setFileUploaded(true);
         });
       } else {
         throw new Error('Не в възможно повторно качване на файл!');
@@ -370,6 +370,10 @@ export default class ProductStore {
     }
   }
 
+  setFileUploaded(isUploaded: boolean) {
+    this.isFileUploaded = isUploaded;
+  }
+
   setProductForOrder = (product: Product) => {
     this.orderSelectedProduct = {
       id: "",
@@ -392,7 +396,7 @@ export default class ProductStore {
     this.loading = true;
     try {
       runInAction(async () => {
-        this.isFileUploaded = await agent.Products.getSeededInfo();
+        this.setFileUploaded(await agent.Products.getSeededInfo());
         this.loading = false;
       });
     } catch (error) {
@@ -417,10 +421,28 @@ export default class ProductStore {
       });
     });
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "Продукти.xlsx");
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet1');
+    
+    // Добавям хедърите
+    const headers = Object.keys(data[0] || {});
+    worksheet.addRow(headers);
+    
+    // Добавям данните
+    data.forEach(item => {
+      worksheet.addRow(Object.values(item as Record<string, unknown>));
+    });
+    
+    // Свалям файла
+    workbook.xlsx.writeBuffer().then(buffer => {
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Продукти.xlsx';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
   };
 
   uploadProductsFile = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -430,16 +452,28 @@ export default class ProductStore {
       }
       const file = event.target.files[0];
       const reader = new FileReader();
-      reader.onload = (evt) => {
+      reader.onload = async (evt) => {
         try {
           if (evt.target === null) {
             throw new Error('Не е намерен файл.');
           }
-          const bstr = evt.target.result;
-          const wb = XLSX.read(bstr, { type: 'binary' });
-          const wsname = wb.SheetNames[0];
-          const ws = wb.Sheets[wsname];
-          const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          const buffer = evt.target.result as ArrayBuffer;
+          const workbook = new ExcelJS.Workbook();
+          await workbook.xlsx.load(buffer);
+          
+          const worksheet = workbook.getWorksheet(1); // Първия worksheet
+          if (!worksheet) {
+            throw new Error('Не е намерен worksheet в файла.');
+          }
+          
+          const data: (string | number | null)[][] = [];
+          worksheet.eachRow((row) => {
+            const rowData: (string | number | null)[] = [];
+            row.eachCell((cell, colNumber) => {
+              rowData[colNumber - 1] = cell.value as string | number | null;
+            });
+            data.push(rowData);
+          });
           const uploadedProducts: UploadedProduct[] = (data as [string, string, number, string, string, number, string, string][]).map((row) => {
             const unitId = store.unitStore.getUnitsByAcronym(row[3]);
             if (!unitId) {
@@ -468,7 +502,7 @@ export default class ProductStore {
           toast.error(String(error));
         }
       };
-      reader.readAsBinaryString(file);
+      reader.readAsArrayBuffer(file);
     } catch (error) {
       toast.error(String(error));
     }

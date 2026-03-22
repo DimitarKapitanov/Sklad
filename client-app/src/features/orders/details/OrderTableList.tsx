@@ -10,7 +10,7 @@ interface Props {
 }
 export default observer(function OrderTableList({ order, isEditClicked }: Props) {
     const { modalStore, orderStore } = useStore();
-    const { productTableHeader, sortOrderProducts, sortedOrderProducts, sortCategory, sortDirection, deleteProduct } = orderStore;
+    const { productTableHeader, sortOrderProducts, sortCategory, sortDirection, deleteProduct } = orderStore;
 
     const totalPrice = () => {
         let total = 0;
@@ -45,7 +45,7 @@ export default observer(function OrderTableList({ order, isEditClicked }: Props)
                 </Table.Row>
             </Table.Header>
             <Table.Body>
-                {sortedOrderProducts.map((product) => (
+                {order.orderProductDtos.map((product) => (
                     <Table.Row key={product.id}>
                         <Table.Cell>{product.name}</Table.Cell>
                         <Table.Cell>{product.categoryName}</Table.Cell>

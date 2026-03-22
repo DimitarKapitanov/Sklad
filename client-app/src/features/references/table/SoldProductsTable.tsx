@@ -34,6 +34,7 @@ export default observer(function SoldProductsTable() {
     setPagingParams(new PagingParams(activePage));
     loadSoldProducts();
   }
+
   return (
     <Segment style={{ overflowX: "auto" }}>
       <DataTable header={tableHeaderSoldProducts}>

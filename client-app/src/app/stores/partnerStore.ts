@@ -47,10 +47,10 @@ export default class PartnerStore {
                 const { selectedPartner } = this;
                 if (selectedPartner) {
 
-                    if (selectedPartner.isClient && !selectedPartner.isSupplier && (this.secondaryPredicate.has('isClient') || this.secondaryPredicate.has('all'))) {
+                    if (selectedPartner.isClient && !selectedPartner.isSupplier && (this.secondaryPredicate.has('isClient') || this.secondaryPredicate.has('allOrders'))) {
                         this.partnerOrdersRegistry.clear();
                         this.loadPartnerOrders(selectedPartner.id);
-                    } else if (selectedPartner.isSupplier && !selectedPartner.isClient && (this.secondaryPredicate.has('isSupplier') || this.secondaryPredicate.has('all'))) {
+                    } else if (selectedPartner.isSupplier && !selectedPartner.isClient && (this.secondaryPredicate.has('isSupplier') || this.secondaryPredicate.has('allOrders'))) {
                         this.partnerDeliversRegistry.clear();
                         this.loadPartnerDelivers(selectedPartner.id);
                     } else {
@@ -198,6 +198,8 @@ export default class PartnerStore {
 
     loadPartners = async () => {
         try {
+            this.partnerRegistry.clear();
+            this.partnerOptions = [];
             const result = await agent.Partner.list(this.axiosParams);
             runInAction(() => {
                 result.data.map(partner => {
@@ -214,8 +216,8 @@ export default class PartnerStore {
         let partner = this.getPartner(id);
 
         if (partner) {
-            this.selectedPartner = partner;
-            return partner;
+            this.setSelectedPartner(partner);
+            return this.selectedPartner;
         }
 
         this.setLoadingInitial(true);
@@ -223,7 +225,7 @@ export default class PartnerStore {
             partner = await agent.Partner.details(id);
             runInAction(() => {
                 this.setPartners(partner);
-                this.selectedPartner = partner
+                this.setSelectedPartner(partner!);
                 this.setLoadingInitial(false);
             });
             return partner;
@@ -294,6 +296,28 @@ export default class PartnerStore {
                 throw error;
             })
         }
+    }
+
+    editPartner = async (partner: Partner) => {
+        this.loading = true;
+        try {
+            await agent.Partner.updatePartner(partner.id, partner);
+            runInAction(() => {
+                this.partnerRegistry.set(partner.id, partner);
+                this.selectedPartner = partner;
+                this.loading = false;
+            });
+        } catch (error) {
+            console.log(error);
+            runInAction(() => {
+                this.loading = false;
+                throw error;
+            })
+        }
+    }
+
+    setSelectedPartner = (partner: Partner) => {
+        this.selectedPartner = partner;
     }
 
     setLoadingInitial = (state: boolean) => {
@@ -368,6 +392,7 @@ export default class PartnerStore {
     setSearch = (search: string) => {
         this.search = search;
     }
+
     private convertNewPartnerToPartner(newPartner: NewPartner): Partner {
         return {
             id: newPartner.id,

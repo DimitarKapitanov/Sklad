@@ -10,134 +10,111 @@ import { Product } from "../../../app/models/product";
 import { useStore } from "../../../app/stores/store";
 import CustomSelect from "../../orders/form/CustomSelect";
 import ProductTable from "./ProductTable";
+import RevealButton from "../../../app/common/buttons/RevealButton";
+import PartnerCreate from "../../partners/partnerCreate/PartnerCreate";
 
 interface FormValues {
-  products: Product[];
-  deliveryCompany: string;
+	products: Product[];
+	deliveryCompany: string;
 }
 
-export default observer(function ProductForm() {
-  const { productStore, commonStore, unitStore, supplierStore, categoryStore } = useStore();
-  const { validationSchema } = commonStore;
-  const { createProduct, loading, loadingInitial } = productStore;
-  const { loadUnits, unitRegistry } = unitStore;
-  const { loadSuppliers, supplierRegistry, supplierOptions, setPagingParams, pagination } = supplierStore;
-  const { loadCategories, categoryRegistry } = categoryStore;
-  const navigate = useNavigate();
-  const [products] = useState<Product[]>([
-    {
-      id: "",
-      name: "",
-      quantity: 0,
-      deliveryPrice: '',
-      price: '',
-      categoryId: "",
-      categoryName: "",
-      unitId: "",
-      unitAcronym: "",
-      description: "",
-      createdOn: new Date(),
-      modifiedOn: new Date(),
-      isDeleted: false,
-      deletedOn: null,
-      unitDto: { id: "", acronym: "" },
-    },
-  ]);
+export default observer(function TestProductForm() {
+	const { productStore, commonStore, unitStore, supplierStore, categoryStore, modalStore } = useStore();
+	const { validationSchema } = commonStore;
+	const { openModal } = modalStore;
 
-  const [, setLoadingNext] = useState(false);
-  useEffect(() => {
-    if (categoryRegistry.size < 1) loadCategories();
-  }, [loadCategories, categoryRegistry.size]);
+	const { createProduct, loading, loadingInitial } = productStore;
+	const { loadUnits, unitRegistry } = unitStore;
+	const { loadSuppliers, supplierRegistry, supplierOptions, setPagingParams, pagination } = supplierStore;
+	const { loadCategories, categoryRegistry } = categoryStore;
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    if (unitRegistry.size < 1) loadUnits();
-  }, [loadUnits, unitRegistry.size]);
+	const [products] = useState<Product[]>([]);
 
-  useEffect(() => {
-    if (supplierRegistry.size < 1) loadSuppliers();
-  }, [loadSuppliers, supplierRegistry.size]);
+	const [, setLoadingNext] = useState(false);
+	useEffect(() => {
+		if (categoryRegistry.size < 1) loadCategories();
+	}, [loadCategories, categoryRegistry.size]);
 
-  function handleProductSubmit(
-    products: Product[],
-    deliveryCompanyId: string
-  ) {
-    products.forEach((product) => { (product.id = uuid()); });
-    createProduct(deliveryCompanyId, products)
-      .then(() => navigate("/products"))
-      .catch((error) => console.log(error));
-  }
+	useEffect(() => {
+		if (unitRegistry.size < 1) loadUnits();
+	}, [loadUnits, unitRegistry.size]);
 
-  if (loadingInitial) return <LoadingComponent content="Зареждане..." />;
+	useEffect(() => {
+		if (supplierRegistry.size < 1) loadSuppliers();
+	}, [loadSuppliers, supplierRegistry.size]);
 
-  function mapToSelectOptions(items: { [key: string]: string }[], valueKey: string, labelKey: string) {
-    return items.map(item => ({
-      value: item[valueKey],
-      label: item[labelKey],
-    }));
-  }
+	function handleProductSubmit(products: Product[], deliveryCompanyId: string) {
+		products.forEach((product) => {
+			product.id = uuid();
+		});
+		createProduct(deliveryCompanyId, products)
+			.then(() => navigate("/products"))
+			.catch((error) => console.log(error));
+	}
 
-  function handleGetNext() {
-    setLoadingNext(true);
-    setPagingParams(new PagingParams(pagination!.currentPage + 1));
-    loadSuppliers().then(() => setLoadingNext(false));
-  }
+	function mapToSelectOptions(items: { [key: string]: string }[], valueKey: string, labelKey: string) {
+		return items.map((item) => ({
+			value: item[valueKey],
+			label: item[labelKey],
+		}));
+	}
 
-  return (
-    <>
-      <Header as={"h2"} content="Създаване на продукти" />
-      <Segment clearing >
-        <Formik
-          validationSchema={validationSchema}
-          initialValues={{ products, deliveryCompany: "" } as FormValues}
-          onSubmit={(values: FormValues) =>
-            handleProductSubmit(values.products, values.deliveryCompany)
-          }
-        >
-          {({
-            values,
-            handleSubmit,
-            setFieldValue,
-            isValid,
-            isSubmitting,
-            dirty,
-          }) => (
-            <Form
-              className="ui form"
-              onSubmit={handleSubmit}
-              autoComplete="off"
-            >
-              {values.deliveryCompany ? (
-                <ProductTable values={values} setFieldValue={setFieldValue} />
-              ) : (
-                <CustomSelect
-                  options={mapToSelectOptions(supplierOptions, "value", "text")}
-                  name="deliveryCompany"
-                  placeholder="Изберете доставчик"
-                  onMenuScrollToBottom={() => { handleGetNext(); }}
-                />
-              )}
+	function handleGetNext() {
+		setLoadingNext(true);
+		setPagingParams(new PagingParams(pagination!.currentPage + 1));
+		loadSuppliers().then(() => setLoadingNext(false));
+	}
 
-              <ButtonGroup floated="right">
-                <Button
-                  as={Link}
-                  to="/products"
-                  color="red"
-                  type="button"
-                  content="Отказ"
-                />
-                <Button
-                  disabled={isSubmitting || !dirty || !isValid}
-                  loading={loading}
-                  type="submit"
-                  positive
-                >
-                  Изпрати
-                </Button>
-              </ButtonGroup>
-            </Form>
-          )}
-        </Formik>
-      </Segment>
-    </>
-  );
+	if (loadingInitial) return <LoadingComponent content="Зареждане..." />;
+
+	return (
+		<>
+			<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "40px" }}>
+				<Header as={"h1"} content="Доставка" />
+				<RevealButton
+					visibleContent="Добави партньор"
+					hiddenContent="Kъм формата"
+					onClick={() => openModal(<PartnerCreate isOpenInModal={true} />, "large")}
+				/>
+			</div>
+			<Segment clearing>
+				<Formik
+					validationSchema={validationSchema}
+					initialValues={{ products, deliveryCompany: "" } as FormValues}
+					onSubmit={(values: FormValues) => handleProductSubmit(values.products, values.deliveryCompany)}
+				>
+					{({ values, handleSubmit, setFieldValue, isValid, isSubmitting, dirty }) => (
+						<Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
+							{values.deliveryCompany ? (
+								<ProductTable setFieldValue={setFieldValue} deliveryCompany={values.deliveryCompany} products={values.products} />
+							) : (
+								<div style={{ maxWidth: "300px", margin: "0 auto" }}>
+									<CustomSelect
+										options={mapToSelectOptions(supplierOptions, "value", "text")}
+										name="deliveryCompany"
+										placeholder="Изберете доставчик"
+										onMenuScrollToBottom={() => {
+											handleGetNext();
+										}}
+									/>
+								</div>
+							)}
+							<ButtonGroup floated="right" style={{ marginTop: 20 }}>
+								<Button as={Link} to="/products" color="red" type="button" content="Отказ" />
+								<Button
+									disabled={isSubmitting || !dirty || !isValid || values.products.length <= 0}
+									loading={loading}
+									type="submit"
+									positive
+								>
+									Изпрати
+								</Button>
+							</ButtonGroup>
+						</Form>
+					)}
+				</Formik>
+			</Segment>
+		</>
+	);
 });

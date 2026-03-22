@@ -20,13 +20,14 @@ export default observer(function PartnersActions() {
   return (
     <>
       <div
+        className="product-actions"
         style={{
           display: "flex",
           justifyContent: "space-between",
         }}
       >
         <Header as="h2" content="Партньори" />
-        <MenuMenu position="right">
+        <MenuMenu position="right" className="reveal-buttons">
           <MenuItem>
             <RevealButton visibleContent="Добави партньор" hiddenContent="Към формата" onClick={() => navigate("/partners/create")} />
           </MenuItem>

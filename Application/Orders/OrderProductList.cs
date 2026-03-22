@@ -35,13 +35,15 @@ namespace Application.Orders
                 var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName());
                 if (user == null) return null;
 
+                // Convert StartDate and EndDate to UTC if they are not DateTime.MinValue
+                DateTime startDate = request.Params.StartDate == DateTime.MinValue ? DateTime.MinValue : DateTime.SpecifyKind(request.Params.StartDate, DateTimeKind.Utc);
+                DateTime endDate = request.Params.EndDate == DateTime.MinValue ? DateTime.MinValue : DateTime.SpecifyKind(request.Params.EndDate, DateTimeKind.Utc);
+
                 var query = _context.Orders
                     .Where(x => x.WarehouseId == request.Id || x.WarehouseId == request.Params.WarehouseId)
                     .Where(x => string.IsNullOrEmpty(request.Params.Search) || x.Partner.Company.Name.Contains(request.Params.Search))
-                    .Where(x => request.Params.StartDate == DateTime.MinValue ||
-                        x.CreatedOn.Date >= request.Params.StartDate.Date)
-                    .Where(x => request.Params.EndDate == DateTime.MinValue ||
-                    x.CreatedOn.Date <= request.Params.EndDate.Date)
+                    .Where(x => startDate == DateTime.MinValue || x.CreatedOn.Date >= startDate.Date)
+                    .Where(x => endDate == DateTime.MinValue || x.CreatedOn.Date <= endDate.Date)
                     .Where(o => o.IsDeleted != true)
                     .OrderByDescending(x => x.ModifiedOn)
                     .ProjectTo<OrderDto>(_mapper.ConfigurationProvider);

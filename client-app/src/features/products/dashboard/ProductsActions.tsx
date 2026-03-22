@@ -43,7 +43,7 @@ export default observer(function ProductActions() {
         className="product-actions"
       >
         <Header as="h2" content="Продукти" />
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div className="reveal-buttons" style={{ display: 'flex', justifyContent: 'space-between' }}>
           <RevealButton visibleContent="Добави продукт" hiddenContent="Към формата" onClick={() => navigate("/create-product")} />
           <RevealButton visibleContent="Добави категория" hiddenContent="Kъм формата" onClick={() => openModal(<CategoriesForm />, "mini")} />
           <RevealButton visibleContent="Добави мярка" hiddenContent="Добави" onClick={() => openModal(<UnitForm />, "mini")} />

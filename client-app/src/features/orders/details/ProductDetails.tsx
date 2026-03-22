@@ -17,13 +17,13 @@ export default observer(function ProductDetails({ orderId, modalName }: Props) {
     const { selectedOrder: order, loadingDetails, loading, completeOrder, loadOrder } = orderStore;
 
     const { id } = useParams();
-    useEffect(() => {
-        if (orderId) loadOrder(orderId);
-    }, [orderId, loadOrder]);
 
     useEffect(() => {
-        if (id && (!order || order.id !== id)) loadOrder(id);
-    }, [id, loadOrder, order]);
+        if (orderId) {
+            loadOrder(orderId);
+        }
+        else if (id) loadOrder(id);
+    }, [orderId, loadOrder, id]);
 
     const [isEditClicked, setIsEditClicked] = useState(false);
 

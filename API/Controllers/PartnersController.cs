@@ -42,8 +42,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditPartner(Guid id, EditPartnerDto partnerDto)
         {
-            partnerDto.Id = id;
-            return HandleResult(await Mediator.Send(new EditPartner.Command { EditPartnerDto = partnerDto }));
+            return HandleResult(await Mediator.Send(new EditPartner.Command { EditPartnerDto = partnerDto, Id = id }));
         }
     }
 }

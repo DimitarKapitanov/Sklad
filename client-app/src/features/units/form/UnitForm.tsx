@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, ButtonGroup, Form, Segment } from "semantic-ui-react";
 import { v4 as uuid } from 'uuid';
 import LoadingComponent from "../../../app/layout/LoadingComponent";
@@ -7,7 +7,7 @@ import { Unit } from "../../../app/models/unit";
 import { useStore } from "../../../app/stores/store";
 
 export default function UnitForm() {
-    const { unitStore } = useStore()
+    const { unitStore, modalStore } = useStore()
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -46,7 +46,7 @@ export default function UnitForm() {
                     <Form.Input required placeholder='Мерна единица' label='Мерна единица' name='acronym' onChange={handleInputChange} />
                     <ButtonGroup floated="right" >
                         <Button loading={loading} type='submit' positive>Изпрати</Button>
-                        <Button as={Link} to='/products' color='red' type="button" content='Отказ' />
+                        <Button onClick={() => modalStore.closeModal()} color='red' type="button" content='Отказ' />
                     </ButtonGroup>
                 </Form>
             </Segment>

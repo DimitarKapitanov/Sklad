@@ -20,7 +20,13 @@ export default observer(function ModalContainer() {
       {modalStore.modals.length > 0 ? (
         modalStore.modals.map((modal) => (
           <Modal
-            closeIcon={{ name: 'close', onClick: () => partnerStore.clearSelectedPartner() }}
+            closeIcon={{
+              name: 'close', onClick: () => {
+                if (modal.id === 'partnerDetailsModal') {
+                  partnerStore.clearSelectedPartner()
+                }
+              }
+            }}
             key={modal.id}
             open={modal.open}
             onClose={() => {

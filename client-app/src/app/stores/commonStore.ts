@@ -5,359 +5,350 @@ import { ServerError } from "../models/serverError";
 import { store } from "./store";
 
 export default class CommonStore {
-  validationSchemaEdit = Yup.object({
-    name: Yup.string().required('Името не може да бъде празно')
-      .min(3, 'Името трябва да е поне 3 символа')
-      .max(50, 'Името трябва да е по-малко от 50 символа')
-      .matches(/^[^\s].*$/, 'Името не може да започва с празно място')
-      .matches(/.*[^\s]$/, 'Името не може да завършва с празно място')
-      .matches(/^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$/, 'Името може да съдържа само букви и цифри'),
-    price: Yup.string()
-      .required("Цената е задължителна")
-      .test(
-        "is-decimal",
-        "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри",
-        function (value) {
-          if (!value) return true;
-          const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
-          const isNumber = !isNaN(Number(value.replace(",", ".")));
-          return isValidFormat && isNumber;
-        }
-      )
-      .test(
-        "is-greater-than-delivery-price",
-        "Цената трябва да е по-голяма от цената за доставка!",
-        function (value) {
-          if (!value) return true;
-          const price = value;
-          const deliveryPrice = this.parent.deliveryPrice;
-          return (
-            Number(price.replace(",", ".")) >
-            Number(deliveryPrice.replace(",", "."))
-          );
-        }
-      ),
-    deliveryPrice: Yup.string()
-      .required("Цената за доставка е задължителна")
-      .test(
-        "is-decimal",
-        "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри",
-        function (value) {
-          if (!value) return true;
-          const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
-          const isNumber = !isNaN(Number(value.replace(",", ".")));
-          return isValidFormat && isNumber;
-        }
-      )
-      .test(
-        "is-greater-than-price",
-        "Цената за доставка трябва да е по-малка от цената!",
-        function (value) {
-          if (!value) return true;
-          const price = this.parent.price;
-          const deliveryPrice = value;
-          return (
-            Number(deliveryPrice.replace(",", ".")) <
-            Number(price.replace(",", "."))
-          );
-        }
-      ),
-    description: Yup.string()
-      .max(500, 'Описанието трябва да е по-малко от 500 символа')
-      .matches(/^[^\s].*$/, 'Описанието не може да започва с празно място')
-      .matches(/.*[^\s]$/, 'Описанието не може да завършва с празно място')
-      .matches(/^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$/, 'Описанието може да съдържа само букви и цифри'),
-  });
+	validationSchemaEdit = Yup.object({
+		name: Yup.string()
+			.required("Името не може да бъде празно")
+			.min(3, "Името трябва да е поне 3 символа")
+			.max(50, "Името трябва да е по-малко от 50 символа")
+			.matches(/^[^\s].*$/, "Името не може да започва с празно място")
+			.matches(/.*[^\s]$/, "Името не може да завършва с празно място")
+			.matches(/^[a-zA-Z0-9\s._\-\s '+&]*$|^[а-яА-Я0-9\s._\-\s '+&]*$/, "Името може да съдържа само букви и цифри"),
+		price: Yup.string()
+			.required("Цената е задължителна")
+			.test("is-decimal", "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри", function (value) {
+				if (!value) return true;
+				const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
+				const isNumber = !isNaN(Number(value.replace(",", ".")));
+				return isValidFormat && isNumber;
+			})
+			.test("is-greater-than-delivery-price", "Цената трябва да е по-голяма от цената за доставка!", function (value) {
+				if (!value) return true;
+				const price = value;
+				const deliveryPrice = this.parent.deliveryPrice;
+				return Number(price.replace(",", ".")) > Number(deliveryPrice.replace(",", "."));
+			}),
+		deliveryPrice: Yup.string()
+			.required("Цената за доставка е задължителна")
+			.test("is-decimal", "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри", function (value) {
+				if (!value) return true;
+				const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
+				const isNumber = !isNaN(Number(value.replace(",", ".")));
+				return isValidFormat && isNumber;
+			})
+			.test("is-greater-than-price", "Цената за доставка трябва да е по-малка от цената!", function (value) {
+				if (!value) return true;
+				const price = this.parent.price;
+				const deliveryPrice = value;
+				return Number(deliveryPrice.replace(",", ".")) < Number(price.replace(",", "."));
+			}),
+		description: Yup.string()
+			.max(500, "Описанието трябва да е по-малко от 500 символа")
+			.matches(/^[^\s].*$/, "Описанието не може да започва с празно място")
+			.matches(/.*[^\s]$/, "Описанието не може да завършва с празно място")
+			.matches(/^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$/, "Описанието може да съдържа само букви и цифри"),
+	});
 
-  validationSchema = Yup.object({
-    // deliveryCompany: Yup.string().required("Изберете доставчик"),
-    products: Yup.array().of(
-      Yup.object({
-        name: Yup.string()
-          .required('Името не може да бъде празно')
-          .min(3, 'Името трябва да е поне 3 символа')
-          .max(50, 'Името трябва да е по-малко от 50 символа')
-          .matches(/^[^\s].*$/, 'Името не може да започва с празно място')
-          .matches(/.*[^\s]$/, 'Името не може да завършва с празно място')
-          .matches(/^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$/, 'Името може да съдържа само букви и цифри'),
-        price: Yup.string()
-          .required("Цената е задължителна")
-          .test(
-            "is-decimal",
-            "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.",
-            function (value) {
-              if (!value) return true;
-              const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(
-                value || ""
-              );
-              const isNumber = !isNaN(Number(value.replace(",", ".")));
-              return isValidFormat && isNumber;
-            }
-          )
-          .test(
-            "is-greater-than-delivery-price",
-            "Цената трябва да е по-голяма от цената за доставка!",
-            function (value) {
-              if (!value) return true;
-              const price = value;
-              const deliveryPrice = this.parent.deliveryPrice;
-              if (deliveryPrice === undefined) return true;
-              return (
-                Number(price.replace(",", ".")) >
-                Number(deliveryPrice.replace(",", "."))
-              );
-            }
-          ),
-        deliveryPrice: Yup.string()
-          .required("Цената за доставка е задължителна")
-          .test(
-            "is-decimal",
-            "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.",
-            function (value) {
-              if (!value) return true;
-              const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(
-                value || ""
-              );
-              const isNumber = !isNaN(Number(value.replace(",", ".")));
-              return isValidFormat && isNumber;
-            }
-          )
-          .test(
-            "is-greater-than-price",
-            "Цената за доставка трябва да е по-малка от цената!",
-            function (value) {
-              if (!value) return true;
-              const price = this.parent.price;
-              if (price === undefined) return true;
-              const deliveryPrice = value;
-              return (
-                Number(deliveryPrice.replace(",", ".")) <
-                Number(price.replace(",", "."))
-              );
-            }
-          ),
-        unitAcronym: Yup.string()
-          .max(5, "Мерната единица трябва да е по малка от 5 символа")
-          .required("Мярката е задължителна"),
-        quantity: Yup.number()
-          .typeError("Количеството трябва да е число")
-          .min(1, "Количеството трябва да е по голямо от 0")
-          .required("Количеството е задължително"),
-        categoryId: Yup.string().required("Категорията е задължителна"),
-        description: Yup.string()
-          .max(500, 'Описанието трябва да е по-малко от 500 символа')
-          .matches(/^[^\s].*$/, 'Описанието не може да започва с празно място')
-          .matches(/.*[^\s]$/, 'Описанието не може да завършва с празно място')
-          .matches(/^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$/, 'Описанието може да съдържа само букви и цифри'),
-      }).required("Трябва да има поне един продукт")
-    ),
-  });
+	validationSchemaAddProduct = Yup.object({
+		name: Yup.string()
+			.required("Името не може да бъде празно")
+			.min(3, "Името трябва да е поне 3 символа")
+			.max(50, "Името трябва да е по-малко от 50 символа")
+			.matches(/^[^\s].*$/, "Името не може да започва с празно място")
+			.matches(/.*[^\s]$/, "Името не може да завършва с празно място")
+			.matches(/^[a-zA-Z0-9._\-\s '+&]*$|^[а-яА-Я0-9._\-\s '+&]*$/, "Името може да съдържа само букви и цифри"),
+		price: Yup.string()
+			.required("Цената е задължителна")
+			.test("is-decimal", "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.", function (value) {
+				if (!value) return true;
+				const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
+				const isNumber = !isNaN(Number(value.replace(",", ".")));
+				return isValidFormat && isNumber;
+			})
+			.test("is-greater-than-delivery-price", "Цената трябва да е по-голяма от цената за доставка!", function (value) {
+				if (!value) return true;
+				const price = value;
+				const deliveryPrice = this.parent.deliveryPrice;
+				if (deliveryPrice === undefined) return true;
+				return Number(price.replace(",", ".")) > Number(deliveryPrice.replace(",", "."));
+			}),
+		deliveryPrice: Yup.string()
+			.required("Цената за доставка е задължителна")
+			.test("is-decimal", "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.", function (value) {
+				if (!value) return true;
+				const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
+				const isNumber = !isNaN(Number(value.replace(",", ".")));
+				return isValidFormat && isNumber;
+			})
+			.test("is-greater-than-price", "Цената за доставка трябва да е по-малка от цената!", function (value) {
+				if (!value) return true;
+				const price = this.parent.price;
+				if (price === undefined) return true;
+				const deliveryPrice = value;
+				return Number(deliveryPrice.replace(",", ".")) < Number(price.replace(",", "."));
+			}),
+		unitAcronym: Yup.string().max(5, "Мерната единица трябва да е по малка от 5 символа").required("Мярката е задължителна"),
+		quantity: Yup.number()
+			.typeError("Количеството трябва да е число")
+			.min(1, "Количеството трябва да е по голямо от 0")
+			.required("Количеството е задължително"),
+		categoryId: Yup.string().required("Категорията е задължителна"),
+		description: Yup.string()
+			.max(500, "Описанието трябва да е по-малко от 500 символа")
+			.matches(/^[^\s].*$/, "Описанието не може да започва с празно място")
+			.matches(/.*[^\s]$/, "Описанието не може да завършва с празно място")
+			.matches(/^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$/, "Описанието може да съдържа само букви и цифри"),
+	});
 
-  orderCreateValidationSchema = Yup.object().shape({
-    newOrder: Yup.object().shape({
-      partnerId: Yup.string().required('Моля изберете партньор'),
-      warehouseId: Yup.string().required('Изберете склад'),
-      deliveryAddressId: Yup.string().required('Изберете адрес за доставка'),
-      orderProducts: Yup.array().notRequired(),
-    }),
-    product: Yup.object().shape({
-      productId: Yup.string().notRequired(),
-      price: Yup.string()
-        .required("Цената е задължителна")
-        .test(
-          "is-decimal",
-          "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.",
-          function (value) {
-            if (!value) return true;
-            const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(
-              value || ""
-            );
-            const isNumber = !isNaN(Number(value.replace(",", ".")));
-            return isValidFormat && isNumber;
-          }
-        ),
-      quantity: Yup.number()
-        .min(0, "Количеството трябва да е по голямо от 1")
-        .required("Количеството е задължително")
-        .test('is-enough', `Няма достатъчно количество!`, function (value) {
-          const { productId } = this.parent;
-          const context = this.options.context as { newOrder?: { orderProducts: OrderProduct[] } };
-          // Check if newOrder exists
-          const newOrder = context?.newOrder;
+	validationSchema = Yup.object({
+		// deliveryCompany: Yup.string().required("Изберете доставчик"),
+		products: Yup.array().of(
+			Yup.object({
+				name: Yup.string()
+					.required("Името не може да бъде празно")
+					.min(3, "Името трябва да е поне 3 символа")
+					.max(50, "Името трябва да е по-малко от 50 символа")
+					.matches(/^[^\s].*$/, "Името не може да започва с празно място")
+					.matches(/.*[^\s]$/, "Името не може да завършва с празно място")
+					.matches(/^[a-zA-Z0-9\s._\-\s '+&]*$|^[а-яА-Я0-9\s._\-\s '+&]*$/, "Името може да съдържа само букви и цифри"),
+				price: Yup.string()
+					.required("Цената е задължителна")
+					.test("is-decimal", "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.", function (value) {
+						if (!value) return true;
+						const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
+						const isNumber = !isNaN(Number(value.replace(",", ".")));
+						return isValidFormat && isNumber;
+					})
+					.test("is-greater-than-delivery-price", "Цената трябва да е по-голяма от цената за доставка!", function (value) {
+						if (!value) return true;
+						const price = value;
+						const deliveryPrice = this.parent.deliveryPrice;
+						if (deliveryPrice === undefined) return true;
+						return Number(price.replace(",", ".")) > Number(deliveryPrice.replace(",", "."));
+					}),
+				deliveryPrice: Yup.string()
+					.required("Цената за доставка е задължителна")
+					.test("is-decimal", "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.", function (value) {
+						if (!value) return true;
+						const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
+						const isNumber = !isNaN(Number(value.replace(",", ".")));
+						return isValidFormat && isNumber;
+					})
+					.test("is-greater-than-price", "Цената за доставка трябва да е по-малка от цената!", function (value) {
+						if (!value) return true;
+						const price = this.parent.price;
+						if (price === undefined) return true;
+						const deliveryPrice = value;
+						return Number(deliveryPrice.replace(",", ".")) < Number(price.replace(",", "."));
+					}),
+				unitAcronym: Yup.string().max(5, "Мерната единица трябва да е по малка от 5 символа").required("Мярката е задължителна"),
+				quantity: Yup.number()
+					.typeError("Количеството трябва да е число")
+					.min(1, "Количеството трябва да е по голямо от 0")
+					.required("Количеството е задължително"),
+				categoryId: Yup.string().required("Категорията е задължителна"),
+				description: Yup.string()
+					.max(500, "Описанието трябва да е по-малко от 500 символа")
+					.matches(/^[^\s].*$/, "Описанието не може да започва с празно място")
+					.matches(/.*[^\s]$/, "Описанието не може да завършва с празно място")
+					.matches(/^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$/, "Описанието може да съдържа само букви и цифри"),
+			}).required("Трябва да има поне един продукт"),
+		),
+	});
 
-          if (productId) {
-            const product = store.productStore.selectedProduct;
-            if (!product) {
-              return true;
-            }
-            // Get the total quantity of this product in orderProducts
-            const totalQuantityInOrder = newOrder?.orderProducts
-              .filter(p => p.productId === productId)
-              .reduce((total, p) => total + p.quantity, 0);
-            // Check if the total quantity in order plus the current value exceeds the product quantity
-            const sum = Number(totalQuantityInOrder) + value;
+	orderCreateValidationSchema = Yup.object().shape({
+		newOrder: Yup.object().shape({
+			partnerId: Yup.string().required("Моля изберете партньор"),
+			warehouseId: Yup.string().required("Изберете склад"),
+			deliveryAddressId: Yup.string().required("Изберете адрес за доставка"),
+			orderProducts: Yup.array().notRequired(),
+		}),
+		product: Yup.object().shape({
+			productId: Yup.string().notRequired(),
+			price: Yup.string()
+				.required("Цената е задължителна")
+				.test("is-decimal", "Цената трябва да има число пред ' . ' след това от 1 до 2 цифри.", function (value) {
+					if (!value) return true;
+					const isValidFormat = /^(\d{1,14})[.](\d{1,2})$/.test(value || "");
+					const isNumber = !isNaN(Number(value.replace(",", ".")));
+					return isValidFormat && isNumber;
+				}),
+			quantity: Yup.number()
+				.min(0, "Количеството трябва да е по голямо от 1")
+				.required("Количеството е задължително")
+				.test("is-enough", `Няма достатъчно количество!`, function (value) {
+					const { productId } = this.parent;
+					const context = this.options.context as { newOrder?: { orderProducts: OrderProduct[] } };
+					// Check if newOrder exists
+					const newOrder = context?.newOrder;
 
-            if (product.quantity < sum) {
-              if (product.quantity <= 0) {
-                return this.createError({ message: `Няма достатъчно количество!` });
-              } else {
-                return this.createError({ message: `Максимално количество ${product.quantity}` });
-              }
-            }
-          }
-          return true;
-        }),
-    }),
-  });
+					if (productId) {
+						const product = store.productStore.selectedProduct;
+						if (!product) {
+							return true;
+						}
+						// Get the total quantity of this product in orderProducts
+						const totalQuantityInOrder = newOrder?.orderProducts
+							.filter((p) => p.productId === productId)
+							.reduce((total, p) => total + p.quantity, 0);
+						// Check if the total quantity in order plus the current value exceeds the product quantity
+						const sum = Number(totalQuantityInOrder) + value;
 
+						if (product.quantity < sum) {
+							if (product.quantity <= 0) {
+								return this.createError({ message: `Няма достатъчно количество!` });
+							} else {
+								return this.createError({ message: `Максимално количество ${product.quantity}` });
+							}
+						}
+					}
+					return true;
+				}),
+		}),
+	});
 
-  validationSchemaStatistics = Yup.object().shape({
-    filter: Yup.string().required("Моля, изберете справка!"),
-    startDate: Yup.date()
-      .required("Моля, изберете начална дата!")
-      .max(
-        new Date(Date.now() - 7200000),
-        "Началната дата не може да е в бъдещето!"
-      ),
-    endDate: Yup.date()
-      .required("Моля, изберете крайна дата не по-голяма от днешната дата!")
-      .min(
-        Yup.ref("startDate"),
-        "Крайната дата трябва да е по-голяма от началната дата!"
-      )
-      .max(
-        new Date(Date.now() - 3600000),
-        "Крайната дата не може да е в бъдещето!"
-      ),
-  });
+	validationSchemaStatistics = Yup.object().shape({
+		filter: Yup.string().required("Моля, изберете справка!"),
+		startDate: Yup.date()
+			.required("Моля, изберете начална дата!")
+			.max(new Date(Date.now() - 7200000), "Началната дата не може да е в бъдещето!"),
+		endDate: Yup.date()
+			.required("Моля, изберете крайна дата не по-голяма от днешната дата!")
+			.min(Yup.ref("startDate"), "Крайната дата трябва да е по-голяма от началната дата!")
+			.max(new Date(Date.now() - 3600000), "Крайната дата не може да е в бъдещето!"),
+	});
 
-  newPartnerValidationSchema = Yup.object().shape({
-    createCompanyDto: Yup.object({
-      name: Yup.string().required("Името на фирмата е задължително")
-        .matches(/^[a-zA-Zа-яА-Я0-9._\\-\\s ]*$/, "Името на компанията трябва да съдържа само букви, цифри и интервали!"),
-      city: Yup.string().required("Градът е задължителен")
-        .matches(/^[a-zA-Zа-яА-Я ]*$/, "Градът трябва да съдържа само букви!"),
-      address: Yup.string().required("Адресът е задължителен")
-        .matches(/^[a-zA-Zа-яА-Я0-9.\\-\\s \\""]*$/, "Адресът трябва да съдържа само букви, цифри и интервали!"),
-      bulstat: Yup.string().required("Булстатът е задължителен")
-        .matches(/^[0-9]{9}$|^[0-9]{10}$|^[0-9]{13}$/, "Булстатът трябва да съдържа 9, 10 или 13 цифри"),
-      phone: Yup.string()
-        .required("Телефонът е задължителен")
-        .matches(
-          /^(\+)?([ 0-9]){10,}$/,
-          "Телефонният номер трябва да е валиден"
-        )
-        .matches(/^(\+[1-9][\d]*|00[1-9][\d]*|0[1-9][\d]*)$/, "Телефонният номер трябва да е валиден"),
-      email: Yup.string()
-        .required("Имейлът е задължителен")
-        .email("Трябва да въведете валиден имейл"),
-      companyOwnerName: Yup.string().required(
-        "Името на собственика е задължително"
-      ).matches(/^[a-zA-Zа-яА-Я ]*$/, "Името на собственика трябва да съдържа само букви!"),
-    }).required("Трябва да има поне една фирма"),
-    phone: Yup.string()
-      .required("Телефонът е задължителен")
-      .matches(/^(\+)?([ 0-9]){10,}$/, "Телефонният номер трябва да е валиден"),
-    email: Yup.string()
-      .required("Имейлът е задължителен")
-      .email("Трябва да въведете валиден имейл"),
-    deliveryAddress: Yup.object({
-      city: Yup.string().matches(/^[a-zA-Zа-яА-Я\s ]*$/, "Градът трябва да съдържа само букви!"),
-      address: Yup.string().matches(/^[a-zA-Zа-яА-Я0-9.\-\s "]*$/, "Адресът трябва да съдържа само букви, цифри и интервали!")
-    })
-  });
+	newPartnerValidationSchema = Yup.object().shape({
+		createCompanyDto: Yup.object({
+			name: Yup.string()
+				.required("Името на фирмата е задължително")
+				.matches(/^[a-zA-Zа-яА-Я0-9._\-\s '+&]*$/, "Името на компанията трябва да съдържа само букви, цифри и интервали!"),
+			city: Yup.string()
+				.required("Градът е задължителен")
+				.matches(/^[a-zA-Zа-яА-Я ]*$/, "Градът трябва да съдържа само букви!"),
+			address: Yup.string()
+				.required("Адресът е задължителен")
+				.matches(/^[a-zA-Zа-яА-Я0-9.\\-\\s \\""]*$/, "Адресът трябва да съдържа само букви, цифри и интервали!"),
+			bulstat: Yup.string()
+				.required("Булстатът е задължителен")
+				.matches(/^[0-9]{9}$|^[0-9]{10}$|^[0-9]{13}$/, "Булстатът трябва да съдържа 9, 10 или 13 цифри"),
+			phone: Yup.string()
+				.required("Телефонът е задължителен")
+				.matches(/^(\+)?([ 0-9]){10,}$/, "Телефонният номер трябва да е валиден")
+				.matches(/^(\+[1-9][\d]*|00[1-9][\d]*|0[1-9][\d]*)$/, "Телефонният номер трябва да е валиден"),
+			email: Yup.string().email("Трябва да въведете валиден имейл"),
+			companyOwnerName: Yup.string()
+				.required("Името на собственика е задължително")
+				.matches(/^[a-zA-Zа-яА-Я ]*$/, "Името на собственика трябва да съдържа само букви!"),
+		}).required("Трябва да има поне една фирма"),
+		phone: Yup.string().when("createCompanyDto.isClient", {
+			is: true,
+			then: (schema) =>
+				schema
+					.required("Телефонът на контактното лице е задължителен за клиенти")
+					.matches(/^(\+)?([ 0-9]){10,}$/, "Телефонният номер трябва да е валиден"),
+			otherwise: (schema) => schema.nullable(),
+		}),
+		email: Yup.string().when("createCompanyDto.isClient", {
+			is: true,
+			then: (schema) => schema.required("Email на контактното лице е задължителен за клиенти").email("Трябва да въведете валиден имейл"),
+			otherwise: (schema) => schema.email("Трябва да въведете валиден имейл").nullable(),
+		}),
+		deliveryAddress: Yup.object({
+			city: Yup.string().matches(/^[a-zA-Zа-яА-Я\s ]*$/, "Градът трябва да съдържа само букви!"),
+			address: Yup.string().matches(/^[a-zA-Zа-яА-Я0-9.\-\s "]*$/, "Адресът трябва да съдържа само букви, цифри и интервали!"),
+		}),
+	});
 
-  newWarehouseValidationSchema = Yup.object().shape({
-    name: Yup.string().required("Името на склада е задължително"),
-    contactPersonId: Yup.string().required("Изберете контактно лице"),
-    description: Yup.string().required("Описанието е задължително"),
-  });
+	newWarehouseValidationSchema = Yup.object().shape({
+		name: Yup.string().required("Името на склада е задължително"),
+		contactPersonId: Yup.string().required("Изберете контактно лице"),
+		description: Yup.string().required("Описанието е задължително"),
+	});
 
-  createUserValidationSchema = Yup.object({
-    displayName: Yup.string().required("Името е задължително").matches(/^[a-zA-Zа-яА-Я\s]*$/, "Името трябва да се състои само от букви, цифри и интервали на латиница или кирилица"),
-    userName: Yup.string().matches(
-      /^[a-zA-Z0-9]*$/,
-      "Потребителското име трябва да се състои само от букви и цифри на латиница"
-    ).required("Потребителското име е задължително"),
-    email: Yup.string().required("Имейлът е задължителен").email("Въведете валиден имейл"),
-    password: Yup.string()
-      .matches(
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/,
-        "Паролата трябва да съдържа малка буква, главна буква и цифра"
-      )
-      .min(6, "Паролата трябва да е поне 6 символа")
-      .required("Паролата е задължителна"),
-    phoneNumber: Yup.string()
-      .required("Телефонът е задължителен")
-      .matches(/^(\+[1-9][\d]*|00[1-9][\d]*|0[1-9][\d]*)$/, "Телефонният номер трябва да е валиден"),
-    role: Yup.string().required('Полето е задължително').matches(/^(Employee|Manager|Admin)$/, "Ролята трябва да бъде Служител, Мениджър или Администратор"),
-    bio: Yup.string().matches(
-      /^[\w\s.,!?а-яА-Я]*$/,
-      "Биографията трябва да се състои само от букви и цифри"
-    ).nullable()
-  });
+	createUserValidationSchema = Yup.object({
+		displayName: Yup.string()
+			.required("Името е задължително")
+			.matches(/^[a-zA-Zа-яА-Я\s]*$/, "Името трябва да се състои само от букви, цифри и интервали на латиница или кирилица"),
+		userName: Yup.string()
+			.matches(/^[a-zA-Z0-9]*$/, "Потребителското име трябва да се състои само от букви и цифри на латиница")
+			.required("Потребителското име е задължително"),
+		email: Yup.string().required("Имейлът е задължителен").email("Въведете валиден имейл"),
+		password: Yup.string()
+			.matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/, "Паролата трябва да съдържа малка буква, главна буква и цифра")
+			.min(6, "Паролата трябва да е поне 6 символа")
+			.required("Паролата е задължителна"),
+		phoneNumber: Yup.string()
+			.required("Телефонът е задължителен")
+			.matches(/^(\+[1-9][\d]*|00[1-9][\d]*|0[1-9][\d]*)$/, "Телефонният номер трябва да е валиден"),
+		role: Yup.string()
+			.required("Полето е задължително")
+			.matches(/^(Employee|Manager|Admin)$/, "Ролята трябва да бъде Служител, Мениджър или Администратор"),
+		bio: Yup.string()
+			.matches(/^[\w\s.,!?а-яА-Я]*$/, "Биографията трябва да се състои само от букви и цифри")
+			.nullable(),
+	});
 
-  userEditValidationSchema = Yup.object({
-    displayName: Yup.string().required("Името е задължително").matches(/^[a-zA-Zа-яА-Я\s]*$/, "Името трябва да се състои само от букви, цифри и интервали на латиница или кирилица"),
-    email: Yup.string().required("Имейлът е задължителен").email("Въведете валиден имейл"),
-    phoneNumber: Yup.string()
-      .required("Телефонът е задължителен")
-      .matches(/^(\+[1-9][\d]*|00[1-9][\d]*|0[1-9][\d]*)$/, "Телефонният номер трябва да е валиден"),
-    role: Yup.string().required('Полето е задължително').matches(/^(Employee|Manager|Admin)$/, "Ролята трябва да бъде Служител, Мениджър или Администратор"),
-    password: Yup.string()
-      .matches(
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/,
-        "Паролата трябва да съдържа малка буква, главна буква и цифра"
-      )
-      .min(6, "Паролата трябва да е поне 6 символа")
-      .nullable(),
-    bio: Yup.string().matches(
-      /^[\w\s.,!?а-яА-Я]*$/,
-      "Биографията трябва да се състои само от букви и цифри"
-    ).nullable()
-  })
+	userEditValidationSchema = Yup.object({
+		displayName: Yup.string()
+			.required("Името е задължително")
+			.matches(/^[a-zA-Zа-яА-Я\s]*$/, "Името трябва да се състои само от букви, цифри и интервали на латиница или кирилица"),
+		email: Yup.string().required("Имейлът е задължителен").email("Въведете валиден имейл"),
+		phoneNumber: Yup.string()
+			.required("Телефонът е задължителен")
+			.matches(/^(\+[1-9][\d]*|00[1-9][\d]*|0[1-9][\d]*)$/, "Телефонният номер трябва да е валиден"),
+		role: Yup.string()
+			.required("Полето е задължително")
+			.matches(/^(Employee|Manager|Admin)$/, "Ролята трябва да бъде Служител, Мениджър или Администратор"),
+		password: Yup.string()
+			.matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/, "Паролата трябва да съдържа малка буква, главна буква и цифра")
+			.min(6, "Паролата трябва да е поне 6 символа")
+			.nullable(),
+		bio: Yup.string()
+			.matches(/^[\w\s.,!?а-яА-Я]*$/, "Биографията трябва да се състои само от букви и цифри")
+			.nullable(),
+	});
 
-  error: ServerError | null = null;
+	error: ServerError | null = null;
 
-  token: string | null = sessionStorage.getItem("jwt");
-  appLoaded = false;
+	token: string | null = sessionStorage.getItem("jwt");
+	appLoaded = false;
 
-  constructor() {
-    makeAutoObservable(this);
-    reaction(
-      () => this.token,
-      token => {
-        if (token) {
-          sessionStorage.setItem("jwt", token);
-        } else {
-          sessionStorage.removeItem("jwt");
-        }
-      }
-    );
-  }
+	constructor() {
+		makeAutoObservable(this);
+		reaction(
+			() => this.token,
+			(token) => {
+				if (token) {
+					sessionStorage.setItem("jwt", token);
+				} else {
+					sessionStorage.removeItem("jwt");
+				}
+			},
+		);
+	}
 
-  serverError = (error: ServerError) => {
-    this.error = error;
-  };
+	serverError = (error: ServerError) => {
+		this.error = error;
+	};
 
-  setToken = (token: string | null) => {
-    this.token = token;
-  };
+	setToken = (token: string | null) => {
+		this.token = token;
+	};
 
-  setAppLoaded = () => {
-    this.appLoaded = true;
-  };
+	setAppLoaded = () => {
+		this.appLoaded = true;
+	};
 
-  dateString = (date: Date | null) => {
-    if (date === null) return "";
-    const dateToString = new Date(date);
-    return dateToString.toLocaleString('bg-BG', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(',', '');
-  }
+	dateString = (date: Date | null) => {
+		if (date === null) return "";
+		const dateToString = new Date(date);
+		return dateToString.toLocaleString("bg-BG", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(",", "");
+	};
 
-  mapToSelectOptions(items: { [key: string]: string }[], valueKey: string, labelKey: string) {
-    return items.map(item => ({
-      value: item[valueKey],
-      label: item[labelKey],
-    }));
-  }
+	mapToSelectOptions(items: { [key: string]: string }[], valueKey: string, labelKey: string) {
+		return items.map((item) => ({
+			value: item[valueKey],
+			label: item[labelKey],
+		}));
+	}
 }

@@ -16,7 +16,7 @@ namespace Application.Products
             .Must(x => x != null && x.Length < 50).WithMessage("Името трябва да е по-малко от 50 символа")
             .Must(x => x != null && !x.StartsWith(" ")).WithMessage("Името не може да започва с празно място")
             .Must(x => x != null && !x.EndsWith(" ")).WithMessage("Името не може да завършва с празно място")
-            .Matches(@"^[a-zA-Z0-9\s]*$|^[а-яА-Я0-9\s]*$").WithMessage("Името може да съдържа само букви и цифри");
+            .Matches(@"^[a-zA-Z0-9._\-\s '+&]*$|^[а-яА-Я0-9._\-\s '+&]*$").WithMessage("Името може да съдържа само букви и цифри");
 
 
             RuleFor(x => x.CategoryId)

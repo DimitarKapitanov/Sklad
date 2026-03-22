@@ -1,4 +1,4 @@
-@import '../resolutions.scss';
+@use '../resolutions.scss' as *;
 
 .partner-create {
     .partner-create_company {

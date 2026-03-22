@@ -27,15 +27,17 @@ namespace Application.Partners
 
             public async Task<Result<PageList<PartnerDeliveriesProductsDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
+                // Convert StartDate and EndDate to UTC if they are not DateTime.MinValue
+                DateTime startDate = request.Params.StartDate == DateTime.MinValue ? DateTime.MinValue : DateTime.SpecifyKind(request.Params.StartDate, DateTimeKind.Utc);
+                DateTime endDate = request.Params.EndDate == DateTime.MinValue ? DateTime.MinValue : DateTime.SpecifyKind(request.Params.EndDate, DateTimeKind.Utc);
+
                 var query = _context.Deliveries
-                .Where(x => x.PartnerId == request.Id)
-                .Where(x => request.Params.StartDate == DateTime.MinValue ||
-                    x.CreatedOn.Date >= request.Params.StartDate.Date)
-                .Where(x => request.Params.EndDate == DateTime.MinValue ||
-                    x.CreatedOn.Date <= request.Params.EndDate.Date)
-                .Where(x => string.IsNullOrEmpty(request.Params.SearchBy) || x.User.UserName.Contains(request.Params.SearchBy))
-                .OrderByDescending(x => x.CreatedOn.Date)
-                .ProjectTo<PartnerDeliveriesProductsDto>(_mapper.ConfigurationProvider);
+                    .Where(x => x.PartnerId == request.Id)
+                    .Where(x => startDate == DateTime.MinValue || x.CreatedOn.Date >= startDate.Date)
+                    .Where(x => endDate == DateTime.MinValue || x.CreatedOn.Date <= endDate.Date)
+                    .Where(x => string.IsNullOrEmpty(request.Params.SearchBy) || x.User.UserName.Contains(request.Params.SearchBy))
+                    .OrderByDescending(x => x.CreatedOn.Date)
+                    .ProjectTo<PartnerDeliveriesProductsDto>(_mapper.ConfigurationProvider);
 
                 if (query == null) return null;
 

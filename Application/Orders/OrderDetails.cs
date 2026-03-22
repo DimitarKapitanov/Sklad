@@ -33,6 +33,7 @@ namespace Application.Orders
                 if (user == null) return null;
 
                 var order = await _context.Orders
+                .Where(x => x.IsDeleted == false)
                 .ProjectTo<GetOrderByIdDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(x => x.Id == request.Id);
 
